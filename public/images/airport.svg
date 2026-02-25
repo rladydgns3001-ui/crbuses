@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#sky4)"/>
+  <!-- Airport terminal -->
+  <rect x="500" y="100" width="280" height="160" rx="5" fill="#e2e8f0"/>
+  <rect x="500" y="100" width="280" height="35" rx="5" fill="#cbd5e1"/>
+  <!-- Terminal windows -->
+  <rect x="515" y="145" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="575" y="145" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="635" y="145" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="695" y="145" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="515" y="195" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="575" y="195" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="635" y="195" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="695" y="195" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <!-- Terminal entrance -->
+  <rect x="600" y="215" width="55" height="45" rx="4" fill="#93c5fd"/>
+  <!-- Control tower -->
+  <rect x="750" y="50" width="25" height="55" rx="2" fill="#94a3b8"/>
+  <rect x="740" y="40" width="45" height="18" rx="4" fill="#64748b"/>
+  <rect x="743" y="43" width="39" height="10" rx="2" fill="#bfdbfe"/>
+  <!-- Airplane -->
+  <g transform="translate(200,80) rotate(-15)">
+    <ellipse cx="0" cy="0" rx="45" ry="8" fill="#e2e8f0"/>
+    <polygon points="-15,-8 -15,-35 5,-8" fill="#cbd5e1"/>
+    <polygon points="20,-5 20,-20 35,-5" fill="#cbd5e1"/>
+    <polygon points="-30,-3 -30,12 -20,-3" fill="#cbd5e1"/>
+    <circle cx="40" cy="0" r="3" fill="#93c5fd"/>
+  </g>
+  <!-- Road -->
+  <rect x="0" y="260" width="800" height="140" fill="#475569"/>
+  <line x1="0" y1="330" x2="800" y2="330" stroke="#fbbf24" stroke-width="2" stroke-dasharray="30,20"/>
+  <!-- Airport bus - blue/white -->
+  <rect x="150" y="200" width="220" height="85" rx="12" fill="#1e40af"/>
+  <rect x="150" y="200" width="220" height="25" rx="12" fill="#1e3a8a"/>
+  <rect x="150" y="218" width="220" height="7" fill="#1e3a8a"/>
+  <!-- White stripe -->
+  <rect x="150" y="250" width="220" height="8" fill="white" opacity="0.8"/>
+  <!-- Windows -->
+  <rect x="168" y="213" width="28" height="26" rx="4" fill="#bfdbfe"/>
+  <rect x="202" y="213" width="28" height="26" rx="4" fill="#bfdbfe"/>
+  <rect x="236" y="213" width="28" height="26" rx="4" fill="#bfdbfe"/>
+  <rect x="270" y="213" width="28" height="26" rx="4" fill="#bfdbfe"/>
+  <!-- Front windshield -->
+  <rect x="310" y="210" width="40" height="38" rx="6" fill="#dbeafe"/>
+  <!-- Luggage compartment -->
+  <rect x="155" y="265" width="210" height="15" rx="2" fill="#1e3a8a"/>
+  <!-- Wheels -->
+  <circle cx="200" cy="290" r="22" fill="#0f172a"/>
+  <circle cx="200" cy="290" r="12" fill="#334155"/>
+  <circle cx="330" cy="290" r="22" fill="#0f172a"/>
+  <circle cx="330" cy="290" r="12" fill="#334155"/>
+  <!-- Sign -->
+  <rect x="168" y="203" width="70" height="12" rx="2" fill="#172554"/>
+  <text x="203" y="213" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">Airport</text>
+  <!-- Runway markings -->
+  <rect x="500" y="350" width="50" height="4" rx="1" fill="white" opacity="0.5"/>
+  <rect x="570" y="350" width="50" height="4" rx="1" fill="white" opacity="0.5"/>
+  <rect x="640" y="350" width="50" height="4" rx="1" fill="white" opacity="0.5"/>
+</svg>

@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://crbuses.com/</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://crbuses.com/about.html</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/privacy.html</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -25,615 +20,1029 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://crbuses.com/intercity/</loc>
+    <loc>https://crbuses.com/privacy.html</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/express/</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/city/</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://crbuses.com/airport/</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/night/</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/village/</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://crbuses.com/fare/</loc>
-    <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/charter/</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/city/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>시내버스 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/express/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/fare/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>요금·할인 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/intercity/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/night/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야버스 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/safety/</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>안전·정책 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/tips/</loc>
     <lastmod>2026-02-25</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>이용 팁 가이드</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://crbuses.com/village/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/결혼식-전세버스-대절/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>결혼식 전세버스 대절 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/경기도-마을버스-안내/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>경기도 마을버스 이용 안내 – 지역별 마을버스 정보</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/경로우대-무임승차/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>경로우대 무임승차 제도 – 나이 조건과 적용 범위</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속도로-휴게소-정차-버스/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속도로 휴게소 정차 버스 노선과 이용 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-모바일-앱/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 모바일 앱 활용법 – 예매, 변경, 환불 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-반려동물-탑승/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 반려동물 탑승 규정 – 반려동물과 함께 버스 이용하기</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-시외버스-차이점/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스와 시외버스의 차이점 완벽 비교</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-심야-노선/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 심야 노선 안내 – 야간 운행 시간과 주요 노선</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-야간-운행/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>고속버스 야간 운행 노선과 심야 이동 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-예매-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 예매 방법 총정리 – 코버스 온라인 예매 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-터미널-위치/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>전국 고속버스 터미널 위치 및 이용 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-프리미엄-좌석/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 프리미엄 이코노미 좌석 안내 – 좌석 등급별 비교</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/고속버스-환불-변경/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 환불 및 변경 방법 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/공항버스-공항철도-비교/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스와 공항철도 비교 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/공항버스-예매-할인/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스 예매 방법과 할인 정보 – 온라인 할인·쿠폰 활용법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/공항버스-이용-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스 이용 가이드 – 인천공항 리무진 노선과 요금</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/공항버스-짐-규정/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스 짐 규정과 탑승 팁 – 캐리어 보관과 주의사항</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/관광-전세버스-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>관광 전세버스 이용 가이드 – 단체 관광에 최적화된 버스 선택</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/관광지-순환버스-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>주요 관광지 순환버스 이용 가이드 – 도시별 노선 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/광역급행버스-M버스-노선/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>수도권 광역급행버스(M버스) 노선 총정리</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/광역버스-직행버스-차이/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>광역버스와 직행버스의 차이점 및 노선 특징</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/교통카드-종류-비교/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>교통카드 종류별 비교 – 티머니, 캐시비, 레일플러스</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/교통카드-충전-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>교통카드 충전 방법 총정리 – 편의점, 지하철, 앱 충전</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/김포공항-버스-노선/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>김포공항 버스 노선 및 요금 안내 – 리무진·시내버스 이용 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/다자녀-교통비-할인/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>다자녀 가정 교통비 할인 제도 – 대중교통 지원 혜택 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/대전-시내버스-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>대전 시내버스 이용 가이드 – 노선 체계와 주요 노선 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-노선-검색/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 노선 검색 방법 – 내 주변 마을버스 찾기</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-민원-신고/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 민원 신고 방법 – 불편 사항 접수와 처리 절차</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-시내버스-차이/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스와 시내버스의 차이점 및 요금 체계</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-신규-노선-신청/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 신규 노선 신청 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-요금-환승/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 요금 및 환승 할인 안내 – 요금 체계와 환승 혜택</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/마을버스-운행-시간/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 운행 시간 확인 방법 – 첫차·막차 시간 조회</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/모바일-교통카드-사용법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>모바일 교통카드 사용법 – 스마트폰 NFC로 버스 타기</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-CCTV-설치-현황/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 내 CCTV 설치 현황 – 설치 기준과 승객 안전 효과</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-노선-개편-절차/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 노선 개편 절차 안내 – 노선 변경 시 확인 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-노선도-보는-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 노선도 보는 방법과 노선 검색 활용 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-분실물-찾기/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 분실물 찾는 방법 – 신고 절차와 조회 사이트</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-사고-대처-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 사고 시 대처 방법 – 사고 발생 시 행동 요령 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-앱-도착-알림/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 앱 도착 알림 설정 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-여행-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스로 여행하는 방법 – 버스 여행 계획 세우기 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-와이파이-이용/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 내 무료 와이파이 이용 방법과 지원 노선 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-운전기사-근무-조건/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 운전기사 근무 조건 – 근무 환경과 제도 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-이용-에티켓/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>안전한 버스 이용 에티켓과 승객이 지켜야 할 기본 매너</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-전용차로-규정/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 전용차로 이용 규정과 위반 시 과태료 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-정기권-구매/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>버스 정기권 구매 방법과 절약 효과 비교</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-정보-앱-비교/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>전국 버스 정보 앱 비교 – 카카오맵, 네이버지도, TAGO</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-좌석-선택-요령/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 좌석 선택 요령 – 편안한 좌석 고르는 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-좌석-종류-비교/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>버스 종류별 특징 – 일반, 우등, 프리미엄 좌석 차이</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/버스-혼잡도-확인-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>출퇴근 시간 버스 혼잡도 확인 방법과 대안 노선 찾기</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/부산-시내버스-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>부산 시내버스 이용 가이드 – 노선, 요금, 관광 명소 접근법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/부산-심야버스-노선/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>부산 심야버스 노선 안내 – 야간 운행 버스 정보</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/서울-간선-지선-버스/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>서울 간선·지선 버스 노선 안내 – 색상별 버스 종류와 특징</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/서울-마을버스-안내/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>서울 마을버스 이용 안내 – 지역별 마을버스 노선과 특징</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/서울-올빼미버스-노선/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>서울 올빼미버스 노선 안내 – 심야 시간대 서울 이동 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/세종시-BRT-이용-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>세종시 BRT 간선급행버스 시스템 소개와 이용 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시내버스-노선-번호-체계/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>시내버스 노선 번호 체계 이해하기 – 번호로 알아보는 버스 노선</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시내버스-환승-할인/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>시내버스 환승 할인 제도 이용 방법과 조건</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-노선-검색/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 노선 검색 방법 – 출발지·도착지별 노선 찾기</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-단체-예매/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 단체 예매 방법 – 10인 이상 단체 예약 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-시간표-확인/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 시간표 확인 방법 – 실시간 운행 조회 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-예매-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 예매 방법 총정리 – 온라인 예매부터 현장 발권까지</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-우등-좌석/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 우등 좌석 안내 – 일반 좌석과의 차이점 비교</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-정류소-찾기/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 정류소 찾는 방법 – 중간 정류소 위치 확인 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-좌석-배치도/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 좌석 배치도 안내 – 좌석 유형별 위치와 선택 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-짐-보관-규정/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 짐 보관 규정 – 수하물 크기 제한과 보관 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-터미널-편의시설/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>전국 시외버스 터미널 편의시설 비교와 이용 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/시외버스-환불-규정/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 환불 규정과 수수료 총정리</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/심야-택시-대신-버스/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야 택시 대신 버스 이용 팁 – 야간 교통비 절약 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/심야버스-안전-수칙/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야버스 안전 이용 수칙 – 늦은 밤 버스 이용 시 주의사항</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/심야버스-요금-결제/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야버스 요금 및 결제 방법 – 일반 버스와의 요금 차이</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/심야버스-운행-시간/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야버스 운행 시간과 노선 확인하는 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/알뜰교통카드-혜택/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>알뜰교통카드 혜택 안내 – 마일리지 적립과 교통비 할인</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/어린이-청소년-요금-할인/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>어린이 및 청소년 버스 요금 할인 제도 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/어린이-통학버스-안전장치/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>어린이 통학버스 안전장치 – 필수 설치 장비와 확인 사항</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/외국인-버스-이용-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>외국인 버스 이용 가이드 – 한국 버스 시스템 영어 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/인천공항-심야-리무진/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>인천공항 심야 리무진 버스 안내 – 늦은 비행기 도착 시 이동 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/인천공항-터미널-버스-탑승/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>인천공항 제1·제2터미널 버스 탑승 위치 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/장애인-버스-요금-감면/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>장애인 버스 요금 감면 제도 – 등급별 감면 혜택 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/장애인-저상버스-이용/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>장애인 저상버스 이용 안내와 노선 확인 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전기버스-수소버스/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>전기버스와 수소버스 – 친환경 버스의 현재와 전망</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전세버스-견적-비교/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 견적 비교 방법 – 업체별 비용 비교와 선택 팁</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전세버스-계약-주의사항/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 계약 시 주의사항 – 계약서 확인 포인트 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전세버스-기사-에티켓/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 기사 에티켓과 소통 방법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전세버스-대절-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 대절 방법과 비용 산정 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/전세버스-보험-안전/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 보험 및 안전 기준 – 안전한 전세버스 선택법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/제주도-버스-이용-가이드/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>제주도 버스 이용 완벽 가이드 – 노선, 요금, 관광지 접근법</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/주요-도시-심야-대중교통/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>주요 도시 심야 대중교통 비교 – 서울, 부산, 대구, 인천</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/지방-인천공항-버스/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>지방에서 인천공항 가는 버스 – 주요 도시별 직행 노선 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/통근-전세버스-운영/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>통근 전세버스 운영 방법 – 기업 통근 버스 운영 가이드</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/통학버스-안전-규정/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>통학버스 안전 규정과 학부모가 알아야 할 사항</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/환승-할인-제도-총정리/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>환승 할인 제도 총정리 – 환승 조건, 시간, 할인 금액 안내</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://crbuses.com/guide/환승센터-이용-방법/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>대중교통 환승센터 이용 방법과 전국 주요 시설 안내</image:title>
+    </image:image>
   </url>
 </urlset>

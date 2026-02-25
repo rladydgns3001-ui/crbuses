@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fefce8"/>
+      <stop offset="100%" stop-color="#fef9c3"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#sky6)"/>
+  <!-- Hills -->
+  <ellipse cx="200" cy="280" rx="200" ry="60" fill="#bbf7d0" opacity="0.5"/>
+  <ellipse cx="650" cy="290" rx="180" ry="50" fill="#bbf7d0" opacity="0.4"/>
+  <!-- Houses -->
+  <rect x="80" y="200" width="55" height="50" rx="2" fill="#fed7aa"/>
+  <polygon points="80,200 107,175 135,200" fill="#f97316" opacity="0.7"/>
+  <rect x="95" y="220" width="15" height="30" rx="1" fill="#fbbf24"/>
+  <rect x="660" y="190" width="50" height="55" rx="2" fill="#fbcfe8"/>
+  <polygon points="660,190 685,168 710,190" fill="#ec4899" opacity="0.6"/>
+  <rect x="673" y="210" width="12" height="35" rx="1" fill="#fbbf24"/>
+  <rect x="730" y="210" width="45" height="40" rx="2" fill="#bfdbfe"/>
+  <polygon points="730,210 752,190 775,210" fill="#3b82f6" opacity="0.5"/>
+  <!-- Trees -->
+  <circle cx="170" cy="220" r="20" fill="#4ade80" opacity="0.6"/>
+  <rect x="168" y="230" width="4" height="20" fill="#854d0e" opacity="0.5"/>
+  <circle cx="620" cy="215" r="22" fill="#4ade80" opacity="0.5"/>
+  <rect x="618" y="228" width="4" height="18" fill="#854d0e" opacity="0.5"/>
+  <!-- Narrow road -->
+  <rect x="0" y="280" width="800" height="120" fill="#78716c" opacity="0.7"/>
+  <line x1="0" y1="340" x2="800" y2="340" stroke="white" stroke-width="1.5" stroke-dasharray="20,15"/>
+  <!-- Small village bus -->
+  <rect x="320" y="240" width="160" height="65" rx="10" fill="#16a34a"/>
+  <rect x="320" y="240" width="160" height="18" rx="10" fill="#15803d"/>
+  <rect x="320" y="253" width="160" height="5" fill="#15803d"/>
+  <!-- Windows -->
+  <rect x="335" y="250" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <rect x="363" y="250" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <rect x="391" y="250" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <!-- Door -->
+  <rect x="420" y="255" width="20" height="30" rx="2" fill="#bbf7d0"/>
+  <!-- Front -->
+  <rect x="445" y="248" width="28" height="30" rx="5" fill="#dcfce7" opacity="0.8"/>
+  <!-- Wheels -->
+  <circle cx="355" cy="310" r="16" fill="#1e293b"/>
+  <circle cx="355" cy="310" r="8" fill="#475569"/>
+  <circle cx="450" cy="310" r="16" fill="#1e293b"/>
+  <circle cx="450" cy="310" r="8" fill="#475569"/>
+  <!-- Route sign -->
+  <rect x="335" y="243" width="50" height="10" rx="2" fill="#14532d"/>
+  <text x="360" y="251" font-family="sans-serif" font-size="7" fill="white" text-anchor="middle">마을 02</text>
+  <!-- Flowers -->
+  <circle cx="250" cy="275" r="4" fill="#f472b6" opacity="0.6"/>
+  <circle cx="260" cy="272" r="3" fill="#fb923c" opacity="0.5"/>
+  <circle cx="540" cy="278" r="4" fill="#a78bfa" opacity="0.6"/>
+  <circle cx="550" cy="273" r="3" fill="#f472b6" opacity="0.5"/>
+</svg>

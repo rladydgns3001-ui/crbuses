@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky8" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#faf5ff"/>
+      <stop offset="100%" stop-color="#f3e8ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#sky8)"/>
+  <!-- Landscape -->
+  <ellipse cx="400" cy="300" rx="500" ry="40" fill="#e9d5ff" opacity="0.3"/>
+  <!-- Decorative ribbons -->
+  <path d="M 50,150 Q 200,100 350,150 Q 500,200 650,130 Q 750,100 800,120" stroke="#c084fc" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M 0,180 Q 150,140 300,180 Q 450,220 600,160 Q 700,130 800,150" stroke="#a855f7" stroke-width="1.5" fill="none" opacity="0.2"/>
+  <!-- Road -->
+  <rect x="0" y="280" width="800" height="120" fill="#475569"/>
+  <line x1="0" y1="340" x2="800" y2="340" stroke="#fbbf24" stroke-width="2" stroke-dasharray="30,20"/>
+  <!-- Charter bus - premium white/purple -->
+  <rect x="240" y="200" width="280" height="100" rx="14" fill="white" stroke="#a855f7" stroke-width="2"/>
+  <rect x="240" y="200" width="280" height="28" rx="14" fill="#f3e8ff"/>
+  <rect x="240" y="220" width="280" height="8" fill="#f3e8ff"/>
+  <!-- Purple accent stripe -->
+  <rect x="240" y="260" width="280" height="6" fill="#a855f7"/>
+  <!-- Tinted windows -->
+  <rect x="258" y="215" width="32" height="30" rx="5" fill="#1e293b" opacity="0.5"/>
+  <rect x="298" y="215" width="32" height="30" rx="5" fill="#1e293b" opacity="0.5"/>
+  <rect x="338" y="215" width="32" height="30" rx="5" fill="#1e293b" opacity="0.5"/>
+  <rect x="378" y="215" width="32" height="30" rx="5" fill="#1e293b" opacity="0.5"/>
+  <rect x="418" y="215" width="32" height="30" rx="5" fill="#1e293b" opacity="0.5"/>
+  <!-- Front windshield -->
+  <rect x="460" y="210" width="50" height="48" rx="8" fill="#1e293b" opacity="0.4"/>
+  <!-- Headlights -->
+  <rect x="510" y="270" width="12" height="16" rx="3" fill="#fde68a"/>
+  <rect x="510" y="215" width="12" height="12" rx="3" fill="#fde68a"/>
+  <!-- Wheels -->
+  <circle cx="295" cy="305" r="24" fill="#0f172a"/>
+  <circle cx="295" cy="305" r="14" fill="#334155"/>
+  <circle cx="295" cy="305" r="5" fill="#64748b"/>
+  <circle cx="480" cy="305" r="24" fill="#0f172a"/>
+  <circle cx="480" cy="305" r="14" fill="#334155"/>
+  <circle cx="480" cy="305" r="5" fill="#64748b"/>
+  <!-- Sign -->
+  <rect x="258" y="203" width="70" height="14" rx="2" fill="#7c3aed"/>
+  <text x="293" y="214" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">전세버스</text>
+  <!-- Group of people silhouettes -->
+  <g opacity="0.4">
+    <circle cx="120" cy="255" r="10" fill="#6b7280"/>
+    <rect x="112" y="265" width="16" height="22" rx="5" fill="#6b7280"/>
+    <circle cx="150" cy="258" r="9" fill="#6b7280"/>
+    <rect x="143" y="267" width="14" height="20" rx="5" fill="#6b7280"/>
+    <circle cx="175" cy="253" r="10" fill="#6b7280"/>
+    <rect x="167" y="263" width="16" height="22" rx="5" fill="#6b7280"/>
+  </g>
+  <!-- Luggage -->
+  <rect x="580" y="275" width="25" height="20" rx="3" fill="#c084fc" opacity="0.5"/>
+  <rect x="610" y="270" width="20" height="25" rx="3" fill="#a855f7" opacity="0.4"/>
+  <rect x="580" y="272" width="25" height="4" rx="1" fill="#7c3aed" opacity="0.3"/>
+</svg>

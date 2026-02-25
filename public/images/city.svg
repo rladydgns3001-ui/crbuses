@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ecfdf5"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#sky3)"/>
+  <!-- City buildings -->
+  <rect x="50" y="120" width="60" height="180" rx="3" fill="#cbd5e1"/>
+  <rect x="55" y="130" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="73" y="130" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="91" y="130" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="55" y="155" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="73" y="155" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="91" y="155" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="55" y="180" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="73" y="180" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="91" y="180" width="12" height="12" rx="1" fill="#bfdbfe"/>
+  <rect x="130" y="160" width="50" height="140" rx="3" fill="#94a3b8"/>
+  <rect x="640" y="100" width="70" height="200" rx="3" fill="#cbd5e1"/>
+  <rect x="720" y="150" width="55" height="150" rx="3" fill="#94a3b8"/>
+  <!-- Road -->
+  <rect x="0" y="300" width="800" height="100" fill="#475569"/>
+  <!-- Crosswalk -->
+  <rect x="580" y="300" width="8" height="100" fill="white" opacity="0.7"/>
+  <rect x="595" y="300" width="8" height="100" fill="white" opacity="0.7"/>
+  <rect x="610" y="300" width="8" height="100" fill="white" opacity="0.7"/>
+  <rect x="625" y="300" width="8" height="100" fill="white" opacity="0.7"/>
+  <!-- Bus stop -->
+  <rect x="195" y="240" width="6" height="65" fill="#64748b"/>
+  <rect x="180" y="235" width="36" height="22" rx="3" fill="#2563eb"/>
+  <text x="198" y="250" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">BUS</text>
+  <!-- City bus - green -->
+  <rect x="300" y="230" width="200" height="85" rx="10" fill="#16a34a"/>
+  <rect x="300" y="230" width="200" height="25" rx="10" fill="#15803d"/>
+  <rect x="300" y="248" width="200" height="7" fill="#15803d"/>
+  <!-- Windows -->
+  <rect x="315" y="242" width="28" height="28" rx="4" fill="#bbf7d0"/>
+  <rect x="350" y="242" width="28" height="28" rx="4" fill="#bbf7d0"/>
+  <rect x="385" y="242" width="28" height="28" rx="4" fill="#bbf7d0"/>
+  <rect x="420" y="242" width="28" height="28" rx="4" fill="#bbf7d0"/>
+  <!-- Door -->
+  <rect x="460" y="248" width="25" height="42" rx="3" fill="#dcfce7"/>
+  <circle cx="480" cy="269" r="2" fill="#166534"/>
+  <!-- Front -->
+  <rect x="460" y="238" width="35" height="42" rx="6" fill="#dcfce7" opacity="0.7"/>
+  <!-- Wheels -->
+  <circle cx="340" cy="320" r="20" fill="#0f172a"/>
+  <circle cx="340" cy="320" r="10" fill="#334155"/>
+  <circle cx="470" cy="320" r="20" fill="#0f172a"/>
+  <circle cx="470" cy="320" r="10" fill="#334155"/>
+  <!-- Route number -->
+  <rect x="315" y="233" width="40" height="12" rx="2" fill="#14532d"/>
+  <text x="335" y="243" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">370</text>
+  <!-- Traffic light -->
+  <rect x="560" y="220" width="14" height="40" rx="3" fill="#1e293b"/>
+  <circle cx="567" cy="230" r="4" fill="#ef4444"/>
+  <circle cx="567" cy="242" r="4" fill="#334155"/>
+  <circle cx="567" cy="254" r="4" fill="#334155"/>
+  <rect x="564" y="260" width="6" height="45" fill="#475569"/>
+</svg>

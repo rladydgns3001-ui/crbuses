@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bg9" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef2f2"/>
+      <stop offset="100%" stop-color="#fee2e2"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg9)"/>
+  <!-- Large shield -->
+  <g transform="translate(320,30)">
+    <path d="M80,0 L160,30 L160,120 Q160,200 80,230 Q0,200 0,120 L0,30 Z" fill="#2563eb" opacity="0.9"/>
+    <path d="M80,15 L148,40 L148,118 Q148,188 80,215 Q12,188 12,118 L12,40 Z" fill="#3b82f6"/>
+    <!-- Checkmark -->
+    <polyline points="50,115 75,140 120,85" stroke="white" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Road -->
+  <rect x="0" y="300" width="800" height="100" fill="#475569"/>
+  <line x1="0" y1="350" x2="800" y2="350" stroke="white" stroke-width="2" stroke-dasharray="30,20"/>
+  <!-- School bus (yellow) -->
+  <rect x="100" y="240" width="170" height="75" rx="8" fill="#eab308"/>
+  <rect x="100" y="240" width="170" height="20" rx="8" fill="#ca8a04"/>
+  <rect x="100" y="254" width="170" height="6" fill="#ca8a04"/>
+  <!-- Windows -->
+  <rect x="115" y="252" width="22" height="22" rx="3" fill="#fef9c3"/>
+  <rect x="143" y="252" width="22" height="22" rx="3" fill="#fef9c3"/>
+  <rect x="171" y="252" width="22" height="22" rx="3" fill="#fef9c3"/>
+  <rect x="199" y="252" width="22" height="22" rx="3" fill="#fef9c3"/>
+  <!-- Front -->
+  <rect x="232" y="250" width="28" height="32" rx="5" fill="#fef9c3"/>
+  <!-- Wheels -->
+  <circle cx="145" cy="320" r="16" fill="#0f172a"/>
+  <circle cx="145" cy="320" r="8" fill="#334155"/>
+  <circle cx="235" cy="320" r="16" fill="#0f172a"/>
+  <circle cx="235" cy="320" r="8" fill="#334155"/>
+  <!-- STOP sign on bus -->
+  <rect x="90" y="265" width="8" height="20" fill="#ef4444"/>
+  <!-- Sign -->
+  <rect x="115" y="243" width="50" height="10" rx="2" fill="#854d0e"/>
+  <text x="140" y="251" font-family="sans-serif" font-size="7" fill="white" text-anchor="middle">통학버스</text>
+  <!-- Low-floor bus -->
+  <rect x="530" y="245" width="180" height="70" rx="8" fill="#16a34a"/>
+  <rect x="530" y="245" width="180" height="18" rx="8" fill="#15803d"/>
+  <!-- Wheelchair symbol -->
+  <circle cx="560" cy="285" r="12" fill="white"/>
+  <circle cx="560" cy="281" r="3" fill="#16a34a"/>
+  <rect x="557" y="283" width="6" height="8" rx="1" fill="#16a34a"/>
+  <path d="M554,290 L558,290 L562,296" stroke="#16a34a" stroke-width="2" fill="none"/>
+  <!-- Windows -->
+  <rect x="580" y="255" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <rect x="608" y="255" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <rect x="636" y="255" width="22" height="22" rx="3" fill="#dcfce7"/>
+  <!-- Ramp -->
+  <polygon points="530,315 530,300 510,315" fill="#22c55e" opacity="0.6"/>
+  <!-- Wheels -->
+  <circle cx="570" cy="320" r="16" fill="#0f172a"/>
+  <circle cx="570" cy="320" r="8" fill="#334155"/>
+  <circle cx="680" cy="320" r="16" fill="#0f172a"/>
+  <circle cx="680" cy="320" r="8" fill="#334155"/>
+  <!-- Safety cones -->
+  <polygon points="440,315 448,285 456,315" fill="#f97316" opacity="0.6"/>
+  <rect x="436" y="315" width="24" height="4" rx="1" fill="#f97316" opacity="0.6"/>
+  <polygon points="470,315 478,290 486,315" fill="#f97316" opacity="0.5"/>
+  <rect x="466" y="315" width="24" height="4" rx="1" fill="#f97316" opacity="0.5"/>
+</svg>

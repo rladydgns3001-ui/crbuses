@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdf4ff"/>
+      <stop offset="100%" stop-color="#f5d0fe"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#sky2)"/>
+  <!-- Highway -->
+  <rect x="0" y="260" width="800" height="140" fill="#374151"/>
+  <!-- Highway guardrails -->
+  <rect x="0" y="260" width="800" height="4" fill="#9ca3af"/>
+  <rect x="0" y="396" width="800" height="4" fill="#9ca3af"/>
+  <!-- Lane markings -->
+  <line x1="0" y1="330" x2="800" y2="330" stroke="white" stroke-width="2" stroke-dasharray="40,25"/>
+  <!-- Express bus body - sleek design -->
+  <rect x="250" y="195" width="280" height="95" rx="15" fill="#dc2626"/>
+  <rect x="250" y="195" width="280" height="28" rx="15" fill="#b91c1c"/>
+  <rect x="250" y="215" width="280" height="8" fill="#b91c1c"/>
+  <!-- Stripe -->
+  <rect x="250" y="255" width="280" height="6" fill="#fbbf24"/>
+  <!-- Windows - tinted -->
+  <rect x="270" y="210" width="30" height="32" rx="5" fill="#1e293b" opacity="0.7"/>
+  <rect x="308" y="210" width="30" height="32" rx="5" fill="#1e293b" opacity="0.7"/>
+  <rect x="346" y="210" width="30" height="32" rx="5" fill="#1e293b" opacity="0.7"/>
+  <rect x="384" y="210" width="30" height="32" rx="5" fill="#1e293b" opacity="0.7"/>
+  <rect x="422" y="210" width="30" height="32" rx="5" fill="#1e293b" opacity="0.7"/>
+  <!-- Front -->
+  <rect x="470" y="205" width="55" height="55" rx="10" fill="#1e293b" opacity="0.6"/>
+  <!-- Headlights -->
+  <rect x="522" y="260" width="10" height="15" rx="3" fill="#fde68a"/>
+  <rect x="522" y="210" width="10" height="12" rx="3" fill="#fde68a"/>
+  <!-- Wheels -->
+  <circle cx="300" cy="295" r="24" fill="#0f172a"/>
+  <circle cx="300" cy="295" r="14" fill="#334155"/>
+  <circle cx="300" cy="295" r="5" fill="#64748b"/>
+  <circle cx="490" cy="295" r="24" fill="#0f172a"/>
+  <circle cx="490" cy="295" r="14" fill="#334155"/>
+  <circle cx="490" cy="295" r="5" fill="#64748b"/>
+  <!-- Destination sign -->
+  <rect x="270" y="198" width="90" height="14" rx="2" fill="#991b1b"/>
+  <text x="315" y="209" font-family="sans-serif" font-size="9" fill="white" text-anchor="middle">고속버스</text>
+  <!-- Speed effect -->
+  <line x1="160" y1="240" x2="220" y2="240" stroke="#f9a8d4" stroke-width="3" opacity="0.5"/>
+  <line x1="140" y1="255" x2="215" y2="255" stroke="#f9a8d4" stroke-width="2" opacity="0.4"/>
+  <line x1="170" y1="270" x2="230" y2="270" stroke="#f9a8d4" stroke-width="2" opacity="0.3"/>
+  <!-- Trees along highway -->
+  <circle cx="80" cy="240" r="25" fill="#22c55e" opacity="0.4"/>
+  <rect x="77" y="240" width="6" height="25" fill="#854d0e" opacity="0.4"/>
+  <circle cx="700" cy="235" r="28" fill="#22c55e" opacity="0.4"/>
+  <rect x="697" y="235" width="6" height="28" fill="#854d0e" opacity="0.4"/>
+</svg>

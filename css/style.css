@@ -403,6 +403,15 @@ a:hover {
   font-weight: 600;
 }
 
+/* Article Hero Image */
+.article-hero {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  display: block;
+}
+
 /* Related Posts */
 .related-posts {
   margin-top: 3rem;
