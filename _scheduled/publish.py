@@ -77,6 +77,10 @@ for filepath in files:
         f'    <lastmod>{today}</lastmod>\n'
         f'    <changefreq>weekly</changefreq>\n'
         f'    <priority>0.8</priority>\n'
+        f'    <image:image>\n'
+        f'      <image:loc>https://crbuses.com/images/{category}.svg</image:loc>\n'
+        f'      <image:title>{title}</image:title>\n'
+        f'    </image:image>\n'
         f'  </url>'
     )
 
