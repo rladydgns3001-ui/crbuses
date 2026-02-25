@@ -1,0 +1,30 @@
+name: Publish Scheduled Posts
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 매일 00:00 UTC (09:00 KST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish today's scheduled posts
+        run: python3 _scheduled/publish.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No scheduled posts for today."
+          else
+            git commit -m "Publish scheduled posts for $(TZ=Asia/Seoul date +%Y-%m-%d)"
+            git push
+          fi
