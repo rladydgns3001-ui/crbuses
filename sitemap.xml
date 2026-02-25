@@ -1045,4 +1045,14 @@
       <image:title>대중교통 환승센터 이용 방법과 전국 주요 시설 안내</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/고속버스-명절-예매-팁/</loc>
+    <lastmod>2026-02-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 명절 예매 꿀팁 – 설날·추석 좌석 확보 전략</image:title>
+    </image:image>
+  </url>
 </urlset>
