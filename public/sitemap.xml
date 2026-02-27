@@ -1055,4 +1055,14 @@
       <image:title>고속버스 명절 예매 꿀팁 – 설날·추석 좌석 확보 전략</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/시외버스-무인발권기-사용법/</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 무인발권기 사용법 – 키오스크 예매부터 발권까지</image:title>
+    </image:image>
+  </url>
 </urlset>
