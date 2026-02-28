@@ -1065,4 +1065,14 @@
       <image:title>시외버스 무인발권기 사용법 – 키오스크 예매부터 발권까지</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/시내버스-첫차-막차-시간/</loc>
+    <lastmod>2026-02-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>시내버스 첫차·막차 시간 확인 방법 – 주요 도시별 운행 시간 정리</image:title>
+    </image:image>
+  </url>
 </urlset>
