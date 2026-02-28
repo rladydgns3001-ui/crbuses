@@ -2,28 +2,41 @@
 """Publish scheduled guide posts for today's date.
 
 New URL structure: /guide/{slug}/index.html
-Scheduled files: _scheduled/YYYY-MM-DD/{slug}.html
+Scheduled files: _scheduled/YYYY-MM-DD/{slot}_{slug}.html
 Each file must contain: <meta name="guide-category" content="{category}">
+
+Slots:
+  --slot 1  → publish 1_*.html files (09:00 KST)
+  --slot 2  → publish 2_*.html files (13:00 KST), delete folder after
 """
 import os
 import re
 import glob
 import shutil
+import argparse
+import urllib.request
+import json
 from datetime import datetime, timezone, timedelta
 
 KST = timezone(timedelta(hours=9))
 today = datetime.now(KST).strftime('%Y-%m-%d')
 scheduled_dir = f'_scheduled/{today}'
 
+# Parse slot argument
+parser = argparse.ArgumentParser()
+parser.add_argument('--slot', type=int, choices=[1, 2], required=True)
+args = parser.parse_args()
+slot = args.slot
+
 if not os.path.isdir(scheduled_dir):
     print(f'No scheduled posts for {today}')
     exit(0)
 
-print(f'Publishing guides for {today}...')
+print(f'Publishing slot {slot} guides for {today}...')
 
-files = sorted(glob.glob(f'{scheduled_dir}/*.html'))
+files = sorted(glob.glob(f'{scheduled_dir}/{slot}_*.html'))
 if not files:
-    print('No HTML files found')
+    print(f'No slot {slot} files found')
     exit(0)
 
 dt = datetime.strptime(today, '%Y-%m-%d')
@@ -43,9 +56,13 @@ CATEGORY_NAMES = {
     'tips': '이용 팁',
 }
 
+published = []
+
 for filepath in files:
     filename = os.path.basename(filepath)
+    # Remove slot prefix: "1_slug.html" → "slug"
     slug = os.path.splitext(filename)[0]
+    slug = re.sub(r'^\d+_', '', slug)
 
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -106,7 +123,6 @@ for filepath in files:
         if os.path.exists(hub):
             with open(hub, 'r', encoding='utf-8') as f:
                 hub_content = f.read()
-            # Insert before closing card-grid div
             hub_content = hub_content.replace(
                 '      </div>\n    </section>',
                 f'{card_html}\n      </div>\n    </section>',
@@ -115,7 +131,47 @@ for filepath in files:
             with open(hub, 'w', encoding='utf-8') as f:
                 f.write(hub_content)
 
+    published.append({
+        'title': title,
+        'category': CATEGORY_NAMES.get(category, category),
+        'slug': slug,
+        'url': f'https://crbuses.com/guide/{slug}/',
+    })
     print(f'Published: {slug} [{category}] - {title}')
 
-shutil.rmtree(scheduled_dir)
-print(f'Done! Published {len(files)} guides for {today}')
+# Delete folder logic:
+# - Slot 2: always delete folder after publishing
+# - Slot 1: delete folder only if no slot 2 files exist
+remaining = glob.glob(f'{scheduled_dir}/2_*.html')
+if slot == 2 or not remaining:
+    shutil.rmtree(scheduled_dir)
+    print(f'Cleaned up {scheduled_dir}')
+
+print(f'Done! Published {len(published)} guides for {today} (slot {slot})')
+
+# Send Telegram notification
+bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
+if bot_token and published:
+    chat_id = '6479449866'
+    lines = [f'📢 발행 완료 ({today} 슬롯{slot})']
+    for p in published:
+        lines.append(f"\n📝 {p['title']}")
+        lines.append(f"  카테고리: {p['category']}")
+        lines.append(f"  URL: {p['url']}")
+    message = '\n'.join(lines)
+
+    payload = json.dumps({
+        'chat_id': chat_id,
+        'text': message,
+        'parse_mode': 'HTML',
+    }).encode('utf-8')
+
+    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+    req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print(f'Telegram notification sent ({resp.status})')
+    except Exception as e:
+        print(f'Telegram notification failed: {e}')
+elif not bot_token:
+    print('TELEGRAM_BOT_TOKEN not set, skipping notification')

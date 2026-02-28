@@ -2,8 +2,18 @@ name: Publish Scheduled Posts
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 매일 00:00 UTC (09:00 KST)
+    - cron: '0 0 * * *'  # 매일 00:00 UTC (09:00 KST) - 슬롯1
+    - cron: '0 4 * * *'  # 매일 04:00 UTC (13:00 KST) - 슬롯2
   workflow_dispatch:
+    inputs:
+      slot:
+        description: 'Slot number (1 or 2)'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '2'
 
 permissions:
   contents: write
@@ -14,8 +24,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Publish today's scheduled posts
-        run: python3 _scheduled/publish.py
+      - name: Determine slot
+        id: slot
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "0 0 * * *" ]; then
+            echo "slot=1" >> $GITHUB_OUTPUT
+          else
+            echo "slot=2" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish scheduled posts (slot ${{ steps.slot.outputs.slot }})
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python3 _scheduled/publish.py --slot ${{ steps.slot.outputs.slot }}
 
       - name: Commit and push
         run: |
@@ -25,6 +48,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No scheduled posts for today."
           else
-            git commit -m "Publish scheduled posts for $(TZ=Asia/Seoul date +%Y-%m-%d)"
+            git commit -m "Publish scheduled posts for $(TZ=Asia/Seoul date +%Y-%m-%d) slot ${{ steps.slot.outputs.slot }}"
             git push
           fi
