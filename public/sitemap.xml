@@ -1075,4 +1075,14 @@
       <image:title>시내버스 첫차·막차 시간 확인 방법 – 주요 도시별 운행 시간 정리</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/마을버스-첫차-막차-확인/</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 첫차·막차 시간 확인하는 방법 – 앱과 정류장 안내판 활용법</image:title>
+    </image:image>
+  </url>
 </urlset>
