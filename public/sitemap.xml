@@ -1105,4 +1105,14 @@
       <image:title>전세버스 학교 소풍 예약 가이드 – 단체 여행 준비부터 안전까지</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/버스-비상탈출-방법/</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 비상탈출 방법 총정리 – 화재·사고 시 대처 요령</image:title>
+    </image:image>
+  </url>
 </urlset>
