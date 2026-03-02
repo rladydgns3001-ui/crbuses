@@ -1095,4 +1095,14 @@
       <image:title>기후동행카드 이용법 총정리 – 무제한 대중교통 정기권 가이드</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/전세버스-학교-소풍-예약/</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/charter.svg</image:loc>
+      <image:title>전세버스 학교 소풍 예약 가이드 – 단체 여행 준비부터 안전까지</image:title>
+    </image:image>
+  </url>
 </urlset>
