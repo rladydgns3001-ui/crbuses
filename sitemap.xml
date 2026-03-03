@@ -1125,4 +1125,14 @@
       <image:title>버스 정류장 번호 조회 방법 – 정류소 ID로 실시간 도착 정보 확인하기</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/고속버스-USB-충전-편의시설/</loc>
+    <lastmod>2026-03-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 USB 충전과 편의시설 안내 – 좌석 등급별 서비스 비교</image:title>
+    </image:image>
+  </url>
 </urlset>
