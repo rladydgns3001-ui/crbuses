@@ -1115,4 +1115,14 @@
       <image:title>버스 비상탈출 방법 총정리 – 화재·사고 시 대처 요령</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/버스-정류장-번호-조회/</loc>
+    <lastmod>2026-03-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 정류장 번호 조회 방법 – 정류소 ID로 실시간 도착 정보 확인하기</image:title>
+    </image:image>
+  </url>
 </urlset>
