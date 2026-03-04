@@ -1135,4 +1135,14 @@
       <image:title>고속버스 USB 충전과 편의시설 안내 – 좌석 등급별 서비스 비교</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/시외버스-명절-임시노선/</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 명절 임시 노선 안내 – 설날·추석 증편 운행 정보</image:title>
+    </image:image>
+  </url>
 </urlset>
