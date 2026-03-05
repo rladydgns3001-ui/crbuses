@@ -1155,4 +1155,14 @@
       <image:title>수도권 광역버스 출퇴근 팁 – 좌석 확보와 빠른 노선 선택법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/공항버스-T머니-결제/</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/airport.svg</image:loc>
+      <image:title>공항버스 T머니 교통카드 결제 방법 – 이용 가능 노선과 주의사항</image:title>
+    </image:image>
+  </url>
 </urlset>
