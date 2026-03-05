@@ -1165,4 +1165,14 @@
       <image:title>공항버스 T머니 교통카드 결제 방법 – 이용 가능 노선과 주의사항</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/심야버스-환승-방법/</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>심야버스 환승 방법과 할인 안내 – 올빼미버스 갈아타기 가이드</image:title>
+    </image:image>
+  </url>
 </urlset>
