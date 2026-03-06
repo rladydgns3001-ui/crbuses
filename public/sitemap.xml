@@ -1185,4 +1185,14 @@
       <image:title>마을버스 교통카드 전용 노선 안내 – 현금 탑승 불가 노선과 대처법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/교통비-소득공제-방법/</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>교통비 소득공제 방법 총정리 – 연말정산에서 대중교통비 돌려받기</image:title>
+    </image:image>
+  </url>
 </urlset>
