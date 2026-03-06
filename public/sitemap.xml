@@ -1175,4 +1175,14 @@
       <image:title>심야버스 환승 방법과 할인 안내 – 올빼미버스 갈아타기 가이드</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/마을버스-교통카드-전용/</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>마을버스 교통카드 전용 노선 안내 – 현금 탑승 불가 노선과 대처법</image:title>
+    </image:image>
+  </url>
 </urlset>
