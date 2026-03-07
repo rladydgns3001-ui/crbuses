@@ -1205,4 +1205,14 @@
       <image:title>전세버스 크기별 선택 가이드 – 인원수에 맞는 버스 고르는 법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/버스-내-성범죄-신고/</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 내 성범죄 신고 방법 – 피해 발생 시 즉각 대응 가이드</image:title>
+    </image:image>
+  </url>
 </urlset>
