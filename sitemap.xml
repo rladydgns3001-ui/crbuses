@@ -1225,4 +1225,14 @@
       <image:title>버스 출퇴근 혼잡 시간 피하는 방법 – 쾌적한 통근을 위한 실전 팁</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/고속버스-경로할인-요금/</loc>
+    <lastmod>2026-03-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/express.svg</image:loc>
+      <image:title>고속버스 경로 할인 요금 안내 – 만 65세 이상 할인율과 이용 방법</image:title>
+    </image:image>
+  </url>
 </urlset>
