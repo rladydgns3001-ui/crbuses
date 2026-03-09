@@ -1245,4 +1245,14 @@
       <image:title>시외버스 학생 할인 안내 – 청소년·대학생 할인 요금과 적용 방법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/시내버스-요금-인상-변천사/</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/city.svg</image:loc>
+      <image:title>시내버스 요금 인상 변천사 – 연도별 요금 변화와 인상 배경</image:title>
+    </image:image>
+  </url>
 </urlset>
