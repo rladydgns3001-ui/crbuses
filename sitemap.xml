@@ -1235,4 +1235,14 @@
       <image:title>고속버스 경로 할인 요금 안내 – 만 65세 이상 할인율과 이용 방법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/시외버스-학생-할인/</loc>
+    <lastmod>2026-03-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/intercity.svg</image:loc>
+      <image:title>시외버스 학생 할인 안내 – 청소년·대학생 할인 요금과 적용 방법</image:title>
+    </image:image>
+  </url>
 </urlset>
