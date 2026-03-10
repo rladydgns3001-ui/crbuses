@@ -1265,4 +1265,14 @@
       <image:title>제주공항 버스 노선 안내 – 공항에서 시내·관광지까지 이동 방법</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/대구-심야버스-노선/</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/night.svg</image:loc>
+      <image:title>대구 심야버스 노선 안내 – 운행 시간, 요금, 주요 경유지 정리</image:title>
+    </image:image>
+  </url>
 </urlset>
