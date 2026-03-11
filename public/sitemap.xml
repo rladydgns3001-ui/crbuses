@@ -1285,4 +1285,14 @@
       <image:title>농어촌 버스 이용 가이드 – 시골 지역 대중교통 완전 정복</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/광역알뜰교통카드-혜택/</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/fare.svg</image:loc>
+      <image:title>광역알뜰교통카드 혜택 총정리 – 교통비 최대 30% 절약하는 방법</image:title>
+    </image:image>
+  </url>
 </urlset>
