@@ -1275,4 +1275,14 @@
       <image:title>대구 심야버스 노선 안내 – 운행 시간, 요금, 주요 경유지 정리</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/농어촌-버스-이용-가이드/</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/village.svg</image:loc>
+      <image:title>농어촌 버스 이용 가이드 – 시골 지역 대중교통 완전 정복</image:title>
+    </image:image>
+  </url>
 </urlset>
