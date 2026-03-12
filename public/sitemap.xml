@@ -1305,4 +1305,14 @@
       <image:title>전세버스 장거리 여행 팁 – 편안하고 안전한 단체 여행을 위한 가이드</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/버스-파업-시-대체교통/</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/safety.svg</image:loc>
+      <image:title>버스 파업 시 대체 교통수단 안내 – 출퇴근 비상 대비 가이드</image:title>
+    </image:image>
+  </url>
 </urlset>
