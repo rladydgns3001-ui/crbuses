@@ -1315,4 +1315,14 @@
       <image:title>버스 파업 시 대체 교통수단 안내 – 출퇴근 비상 대비 가이드</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://crbuses.com/guide/버스-멀미-예방법/</loc>
+    <lastmod>2026-03-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://crbuses.com/images/tips.svg</image:loc>
+      <image:title>버스 멀미 예방법 총정리 – 원인부터 실전 대처법까지</image:title>
+    </image:image>
+  </url>
 </urlset>
