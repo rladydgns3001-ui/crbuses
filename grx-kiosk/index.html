@@ -451,15 +451,17 @@ function parseDate(v){
   let s = String(v).trim();
   // ISO 문자열(2026-06-29T...)이면 날짜 부분만
   if(s.indexOf("T") !== -1) s = s.split("T")[0];
-  // 구분자 통일: "2026. 6. 29", "2026/6/29", "2026.06.29" -> "2026-6-29"
-  s = s.replace(/[.\/\s]+/g, "-").replace(/-+$/,"").replace(/-+/g,"-");
-  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  // "2026. 6. 29", "2026/6/29", "2026.06.29" 형태 정규화
+  let norm = s.replace(/[.\/\s]+/g, "-").replace(/-+$/,"").replace(/-+/g,"-");
+  const m = norm.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if(m){
     const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
     return isNaN(d) ? null : d;
   }
-  const d2 = new Date(s);
-  return isNaN(d2) ? null : d2;
+  // 마지막 폴백: 원본 문자열을 Date에 직접 넘김 (Mon Jun 29 2026 GMT+0900 등)
+  const d2 = new Date(String(v));
+  if(!isNaN(d2)) return new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+  return null;
 }
 function addMonths(dateStr, m){
   const base = parseDate(dateStr);
@@ -638,6 +640,17 @@ function fillPlanOptions(){
   const sel=$("#fPlan"); sel.innerHTML="";
   PLANS[planType].forEach(p=>{ const o=document.createElement("option"); o.value=p; o.textContent=p; sel.appendChild(o); });
 }
+/* 상품명에서 숫자를 뽑아 기간(개월) 또는 총횟수 칸을 자동으로 채운다 */
+function syncPlanToFields(){
+  const plan = $("#fPlan").value || "";
+  const num = (plan.match(/\d+/)||[])[0];   // "3개월권"->3, "10회권"->10
+  if(planType==="period"){
+    if(/개월/.test(plan) && num) $("#fMonths").value = num;     // N개월권 -> 기간 N
+    // 주N회권 같은 건 개월 정보가 없으니 기간은 그대로 둠
+  } else {
+    if(num) $("#fCount").value = num;        // 10회권 -> 총 10회
+  }
+}
 function setPlanType(t){
   planType=t;
   document.querySelectorAll("#planTypeSeg button").forEach(b=>b.classList.toggle("on", b.dataset.type===t));
@@ -645,6 +658,7 @@ function setPlanType(t){
   $("#startField").classList.toggle("hidden", t!=="period");
   $("#periodField").classList.toggle("hidden", t!=="period");
   $("#countField").classList.toggle("hidden", t!=="count");
+  syncPlanToFields();
 }
 function resetForm(){
   $("#editId").value=""; $("#fName").value=""; $("#fPhone").value="";
@@ -757,6 +771,7 @@ async function init(){
   $("#searchInput").oninput=renderTable;
   $("#refreshBtn").onclick=async()=>{ setSync("sync"); await fetchMembers(); renderTable(); toast("최신 명단으로 갱신했습니다"); };
   document.querySelectorAll("#planTypeSeg button").forEach(b=> b.onclick=()=>setPlanType(b.dataset.type));
+  $("#fPlan").onchange=syncPlanToFields;
   $("#fPhone").oninput=e=>{ e.target.value=formatPhone(e.target.value); };
 
   document.addEventListener("keydown", e=>{
