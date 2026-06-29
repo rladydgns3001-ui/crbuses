@@ -119,13 +119,19 @@
   }
   .a-top h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.5px;}
   .a-top h1 span{color:var(--lime);}
+  .sync-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--lime);margin-left:6px;vertical-align:middle;}
+  .sync-dot.ok{background:var(--lime);box-shadow:0 0 6px rgba(155,209,58,.6);}
+  .sync-dot.sync{background:var(--amber);animation:pulse 1s infinite;}
+  .sync-dot.err{background:var(--red);}
+  .sync-dot.off{background:var(--muted2);}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .a-back{
     background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 16px;
     font-size:14px;cursor:pointer;font-family:inherit;
   }
   .a-back:active{background:var(--panel2);color:var(--white);}
-  .a-body{flex:1;overflow-y:auto;padding:22px;display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start;}
-  @media(max-width:860px){.a-body{grid-template-columns:1fr;}}
+  .a-body{flex:1;overflow-y:auto;padding:22px;display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start;-webkit-overflow-scrolling:touch;}
+  @media(max-width:860px) and (min-width:681px){.a-body{grid-template-columns:1fr;}}
 
   .form{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;}
   .form h2{font-size:16px;margin:0 0 18px;font-weight:700;}
@@ -186,6 +192,84 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
   .loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;z-index:90;background:var(--bg);}
+
+  /* ===== TABLET PORTRAIT / smaller landscape ===== */
+  @media(max-width:1000px){
+    .kiosk-grid{gap:32px;}
+    .k-left img{width:280px;}
+    .k-title{font-size:30px;}
+  }
+
+  /* ===== PHONE (portrait) ===== */
+  @media(max-width:680px){
+    .kiosk{padding:18px 16px;align-items:flex-start;overflow-y:auto;}
+    .kiosk-grid{grid-template-columns:1fr;gap:22px;max-width:440px;margin:0 auto;}
+    .k-left{align-items:center;text-align:center;padding-left:0;gap:10px;margin-top:8px;}
+    .k-left img{width:200px;}
+    .k-title{font-size:26px;}
+    .k-sub{font-size:15px;}
+    .k-hint{font-size:13px;}
+    .keypad-wrap{padding:20px;border-radius:24px;max-width:440px;}
+    .display{height:72px;margin-bottom:18px;}
+    .dot{width:42px;}
+    .keys{gap:12px;}
+    .key{height:64px;font-size:26px;border-radius:16px;}
+    .submit{height:60px;font-size:20px;}
+
+    /* result card */
+    .result{padding:16px;}
+    .card{padding:30px 22px;border-radius:24px;}
+    .r-name{font-size:26px;}
+    .r-big{font-size:60px;}
+
+    /* gear bigger tap target on phone */
+    .gear{top:12px;right:12px;width:46px;height:46px;font-size:22px;}
+
+    /* ===== ADMIN on phone ===== */
+    .a-top{padding:14px 16px;position:sticky;top:0;z-index:5;}
+    .a-top h1{font-size:18px;}
+    .a-back{padding:10px 14px;font-size:14px;}
+    .a-body{grid-template-columns:1fr;gap:18px;padding:16px;}
+    .form,.list-wrap{border-radius:18px;padding:18px 16px;}
+    .form h2,.list-head h2{font-size:17px;}
+    .field{margin-bottom:18px;}
+    .field label{font-size:14px;margin-bottom:9px;}
+    .field input,.field select{height:54px;font-size:17px;border-radius:14px;padding:0 16px;}
+    .field select{background-position:right 16px center;}
+    .row2{grid-template-columns:1fr 1fr;gap:12px;}
+    .seg button{height:52px;font-size:15px;border-radius:14px;}
+    .btn-primary{height:58px;font-size:17px;border-radius:16px;margin-top:8px;}
+
+    /* member list -> card rows instead of cramped table */
+    .search{height:52px;font-size:16px;}
+    table,thead,tbody,th,td,tr{display:block;}
+    thead{display:none;}
+    tbody tr{
+      border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;
+      display:grid;grid-template-columns:1fr auto;grid-template-areas:"who status" "plan plan" "left act";gap:10px 12px;align-items:center;
+    }
+    tbody tr td{border:none;padding:0;}
+    tbody tr td:nth-child(1){grid-area:who;}
+    tbody tr td:nth-child(2){grid-area:plan;color:var(--muted);font-size:14px;}
+    tbody tr td:nth-child(3){grid-area:left;font-size:18px;}
+    tbody tr td:nth-child(4){grid-area:status;text-align:right;}
+    tbody tr td:nth-child(5){grid-area:act;}
+    .m-name{font-size:17px;}
+    .act{justify-content:flex-end;}
+    .act button{width:42px;height:42px;font-size:17px;border-radius:11px;}
+  }
+
+  /* very small phones */
+  @media(max-width:380px){
+    .key{height:58px;font-size:24px;}
+    .k-left img{width:170px;}
+  }
+
+  @media(max-width:680px){
+    body{overflow:auto;}
+    #app{height:auto;min-height:100vh;}
+    .admin{min-height:100vh;}
+  }
 </style>
 </head>
 <body>
@@ -210,7 +294,7 @@
   <!-- ADMIN -->
   <div class="admin hidden" id="adminView">
     <div class="a-top">
-      <h1>GR<span>X</span> 회원 관리</h1>
+      <h1>GR<span>X</span> 회원 관리 <span class="sync-dot ok" id="syncDot" title="동기화됨"></span></h1>
       <button class="a-back" id="backBtn">키오스크로</button>
     </div>
     <div class="a-body">
@@ -256,7 +340,10 @@
       <div class="list-wrap">
         <div class="list-head">
           <h2>회원 목록</h2>
-          <span class="count" id="memCount">0명</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="count" id="memCount">0명</span>
+            <button class="a-back" id="refreshBtn" style="padding:7px 12px;">↻ 갱신</button>
+          </div>
         </div>
         <input class="search" id="searchInput" placeholder="이름 또는 전화번호 검색" autocomplete="off">
         <div id="tableWrap"></div>
@@ -283,29 +370,72 @@
 
 <script>
 /* ====== CONFIG ====== */
-const ADMIN_PIN = "0000"; // 관리자 비밀번호 (원하면 바꾸세요)
+// ▼▼▼ 여기에 Apps Script 웹앱 배포 URL을 붙여넣으세요 ▼▼▼
+const SHEET_API = "https://script.google.com/macros/s/AKfycbxws5e_c2oMyeSz7svuHCrIJvsvLSZqcHyIXQM3RNPyHVLVQFrs9j0Z4_CCtwqm3VQ4Yg/exec";
+// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
+
+const ADMIN_PIN = "0000";        // 관리자 비밀번호 (원하면 바꾸세요)
+const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
 const PLANS = {
   period: ["1개월권","3개월권","6개월권","주2회권","주3회권"],
   count:  ["10회권","20회권","30회권","PT 10회","PT 20회"]
 };
 
 /* ====== STATE ====== */
-let members = [];
+let members = [];                // 시트에서 받아온 회원 명단 (캐시)
 let kInput = "";
 let gInput = "";
 let resultTimer = null;
 let planType = "period";
+let lastSync = 0;
+let apiReady = false;            // SHEET_API가 설정됐는지
 
-/* ====== STORAGE ====== */
-async function loadMembers(){
-  try{
-    const r = await window.storage.get("grx:members");
-    members = r ? JSON.parse(r.value) : [];
-  }catch(e){ members = []; }
+/* ====== SHEET API ====== */
+function apiConfigured(){
+  return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("script.google.com") !== -1;
 }
-async function saveMembers(){
-  try{ await window.storage.set("grx:members", JSON.stringify(members)); }
-  catch(e){ toast("저장 실패 — 다시 시도하세요"); }
+
+/* 시트에서 전체 명단을 받아와 캐시 갱신 */
+async function fetchMembers(){
+  if(!apiConfigured()) return false;
+  try{
+    const res = await fetch(SHEET_API, {method:"GET"});
+    const data = await res.json();
+    if(data.ok && Array.isArray(data.members)){
+      members = data.members;
+      lastSync = Date.now();
+      setSync("ok");
+      return true;
+    }
+    setSync("err"); return false;
+  }catch(e){ setSync("err"); return false; }
+}
+
+/* 시트에 변경 요청 (add/update/delete/use). 성공 시 캐시도 재동기화 */
+async function apiPost(payload){
+  if(!apiConfigured()){ toast("시트 URL이 설정되지 않았습니다"); return null; }
+  setSync("sync");
+  try{
+    const res = await fetch(SHEET_API, {
+      method:"POST",
+      // Apps Script는 text/plain 본문이면 preflight 없이 통과합니다
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(!data.ok){ toast("시트 처리 실패: "+(data.error||"")); setSync("err"); return null; }
+    await fetchMembers();   // 변경 후 최신 명단으로 갱신
+    return data;
+  }catch(e){ toast("네트워크 오류 — 다시 시도하세요"); setSync("err"); return null; }
+}
+
+/* 동기화 상태 점 표시 */
+function setSync(state){
+  const el = document.getElementById("syncDot");
+  if(!el) return;
+  el.className = "sync-dot " + state;
+  const label = {ok:"동기화됨", sync:"저장 중…", err:"연결 끊김", off:"오프라인"};
+  el.title = label[state] || "";
 }
 
 /* ====== HELPERS ====== */
@@ -313,9 +443,30 @@ const $ = s => document.querySelector(s);
 const pad2 = n => String(n).padStart(2,"0");
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
 function last4(phone){ const d=(phone||"").replace(/\D/g,""); return d.slice(-4); }
+
+/* 어떤 형식이든 받아서 Date로 파싱 (실패 시 null) */
+function parseDate(v){
+  if(!v) return null;
+  if(v instanceof Date) return isNaN(v) ? null : v;
+  let s = String(v).trim();
+  // ISO 문자열(2026-06-29T...)이면 날짜 부분만
+  if(s.indexOf("T") !== -1) s = s.split("T")[0];
+  // 구분자 통일: "2026. 6. 29", "2026/6/29", "2026.06.29" -> "2026-6-29"
+  s = s.replace(/[.\/\s]+/g, "-").replace(/-+$/,"").replace(/-+/g,"-");
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if(m){
+    const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+    return isNaN(d) ? null : d;
+  }
+  const d2 = new Date(s);
+  return isNaN(d2) ? null : d2;
+}
 function addMonths(dateStr, m){
-  const d = new Date(dateStr+"T00:00:00");
-  d.setMonth(d.getMonth()+parseInt(m,10));
+  const base = parseDate(dateStr);
+  if(!base) return null;
+  const months = parseInt(m,10);
+  const d = new Date(base.getTime());
+  d.setMonth(d.getMonth() + (isNaN(months)?0:months));
   return d;
 }
 function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
@@ -324,6 +475,7 @@ function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
 function memberStatus(m){
   if(m.type==="period"){
     const end = addMonths(m.start, m.months);
+    if(!end) return {kind:"unknown", daysLeft:null, end:null}; // 날짜 누락/오류
     const now = new Date(); now.setHours(0,0,0,0);
     const left = daysBetween(now, end);
     let kind = "ok";
@@ -331,7 +483,8 @@ function memberStatus(m){
     else if(left <= 7) kind = "warn";
     return {kind, daysLeft:left, end};
   } else {
-    const left = m.total - (m.used||0);
+    const total = Number(m.total)||0;
+    const left = total - (Number(m.used)||0);
     let kind = "ok";
     if(left <= 0) kind = "exp";
     else if(left <= 3) kind = "warn";
@@ -372,12 +525,24 @@ function kDigit(d){ if(kInput.length<4){ kInput+=d; kRender(); } }
 function kClear(){ kInput=""; kRender(); }
 function kBack(){ kInput=kInput.slice(0,-1); kRender(); }
 
-function kSubmit(){
+async function kSubmit(){
   if(kInput.length!==4) return;
   const code = kInput;
-  const matches = members.filter(m=>last4(m.phone)===code);
-  showResult(matches, code);
   kClear();
+  let matches = members.filter(m=>last4(m.phone)===code);
+  // 캐시에 없으면 시트를 한 번 더 확인 (방금 등록한 회원 대비)
+  if(matches.length===0 && apiConfigured()){
+    showLoadingResult();
+    await fetchMembers();
+    matches = members.filter(m=>last4(m.phone)===code);
+  }
+  showResult(matches, code);
+}
+
+function showLoadingResult(){
+  const view=$("#resultView");
+  view.innerHTML=`<div class="card"><div class="r-big" style="font-size:28px;color:var(--muted)">확인 중…</div></div>`;
+  view.classList.remove("hidden");
 }
 
 function showResult(matches, code){
@@ -394,6 +559,12 @@ function showResult(matches, code){
     const st = memberStatus(m);
     let big, statusCls, statusTxt, meta="", bar="";
     if(m.type==="period"){
+      if(st.kind==="unknown" || !st.end){
+        big=`<div class="r-big" style="font-size:30px;color:var(--amber)">기간 정보 없음</div>`;
+        statusCls="s-warn"; statusTxt="데스크 문의";
+        meta="시작일/기간이 등록되지 않았습니다";
+        bar="";
+      } else {
       const end=st.end;
       const endStr=end.getFullYear()+"."+pad2(end.getMonth()+1)+"."+pad2(end.getDate());
       if(st.kind==="exp"){
@@ -405,10 +576,12 @@ function showResult(matches, code){
         statusTxt = st.kind==="warn"?"곧 만료 — 연장 안내":"이용중";
       }
       meta=`만료일 ${endStr}`;
-      const totalDays = Math.max(daysBetween(new Date(m.start+"T00:00:00"), end),1);
+      const startD = parseDate(m.start);
+      const totalDays = startD ? Math.max(daysBetween(startD, end),1) : 1;
       const pct = Math.max(0, Math.min(100, Math.round((Math.max(st.daysLeft,0)/totalDays)*100)));
       const barColor = st.kind==="exp"?"var(--red)":st.kind==="warn"?"var(--amber)":"var(--lime)";
       bar=`<div class="r-bar"><i style="width:${pct}%;background:${barColor}"></i></div>`;
+      }
     } else {
       if(st.kind==="exp"){
         big=`<div class="r-big" style="color:var(--red)">소진됨</div>`;
@@ -479,7 +652,7 @@ function resetForm(){
   setPlanType("period");
   $("#formTitle").textContent="회원 등록"; $("#saveBtn").textContent="등록하기";
 }
-function saveMember(){
+async function saveMember(){
   const name=$("#fName").value.trim();
   const phone=$("#fPhone").value.trim();
   const plan=$("#fPlan").value;
@@ -490,20 +663,22 @@ function saveMember(){
   if(planType==="period"){
     base.start=$("#fStart").value||todayStr();
     base.months=parseInt($("#fMonths").value||"1",10);
+    base.total=null;
   } else {
     base.total=parseInt($("#fCount").value||"1",10);
     base.used = id ? (members.find(m=>m.id===id)?.used||0) : 0;
+    base.start=""; base.months=null;
   }
+  $("#saveBtn").disabled=true;
   if(id){
-    const i=members.findIndex(m=>m.id===id);
-    members[i]={...members[i],...base};
-    toast("수정되었습니다");
+    base.id=id;
+    const r=await apiPost({action:"update", member:base});
+    if(r){ toast("수정되었습니다"); resetForm(); renderTable(); }
   } else {
-    base.id="m_"+Date.now()+"_"+Math.floor(Math.random()*1000);
-    members.push(base);
-    toast("등록되었습니다");
+    const r=await apiPost({action:"add", member:base});
+    if(r){ toast("등록되었습니다"); resetForm(); renderTable(); }
   }
-  saveMembers(); resetForm(); renderTable();
+  $("#saveBtn").disabled=false;
 }
 function editMember(id){
   const m=members.find(x=>x.id===id); if(!m) return;
@@ -514,15 +689,17 @@ function editMember(id){
   $("#formTitle").textContent="회원 수정"; $("#saveBtn").textContent="수정 저장";
   window.scrollTo({top:0,behavior:"smooth"});
 }
-function delMember(id){
+async function delMember(id){
   const m=members.find(x=>x.id===id);
-  if(!confirm((m?m.name:"이 회원")+" 님을 삭제할까요?")) return;
-  members=members.filter(x=>x.id!==id); saveMembers(); renderTable(); toast("삭제되었습니다");
+  if(!confirm((m?m.name:"이 회원")+" 님의 등록을 취소(삭제)할까요?")) return;
+  const r=await apiPost({action:"delete", id:id});
+  if(r){ renderTable(); toast("등록이 취소되었습니다"); }
 }
-function useOne(id){
+async function useOne(id){
   const m=members.find(x=>x.id===id); if(!m||m.type!=="count") return;
   if((m.used||0) >= m.total){ toast("잔여 횟수가 없습니다"); return; }
-  m.used=(m.used||0)+1; saveMembers(); renderTable(); toast(m.name+" 1회 차감");
+  const r=await apiPost({action:"use", id:id});
+  if(r){ renderTable(); toast(m.name+" 1회 차감"); }
 }
 
 /* ====== TABLE ====== */
@@ -538,7 +715,8 @@ function renderTable(){
     const st=memberStatus(m);
     let pillCls,pillTxt,leftTxt;
     if(m.type==="period"){
-      if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
+      if(st.kind==="unknown"){pillCls="p-warn";pillTxt="정보없음";leftTxt="—";}
+      else if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
       else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.daysLeft}일`;}
     } else {
       if(st.kind==="exp"){pillCls="p-exp";pillTxt="소진";leftTxt="0회";}
@@ -566,9 +744,6 @@ function formatPhone(v){
 
 /* ====== INIT ====== */
 async function init(){
-  await loadMembers();
-  $("#loading").classList.add("hidden");
-
   buildKeys($("#keys"), kDigit, kClear, kBack);
   buildKeys($("#gateKeys"), gDigit, gClear, gBack);
   kRender(); gRender();
@@ -580,10 +755,10 @@ async function init(){
   $("#backBtn").onclick=closeAdmin;
   $("#saveBtn").onclick=saveMember;
   $("#searchInput").oninput=renderTable;
+  $("#refreshBtn").onclick=async()=>{ setSync("sync"); await fetchMembers(); renderTable(); toast("최신 명단으로 갱신했습니다"); };
   document.querySelectorAll("#planTypeSeg button").forEach(b=> b.onclick=()=>setPlanType(b.dataset.type));
   $("#fPhone").oninput=e=>{ e.target.value=formatPhone(e.target.value); };
 
-  // physical keyboard support on kiosk
   document.addEventListener("keydown", e=>{
     if(!$("#kioskView").classList.contains("hidden") && $("#resultView").classList.contains("hidden") && $("#gateView").classList.contains("hidden")){
       if(/^[0-9]$/.test(e.key)) kDigit(e.key);
@@ -595,11 +770,30 @@ async function init(){
 
   resetForm();
 
-  // triple-tap title area as alternative admin entry (logo)
   let taps=0,tt;
   $("#logoImg").onclick=()=>{ taps++; clearTimeout(tt); tt=setTimeout(()=>taps=0,600); if(taps>=3){taps=0;openGate();} };
+
+  // 시트 연동 시작
+  $("#loading").classList.add("hidden");
+  $("#gearBtn").classList.remove("hidden");
+  if(apiConfigured()){
+    setSync("sync");
+    await fetchMembers();        // 첫 로딩
+    renderTable();
+    // 주기적 갱신: 키오스크 화면이고 결과창이 닫혀 있을 때만 갱신
+    setInterval(async()=>{
+      if($("#resultView").classList.contains("hidden")){
+        await fetchMembers();
+        if(!$("#adminView").classList.contains("hidden")) renderTable();
+      }
+    }, REFRESH_MS);
+  } else {
+    setSync("off");
+    toast("시트 URL을 먼저 설정하세요 (코드 상단 SHEET_API)");
+  }
 }
 init();
+
 </script>
 </body>
 </html>

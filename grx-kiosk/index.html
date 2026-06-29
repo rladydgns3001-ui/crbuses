@@ -443,9 +443,30 @@ const $ = s => document.querySelector(s);
 const pad2 = n => String(n).padStart(2,"0");
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
 function last4(phone){ const d=(phone||"").replace(/\D/g,""); return d.slice(-4); }
+
+/* 어떤 형식이든 받아서 Date로 파싱 (실패 시 null) */
+function parseDate(v){
+  if(!v) return null;
+  if(v instanceof Date) return isNaN(v) ? null : v;
+  let s = String(v).trim();
+  // ISO 문자열(2026-06-29T...)이면 날짜 부분만
+  if(s.indexOf("T") !== -1) s = s.split("T")[0];
+  // 구분자 통일: "2026. 6. 29", "2026/6/29", "2026.06.29" -> "2026-6-29"
+  s = s.replace(/[.\/\s]+/g, "-").replace(/-+$/,"").replace(/-+/g,"-");
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if(m){
+    const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+    return isNaN(d) ? null : d;
+  }
+  const d2 = new Date(s);
+  return isNaN(d2) ? null : d2;
+}
 function addMonths(dateStr, m){
-  const d = new Date(dateStr+"T00:00:00");
-  d.setMonth(d.getMonth()+parseInt(m,10));
+  const base = parseDate(dateStr);
+  if(!base) return null;
+  const months = parseInt(m,10);
+  const d = new Date(base.getTime());
+  d.setMonth(d.getMonth() + (isNaN(months)?0:months));
   return d;
 }
 function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
@@ -454,6 +475,7 @@ function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
 function memberStatus(m){
   if(m.type==="period"){
     const end = addMonths(m.start, m.months);
+    if(!end) return {kind:"unknown", daysLeft:null, end:null}; // 날짜 누락/오류
     const now = new Date(); now.setHours(0,0,0,0);
     const left = daysBetween(now, end);
     let kind = "ok";
@@ -461,7 +483,8 @@ function memberStatus(m){
     else if(left <= 7) kind = "warn";
     return {kind, daysLeft:left, end};
   } else {
-    const left = m.total - (m.used||0);
+    const total = Number(m.total)||0;
+    const left = total - (Number(m.used)||0);
     let kind = "ok";
     if(left <= 0) kind = "exp";
     else if(left <= 3) kind = "warn";
@@ -536,6 +559,12 @@ function showResult(matches, code){
     const st = memberStatus(m);
     let big, statusCls, statusTxt, meta="", bar="";
     if(m.type==="period"){
+      if(st.kind==="unknown" || !st.end){
+        big=`<div class="r-big" style="font-size:30px;color:var(--amber)">기간 정보 없음</div>`;
+        statusCls="s-warn"; statusTxt="데스크 문의";
+        meta="시작일/기간이 등록되지 않았습니다";
+        bar="";
+      } else {
       const end=st.end;
       const endStr=end.getFullYear()+"."+pad2(end.getMonth()+1)+"."+pad2(end.getDate());
       if(st.kind==="exp"){
@@ -547,10 +576,12 @@ function showResult(matches, code){
         statusTxt = st.kind==="warn"?"곧 만료 — 연장 안내":"이용중";
       }
       meta=`만료일 ${endStr}`;
-      const totalDays = Math.max(daysBetween(new Date(m.start+"T00:00:00"), end),1);
+      const startD = parseDate(m.start);
+      const totalDays = startD ? Math.max(daysBetween(startD, end),1) : 1;
       const pct = Math.max(0, Math.min(100, Math.round((Math.max(st.daysLeft,0)/totalDays)*100)));
       const barColor = st.kind==="exp"?"var(--red)":st.kind==="warn"?"var(--amber)":"var(--lime)";
       bar=`<div class="r-bar"><i style="width:${pct}%;background:${barColor}"></i></div>`;
+      }
     } else {
       if(st.kind==="exp"){
         big=`<div class="r-big" style="color:var(--red)">소진됨</div>`;
@@ -684,7 +715,8 @@ function renderTable(){
     const st=memberStatus(m);
     let pillCls,pillTxt,leftTxt;
     if(m.type==="period"){
-      if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
+      if(st.kind==="unknown"){pillCls="p-warn";pillTxt="정보없음";leftTxt="—";}
+      else if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
       else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.daysLeft}일`;}
     } else {
       if(st.kind==="exp"){pillCls="p-exp";pillTxt="소진";leftTxt="0회";}
