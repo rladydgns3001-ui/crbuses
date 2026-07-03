@@ -785,12 +785,11 @@ async function init(){
 
   resetForm();
 
-  let taps=0,tt;
-  $("#logoImg").onclick=()=>{ taps++; clearTimeout(tt); tt=setTimeout(()=>taps=0,600); if(taps>=3){taps=0;openGate();} };
+  // (관리자 진입은 별도 admin 페이지에서만 가능)
 
   // 시트 연동 시작
   $("#loading").classList.add("hidden");
-  $("#gearBtn").classList.remove("hidden");
+  // 키오스크 전용 페이지: 관리자 진입 없음
   if(apiConfigured()){
     setSync("sync");
     await fetchMembers();        // 첫 로딩
