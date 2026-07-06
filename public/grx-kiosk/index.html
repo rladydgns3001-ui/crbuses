@@ -362,6 +362,10 @@
   </div>
 
   <div class="gear hidden" id="gearBtn">⚙</div>
+  <div class="gear" id="fsBtn" title="전체화면" style="display:flex;">⛶</div>
+  <div id="kioskSync" style="position:fixed;bottom:14px;left:16px;font-size:12px;color:var(--muted2);display:flex;align-items:center;gap:6px;z-index:30;">
+    <span class="sync-dot off" id="kioskSyncDot"></span><span id="kioskSyncTxt">연결 확인 중…</span>
+  </div>
 </div>
 
 <div class="result hidden" id="resultView"></div>
@@ -431,11 +435,16 @@ async function apiPost(payload){
 
 /* 동기화 상태 점 표시 */
 function setSync(state){
+  const label = {ok:"시트 연결됨", sync:"확인 중…", err:"시트 연결 안 됨", off:"URL 미설정"};
   const el = document.getElementById("syncDot");
-  if(!el) return;
-  el.className = "sync-dot " + state;
-  const label = {ok:"동기화됨", sync:"저장 중…", err:"연결 끊김", off:"오프라인"};
-  el.title = label[state] || "";
+  if(el){
+    el.className = "sync-dot " + state;
+    el.title = label[state] || "";
+  }
+  const kd = document.getElementById("kioskSyncDot");
+  const kt = document.getElementById("kioskSyncTxt");
+  if(kd){ kd.className = "sync-dot " + state; }
+  if(kt){ kt.textContent = label[state] || ""; }
 }
 
 /* ====== HELPERS ====== */
@@ -535,10 +544,26 @@ async function kSubmit(){
   // 캐시에 없으면 시트를 한 번 더 확인 (방금 등록한 회원 대비)
   if(matches.length===0 && apiConfigured()){
     showLoadingResult();
-    await fetchMembers();
+    const ok = await fetchMembers();
+    if(!ok && members.length===0){
+      // 시트 연결 자체가 안 되는 상태 - 명확히 안내
+      showErrorResult();
+      return;
+    }
     matches = members.filter(m=>last4(m.phone)===code);
   }
   showResult(matches, code);
+}
+
+function showErrorResult(){
+  const view=$("#resultView");
+  view.innerHTML=`<div class="card">
+    <div class="r-big" style="font-size:28px;color:var(--red)">시트 연결 안 됨</div>
+    <div class="r-meta">회원 명단을 불러오지 못했습니다.<br>인터넷 연결을 확인하거나<br>데스크에 문의해 주세요.</div>
+    <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
+  view.classList.remove("hidden");
+  clearTimeout(resultTimer);
+  resultTimer=setTimeout(closeResult, 7000);
 }
 
 function showLoadingResult(){
@@ -787,12 +812,34 @@ async function init(){
 
   // (관리자 진입은 별도 admin 페이지에서만 가능)
 
+  // 전체화면 버튼 (구형 브라우저 호환)
+  $("#fsBtn").onclick=function(){
+    var doc=document, el=doc.documentElement;
+    var isFs = doc.fullscreenElement || doc.webkitFullscreenElement;
+    if(!isFs){
+      if(el.requestFullscreen) el.requestFullscreen();
+      else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      $("#fsBtn").textContent="✕";
+    } else {
+      if(doc.exitFullscreen) doc.exitFullscreen();
+      else if(doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+      $("#fsBtn").textContent="⛶";
+    }
+  };
+
   // 시트 연동 시작
   $("#loading").classList.add("hidden");
   // 키오스크 전용 페이지: 관리자 진입 없음
   if(apiConfigured()){
     setSync("sync");
-    await fetchMembers();        // 첫 로딩
+    let ok = await fetchMembers();   // 첫 로딩
+    if(!ok){
+      // 실패하면 5초 간격으로 재시도 (연결될 때까지 최대 계속)
+      const retry = setInterval(async ()=>{
+        const r = await fetchMembers();
+        if(r){ clearInterval(retry); renderTable(); }
+      }, 5000);
+    }
     renderTable();
     // 주기적 갱신: 키오스크 화면이고 결과창이 닫혀 있을 때만 갱신
     setInterval(async()=>{
