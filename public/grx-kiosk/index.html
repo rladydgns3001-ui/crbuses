@@ -680,7 +680,7 @@ async function saveMember(){
     base.total=null;
   } else {
     base.total=parseInt($("#fCount").value||"1",10);
-    base.used = id ? (members.find(m=>m.id===id)?.used||0) : 0;
+    base.used = id ? (function(){ var ex=members.find(function(m){return m.id===id;}); return (ex&&ex.used)||0; })() : 0;
     base.start=""; base.months=null;
   }
   $("#saveBtn").disabled=true;
