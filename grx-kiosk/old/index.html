@@ -103,6 +103,14 @@
   .r-bar > i{display:block;height:100%;border-radius:4px;background:var(--lime);}
   .r-close{margin-top:26px;font-size:14px;color:var(--muted2);}
   .r-notfound .r-big{font-size:34px;color:var(--red);}
+  .pick-list{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+  .pick-btn{
+    width:100%;height:60px;background:var(--panel2);border:1px solid var(--line2);border-radius:16px;
+    color:var(--white);font-size:20px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .pick-btn:active{background:#1d1d1d;border-color:var(--lime);}
+  .pick-plan{color:var(--muted);font-size:14px;font-weight:500;}
 
   /* admin gear */
   .gear{
@@ -596,6 +604,18 @@ function showResult(matches, code){
       <div class="r-big">등록 정보 없음</div>
       <div class="r-meta">뒤 4자리 <b>${code}</b> 회원을 찾을 수 없습니다.<br>데스크에 문의해 주세요.</div>
       <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
+  } else if(matches.length>1){
+    // 뒷번호 중복: 가려진 이름으로 본인 선택
+    let btns = matches.map(function(m){
+      return '<button class="pick-btn" onclick="event.stopPropagation();pickMember(\''+m.id+'\')">'
+        + maskName(m.name)
+        + '<span class="pick-plan">'+(m.plan||'')+'</span></button>';
+    }).join("");
+    html = `<div class="card">
+      <div class="r-name" style="font-size:24px;">회원 선택</div>
+      <div class="r-meta" style="margin-top:6px;">같은 뒷번호 회원이 ${matches.length}명 있습니다.<br>본인을 선택해주세요.</div>
+      <div class="pick-list">${btns}</div>
+      <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
   } else {
     // if multiple share last4, show each compactly; usually 1
     const m = matches[0];
@@ -653,9 +673,24 @@ function showResult(matches, code){
   view.classList.remove("hidden");
   resultShownAt=Date.now();
   clearTimeout(resultTimer);
-  resultTimer=setTimeout(closeResult, 7000);
+  resultTimer=setTimeout(closeResult, matches.length>1 ? 15000 : 7000);
 }
 function closeResult(){ $("#resultView").classList.add("hidden"); clearTimeout(resultTimer); }
+
+/* 이름 가리기: 김용훈 -> 김○훈, 김수 -> 김○, 남궁민수 -> 남궁○수 */
+function maskName(name){
+  var n = String(name||"").trim();
+  if(n.length<=1) return n;
+  if(n.length===2) return n[0]+"○";
+  return n.slice(0, n.length-2) + "○" + n.slice(n.length-1);
+}
+
+/* 중복 선택 화면에서 본인을 고르면 그 회원 카드 표시 */
+function pickMember(id){
+  var m = members.find(function(x){ return x.id===id; });
+  if(m) showResult([m], "");
+}
+window.pickMember = pickMember;
 
 /* ====== ADMIN GATE ====== */
 function gRender(){ renderDots($("#gateDisplay"), gInput.length); }

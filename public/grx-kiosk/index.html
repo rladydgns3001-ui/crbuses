@@ -62,6 +62,7 @@
   .dot.filled{background:var(--lime);transform:scaleY(2.2);}
   .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
   .key{
+    touch-action:manipulation;
     background:var(--panel2);border:1px solid var(--line);border-radius:18px;height:74px;
     font-size:30px;font-weight:600;color:var(--white);display:flex;align-items:center;justify-content:center;
     cursor:pointer;transition:transform .06s,background .12s,border-color .12s;
@@ -79,7 +80,7 @@
 
   /* result overlay */
   .result{
-    position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;
+    position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;
     z-index:50;padding:24px;backdrop-filter:blur(4px);
   }
   .card{
@@ -102,6 +103,14 @@
   .r-bar > i{display:block;height:100%;border-radius:4px;background:var(--lime);}
   .r-close{margin-top:26px;font-size:14px;color:var(--muted2);}
   .r-notfound .r-big{font-size:34px;color:var(--red);}
+  .pick-list{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+  .pick-btn{
+    width:100%;height:60px;background:var(--panel2);border:1px solid var(--line2);border-radius:16px;
+    color:var(--white);font-size:20px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .pick-btn:active{background:#1d1d1d;border-color:var(--lime);}
+  .pick-plan{color:var(--muted);font-size:14px;font-weight:500;}
 
   /* admin gear */
   .gear{
@@ -183,7 +192,7 @@
   .empty{text-align:center;color:var(--muted2);padding:40px 0;font-size:14px;}
 
   /* admin gate */
-  .gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:60;}
+  .gate{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:60;}
   .gate .keypad-wrap{max-width:340px;}
   .gate-title{text-align:center;font-size:18px;font-weight:700;margin-bottom:18px;}
   .toast{
@@ -191,7 +200,7 @@
     padding:13px 26px;border-radius:999px;font-weight:700;font-size:15px;z-index:80;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
-  .loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;z-index:90;background:var(--bg);}
+  .loading{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;z-index:90;background:var(--bg);}
 
   /* ===== TABLET PORTRAIT / smaller landscape ===== */
   @media(max-width:1000px){
@@ -392,6 +401,7 @@ let gInput = "";
 let resultTimer = null;
 let planType = "period";
 let lastSync = 0;
+let resultShownAt = 0;   // 팝업이 뜨자마자 닫히는 오작동 방지
 let apiReady = false;            // SHEET_API가 설정됐는지
 
 /* ====== SHEET API ====== */
@@ -512,12 +522,24 @@ function toast(msg){
 function buildKeys(container, onDigit, onClear, onBack){
   container.innerHTML="";
   const layout=[1,2,3,4,5,6,7,8,9,"clear",0,"back"];
+  // 터치·마우스 모두에서 확실히 반응하도록 pointerdown 사용 (구형은 touchstart 폴백)
+  function bind(el, fn){
+    var fired=false;
+    var h=function(ev){ ev.preventDefault(); fired=true; fn(); setTimeout(function(){fired=false;},400); };
+    if(window.PointerEvent){ el.addEventListener("pointerdown", h); }
+    else {
+      el.addEventListener("touchstart", h, {passive:false});
+      el.addEventListener("mousedown", function(ev){ if(!fired) h(ev); });
+    }
+    // 최후 폴백: 위 이벤트가 모두 안 먹는 환경 대비
+    el.addEventListener("click", function(ev){ if(!fired){ fn(); } });
+  }
   layout.forEach(v=>{
     const b=document.createElement("div");
     b.className="key";
-    if(v==="clear"){b.classList.add("util");b.textContent="↻";b.onclick=onClear;}
-    else if(v==="back"){b.classList.add("util");b.textContent="←";b.onclick=onBack;}
-    else{b.textContent=v;b.onclick=()=>onDigit(String(v));}
+    if(v==="clear"){b.classList.add("util");b.textContent="↻";bind(b,onClear);}
+    else if(v==="back"){b.classList.add("util");b.textContent="←";bind(b,onBack);}
+    else{b.textContent=v;bind(b,function(){onDigit(String(v));});}
     container.appendChild(b);
   });
 }
@@ -562,6 +584,7 @@ function showErrorResult(){
     <div class="r-meta">회원 명단을 불러오지 못했습니다.<br>인터넷 연결을 확인하거나<br>데스크에 문의해 주세요.</div>
     <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
   view.classList.remove("hidden");
+  resultShownAt=Date.now();
   clearTimeout(resultTimer);
   resultTimer=setTimeout(closeResult, 7000);
 }
@@ -570,6 +593,7 @@ function showLoadingResult(){
   const view=$("#resultView");
   view.innerHTML=`<div class="card"><div class="r-big" style="font-size:28px;color:var(--muted)">확인 중…</div></div>`;
   view.classList.remove("hidden");
+  resultShownAt=Date.now();
 }
 
 function showResult(matches, code){
@@ -579,6 +603,18 @@ function showResult(matches, code){
     html = `<div class="card r-notfound">
       <div class="r-big">등록 정보 없음</div>
       <div class="r-meta">뒤 4자리 <b>${code}</b> 회원을 찾을 수 없습니다.<br>데스크에 문의해 주세요.</div>
+      <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
+  } else if(matches.length>1){
+    // 뒷번호 중복: 가려진 이름으로 본인 선택
+    let btns = matches.map(function(m){
+      return '<button class="pick-btn" onclick="event.stopPropagation();pickMember(\''+m.id+'\')">'
+        + maskName(m.name)
+        + '<span class="pick-plan">'+(m.plan||'')+'</span></button>';
+    }).join("");
+    html = `<div class="card">
+      <div class="r-name" style="font-size:24px;">회원 선택</div>
+      <div class="r-meta" style="margin-top:6px;">같은 뒷번호 회원이 ${matches.length}명 있습니다.<br>본인을 선택해주세요.</div>
+      <div class="pick-list">${btns}</div>
       <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
   } else {
     // if multiple share last4, show each compactly; usually 1
@@ -635,10 +671,26 @@ function showResult(matches, code){
   }
   view.innerHTML=html;
   view.classList.remove("hidden");
+  resultShownAt=Date.now();
   clearTimeout(resultTimer);
-  resultTimer=setTimeout(closeResult, 7000);
+  resultTimer=setTimeout(closeResult, matches.length>1 ? 15000 : 7000);
 }
 function closeResult(){ $("#resultView").classList.add("hidden"); clearTimeout(resultTimer); }
+
+/* 이름 가리기: 김용훈 -> 김○훈, 김수 -> 김○, 남궁민수 -> 남궁○수 */
+function maskName(name){
+  var n = String(name||"").trim();
+  if(n.length<=1) return n;
+  if(n.length===2) return n[0]+"○";
+  return n.slice(0, n.length-2) + "○" + n.slice(n.length-1);
+}
+
+/* 중복 선택 화면에서 본인을 고르면 그 회원 카드 표시 */
+function pickMember(id){
+  var m = members.find(function(x){ return x.id===id; });
+  if(m) showResult([m], "");
+}
+window.pickMember = pickMember;
 
 /* ====== ADMIN GATE ====== */
 function gRender(){ renderDots($("#gateDisplay"), gInput.length); }
@@ -788,7 +840,8 @@ async function init(){
   kRender(); gRender();
 
   $("#submitBtn").onclick=kSubmit;
-  $("#resultView").onclick=closeResult;
+  if(window.PointerEvent){ $("#submitBtn").addEventListener("pointerdown", function(e){ e.preventDefault(); kSubmit(); }); }
+  $("#resultView").onclick=function(){ if(Date.now()-resultShownAt>400) closeResult(); };
   $("#gearBtn").onclick=openGate;
   $("#gateCancel").onclick=closeGate;
   $("#backBtn").onclick=closeAdmin;
