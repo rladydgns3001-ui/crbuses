@@ -270,6 +270,100 @@
     #app{height:auto;min-height:100vh;}
     .admin{min-height:100vh;}
   }
+
+  /* ===== ADMIN LIST v2 : 상태 필터 / 검색 / 연장 ===== */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;
+        cursor:pointer;font-family:inherit;color:var(--muted);transition:border-color .12s,background .12s;}
+  .stat b{display:block;font-size:20px;font-weight:800;color:var(--white);line-height:1.2;}
+  .stat span{font-size:12px;font-weight:600;}
+  .stat.on{border-color:var(--lime);background:rgba(155,209,58,.10);}
+  .stat.on b,.stat.on span{color:var(--lime);}
+  .stat:active{background:#1d1d1d;}
+
+  .searchbar{position:relative;margin-bottom:10px;}
+  .searchbar .search{margin-bottom:0;padding-right:46px;}
+  .clear-x{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;
+           background:none;color:var(--muted2);font-size:17px;cursor:pointer;font-family:inherit;display:none;}
+  .searchbar.filled .clear-x{display:block;}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .toolbar select{height:38px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--muted);
+    font-size:13px;font-family:inherit;padding:0 32px 0 12px;outline:none;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239a9a9a' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;}
+
+  .mlist{display:grid;grid-template-columns:1fr;gap:10px;}
+  @media(min-width:1000px){.mlist{grid-template-columns:1fr 1fr;}}
+  .mcard{border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--panel2);}
+  .mcard.exp{border-color:rgba(226,75,74,.35);}
+  .mcard.none{border-color:rgba(239,176,42,.35);}
+  .mc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .mc-name{font-size:17px;font-weight:800;}
+  .mc-phone{font-size:13px;color:var(--muted);margin-top:2px;}
+  .mc-mid{display:flex;align-items:baseline;gap:8px;margin:10px 0 12px;flex-wrap:wrap;}
+  .mc-left{font-size:21px;font-weight:800;}
+  .mc-plan{font-size:13px;color:var(--muted);}
+  .mc-act{display:flex;gap:8px;}
+  .mc-act button{height:42px;padding:0 14px;background:var(--panel);border:1px solid var(--line);border-radius:11px;
+                 color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .mc-act button:active{background:#1d1d1d;color:var(--white);}
+  .mc-act .renew{flex:1;background:var(--lime);border-color:var(--lime);color:#0b0b0b;font-weight:800;}
+  .mc-act .del:active{color:var(--red);border-color:var(--red);}
+  .more-btn{width:100%;height:48px;margin:14px 0 6px;background:var(--panel2);border:1px solid var(--line);
+            border-radius:14px;color:var(--muted);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+
+  /* 연장 시트 */
+  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:70;display:flex;align-items:flex-end;
+         justify-content:center;backdrop-filter:blur(3px);}
+  .sheet-card{width:100%;max-width:460px;background:var(--panel);border:1px solid var(--line);
+              border-radius:24px 24px 0 0;padding:22px 20px 26px;}
+  @media(min-width:700px){.sheet{align-items:center;}.sheet-card{border-radius:24px;}}
+  .sheet h3{margin:0 0 4px;font-size:19px;font-weight:800;}
+  .sheet .sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+  .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+  .chips button{height:48px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;color:var(--white);
+                font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .chips button.on{background:var(--lime);border-color:var(--lime);color:#0b0b0b;}
+  .sheet-note{font-size:13px;color:var(--lime);margin-bottom:18px;line-height:1.5;min-height:20px;}
+  .sheet-btns{display:flex;gap:10px;}
+  .sheet-btns button{flex:1;height:52px;border-radius:14px;font-size:16px;font-weight:800;font-family:inherit;
+                     cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--muted);}
+  .sheet-btns .ok{background:var(--lime);border-color:var(--lime);color:#0b0b0b;}
+
+  /* 목록 1단 + 하단 고정 등록 버튼 */
+  .a-body{grid-template-columns:1fr;max-width:1100px;width:100%;margin:0 auto;padding-bottom:104px;}
+  .fab-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;
+           padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+           background:linear-gradient(to top,var(--bg) 55%,rgba(0,0,0,0));}
+  .fab-btn{display:block;width:100%;max-width:520px;margin:0 auto;height:58px;border:none;border-radius:16px;
+           background:var(--lime);color:#0b0b0b;font-size:17px;font-weight:800;font-family:inherit;
+           cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.55);}
+  .fab-btn:active{transform:scale(.99);}
+
+  /* 등록 / 수정 모달 */
+  .fsheet{position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.85);backdrop-filter:blur(3px);
+          display:flex;align-items:flex-end;justify-content:center;}
+  .fsheet-card{width:100%;max-width:480px;max-height:92vh;display:flex;flex-direction:column;
+               background:var(--panel);border:1px solid var(--line);border-radius:24px 24px 0 0;}
+  .fsheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+               padding:20px 20px 14px;border-bottom:1px solid var(--line);}
+  .fsheet-head h2{margin:0;font-size:19px;font-weight:800;}
+  .fsheet-close{width:40px;height:40px;flex:0 0 auto;border:1px solid var(--line);background:var(--panel2);
+                border-radius:11px;color:var(--muted);font-size:15px;cursor:pointer;font-family:inherit;}
+  .fsheet-close:active{background:#1d1d1d;color:var(--white);}
+  .fsheet-body{overflow-y:auto;padding:20px 20px 24px;-webkit-overflow-scrolling:touch;}
+  .fsheet-body .btn-primary{margin-top:10px;}
+  @media(min-width:700px){
+    .fsheet{align-items:center;}
+    .fsheet-card{border-radius:24px;}
+  }
+
+  /* 폰 */
+  @media(max-width:680px){
+    .stats{gap:6px;}
+    .stat b{font-size:19px;}
+  }
 </style>
 </head>
 <body>
@@ -298,8 +392,62 @@
       <button class="a-back" id="backBtn">잠그기 🔒</button>
     </div>
     <div class="a-body">
-      <div class="form">
-        <h2 id="formTitle">회원 등록</h2>
+      <div class="list-wrap">
+        <div class="list-head">
+          <h2>회원 목록</h2>
+          <button class="a-back" id="refreshBtn" style="padding:7px 12px;">↻ 갱신</button>
+        </div>
+
+        <div class="stats" id="statBar">
+          <button class="stat on" data-f="all"><b id="cAll">0</b><span>전체</span></button>
+          <button class="stat" data-f="ok"><b id="cOk">0</b><span>유효</span></button>
+          <button class="stat" data-f="exp"><b id="cExp">0</b><span>만료</span></button>
+          <button class="stat" data-f="none"><b id="cNone">0</b><span>미입력</span></button>
+        </div>
+
+        <div class="searchbar" id="searchBar">
+          <input class="search" id="searchInput" placeholder="이름 · 전화번호 · 초성으로 검색" autocomplete="off">
+          <button class="clear-x" id="clearSearch" aria-label="검색어 지우기">✕</button>
+        </div>
+
+        <div class="toolbar">
+          <span class="count" id="listCount">0명</span>
+          <select id="sortSel">
+            <option value="urgent">만료 임박순</option>
+            <option value="name">이름순</option>
+            <option value="recent">최근 등록순</option>
+          </select>
+        </div>
+
+        <div id="tableWrap"></div>
+      </div>
+    </div>
+    <div class="fab-bar">
+      <button class="fab-btn" id="newMemberBtn">＋ 신규 회원 등록</button>
+    </div>
+  </div>
+
+  <!-- ADMIN GATE -->
+  <div class="gate hidden" id="gateView">
+    <div class="keypad-wrap">
+      <div class="gate-title">관리자 비밀번호</div>
+      <div class="display" id="gateDisplay"></div>
+      <div class="keys" id="gateKeys"></div>
+      <button class="a-back" id="gateCancel" style="display:none;">취소</button>
+    </div>
+  </div>
+
+  <div class="gear hidden" id="gearBtn">⚙</div>
+</div>
+
+<div class="result hidden" id="resultView"></div>
+<div class="fsheet hidden" id="formSheet">
+  <div class="fsheet-card">
+    <div class="fsheet-head">
+      <h2 id="formTitle">신규 회원 등록</h2>
+      <button class="fsheet-close" id="formClose" aria-label="닫기">✕</button>
+    </div>
+    <div class="fsheet-body">
         <div class="field">
           <label>이름</label>
           <input id="fName" placeholder="홍길동" autocomplete="off">
@@ -335,36 +483,21 @@
         </div>
         <input type="hidden" id="editId">
         <button class="btn-primary" id="saveBtn">등록하기</button>
-      </div>
-
-      <div class="list-wrap">
-        <div class="list-head">
-          <h2>회원 목록</h2>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span class="count" id="memCount">0명</span>
-            <button class="a-back" id="refreshBtn" style="padding:7px 12px;">↻ 갱신</button>
-          </div>
-        </div>
-        <input class="search" id="searchInput" placeholder="이름 또는 전화번호 검색" autocomplete="off">
-        <div id="tableWrap"></div>
-      </div>
     </div>
   </div>
-
-  <!-- ADMIN GATE -->
-  <div class="gate hidden" id="gateView">
-    <div class="keypad-wrap">
-      <div class="gate-title">관리자 비밀번호</div>
-      <div class="display" id="gateDisplay"></div>
-      <div class="keys" id="gateKeys"></div>
-      <button class="a-back" id="gateCancel" style="display:none;">취소</button>
-    </div>
-  </div>
-
-  <div class="gear hidden" id="gearBtn">⚙</div>
 </div>
-
-<div class="result hidden" id="resultView"></div>
+<div class="sheet hidden" id="renewSheet">
+  <div class="sheet-card">
+    <h3 id="rnName">회원</h3>
+    <div class="sub" id="rnSub"></div>
+    <div class="chips" id="rnChips"></div>
+    <div class="sheet-note" id="rnNote"></div>
+    <div class="sheet-btns">
+      <button id="rnCancel">취소</button>
+      <button class="ok" id="rnSave">연장하기</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <div class="loading" id="loading">불러오는 중…</div>
 
@@ -664,8 +797,10 @@ function resetForm(){
   $("#editId").value=""; $("#fName").value=""; $("#fPhone").value="";
   $("#fStart").value=todayStr(); $("#fMonths").value="3"; $("#fCount").value="20";
   setPlanType("period");
-  $("#formTitle").textContent="회원 등록"; $("#saveBtn").textContent="등록하기";
+  $("#formTitle").textContent="신규 회원 등록"; $("#saveBtn").textContent="등록하기";
 }
+function openForm(){ $("#formSheet").classList.remove("hidden"); }
+function closeForm(){ $("#formSheet").classList.add("hidden"); resetForm(); }
 async function saveMember(){
   const name=$("#fName").value.trim();
   const phone=$("#fPhone").value.trim();
@@ -687,10 +822,10 @@ async function saveMember(){
   if(id){
     base.id=id;
     const r=await apiPost({action:"update", member:base});
-    if(r){ toast("수정되었습니다"); resetForm(); renderTable(); }
+    if(r){ toast("수정되었습니다"); closeForm(); renderTable(); }
   } else {
     const r=await apiPost({action:"add", member:base});
-    if(r){ toast("등록되었습니다"); resetForm(); renderTable(); }
+    if(r){ toast("등록되었습니다"); closeForm(); renderTable(); }
   }
   $("#saveBtn").disabled=false;
 }
@@ -701,7 +836,7 @@ function editMember(id){
   if(m.type==="period"){ $("#fStart").value=m.start; $("#fMonths").value=m.months; }
   else { $("#fCount").value=m.total; }
   $("#formTitle").textContent="회원 수정"; $("#saveBtn").textContent="수정 저장";
-  window.scrollTo({top:0,behavior:"smooth"});
+  openForm();
 }
 async function delMember(id){
   const m=members.find(x=>x.id===id);
@@ -716,36 +851,190 @@ async function useOne(id){
   if(r){ renderTable(); toast(m.name+" 1회 차감"); }
 }
 
+/* ====== LIST STATE ====== */
+let filter = "all";
+let sortBy = "urgent";
+let query  = "";
+const PAGE = 40;
+let shown  = PAGE;
+let searchTimer = null;
+
+const CHO=["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+function toCho(v){
+  const t=String(v==null?"":v); let r="";
+  for(let i=0;i<t.length;i++){
+    const c=t.charCodeAt(i);
+    r += (c>=0xAC00 && c<=0xD7A3) ? CHO[Math.floor((c-0xAC00)/588)] : t[i];
+  }
+  return r;
+}
+function digitsOnly(v){ return String(v==null?"":v).replace(/\D/g,""); }
+function norm(v){ return String(v==null?"":v).replace(/\s/g,"").toLowerCase(); }
+function esc(v){ return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* 상태 구분: ok(유효) / exp(만료·소진) / none(정보 미입력) */
+function bucket(m){
+  if(m.type==="period"){
+    if(!m.start || !m.months || !addMonths(m.start,m.months)) return "none";
+  } else if(m.type==="count"){
+    const t=Number(m.total);
+    if(!isFinite(t) || t<=0) return "none";
+  } else {
+    return "none";
+  }
+  const st=memberStatus(m);
+  if(st.kind==="unknown") return "none";
+  return st.kind==="exp" ? "exp" : "ok";
+}
+/* 정렬용 잔여치 — 작을수록 임박 */
+function urgency(m){
+  if(bucket(m)==="none") return 99999;
+  const st=memberStatus(m);
+  if(m.type==="period") return st.daysLeft==null ? 99998 : st.daysLeft;
+  return st.countLeft==null ? 99998 : st.countLeft;
+}
+function matchQuery(m,q){
+  if(!q) return true;
+  const qd=digitsOnly(q);
+  /* 숫자만 입력했을 때만 전화번호 대조 (예: "10회권"이 전화번호에 걸리지 않도록) */
+  if(qd && /^[0-9\s-]+$/.test(q) && digitsOnly(m.phone).indexOf(qd)!==-1) return true;
+  const qn=norm(q);
+  if(!qn) return false;
+  if(norm(m.name).indexOf(qn)!==-1) return true;
+  if(norm(m.plan).indexOf(qn)!==-1) return true;
+  if(/^[ㄱ-ㅎ]+$/.test(qn) && toCho(norm(m.name)).indexOf(qn)!==-1) return true;
+  return false;
+}
+function fmtDate(d){ return d ? d.getFullYear()+"."+pad2(d.getMonth()+1)+"."+pad2(d.getDate()) : ""; }
+
 /* ====== TABLE ====== */
 function renderTable(){
-  const q=$("#searchInput").value.trim().replace(/\s/g,"");
-  let list=members.slice().sort((a,b)=>a.name.localeCompare(b.name,"ko"));
-  if(q){ list=list.filter(m=> m.name.replace(/\s/g,"").includes(q) || (m.phone||"").replace(/\D/g,"").includes(q.replace(/\D/g,""))); }
-  $("#memCount").textContent=members.length+"명";
+  if(!document.getElementById("tableWrap")) return;
+  const all = members.map((m,i)=>({m:m,i:i}));
+
+  let cAll=all.length, cOk=0, cExp=0, cNone=0;
+  all.forEach(o=>{ const b=bucket(o.m); if(b==="ok")cOk++; else if(b==="exp")cExp++; else cNone++; });
+  $("#cAll").textContent=cAll; $("#cOk").textContent=cOk;
+  $("#cExp").textContent=cExp; $("#cNone").textContent=cNone;
+
+  let list=all.filter(o => (filter==="all" || bucket(o.m)===filter) && matchQuery(o.m,query));
+
+  if(sortBy==="name")        list.sort((a,b)=>String(a.m.name||"").localeCompare(String(b.m.name||""),"ko"));
+  else if(sortBy==="recent") list.sort((a,b)=>b.i-a.i);
+  else                       list.sort((a,b)=>(urgency(a.m)-urgency(b.m)) || String(a.m.name||"").localeCompare(String(b.m.name||""),"ko"));
+
+  $("#listCount").textContent = list.length+"명" + ((query || filter!=="all") ? " / 전체 "+cAll+"명" : "");
+
   const wrap=$("#tableWrap");
-  if(list.length===0){ wrap.innerHTML=`<div class="empty">${members.length===0?"아직 등록된 회원이 없습니다":"검색 결과가 없습니다"}</div>`; return; }
-  let rows="";
-  list.forEach(m=>{
-    const st=memberStatus(m);
-    let pillCls,pillTxt,leftTxt;
-    if(m.type==="period"){
-      if(st.kind==="unknown"){pillCls="p-warn";pillTxt="정보없음";leftTxt="—";}
-      else if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
-      else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.daysLeft}일`;}
+  if(list.length===0){
+    wrap.innerHTML='<div class="empty">'+(members.length===0?"아직 등록된 회원이 없습니다":"조건에 맞는 회원이 없습니다")+'</div>';
+    return;
+  }
+  if(shown<PAGE) shown=PAGE;
+  const page=list.slice(0,shown);
+
+  let cards="";
+  page.forEach(o=>{
+    const m=o.m, b=bucket(m), st=memberStatus(m);
+    let pill,left,sub;
+    if(b==="none"){
+      pill='<span class="pill p-warn">미입력</span>'; left="—"; sub="회원권 정보를 입력해 주세요";
+    } else if(m.type==="period"){
+      if(st.kind==="exp"){ pill='<span class="pill p-exp">만료</span>'; left=(-st.daysLeft)+"일 지남"; }
+      else { pill='<span class="pill '+(st.kind==="warn"?"p-warn":"p-ok")+'">'+(st.kind==="warn"?"임박":"이용중")+'</span>'; left=st.daysLeft+"일 남음"; }
+      sub="만료 "+fmtDate(st.end);
     } else {
-      if(st.kind==="exp"){pillCls="p-exp";pillTxt="소진";leftTxt="0회";}
-      else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.countLeft}회`;}
+      if(st.kind==="exp"){ pill='<span class="pill p-exp">소진</span>'; left="0회 남음"; }
+      else { pill='<span class="pill '+(st.kind==="warn"?"p-warn":"p-ok")+'">'+(st.kind==="warn"?"임박":"이용중")+'</span>'; left=st.countLeft+"회 남음"; }
+      sub="총 "+m.total+"회 중 "+(m.used||0)+"회 사용";
     }
-    const useBtn = m.type==="count" ? `<button title="1회 차감" onclick="useOne('${m.id}')">−1</button>` : "";
-    rows+=`<tr>
-      <td><div class="m-name">${m.name}</div><div class="m-phone">${m.phone||""}</div></td>
-      <td>${m.plan}</td>
-      <td><b>${leftTxt}</b></td>
-      <td><span class="pill ${pillCls}">${pillTxt}</span></td>
-      <td><div class="act">${useBtn}<button title="수정" onclick="editMember('${m.id}')">✎</button><button class="del" title="삭제" onclick="delMember('${m.id}')">🗑</button></div></td>
-    </tr>`;
+    const useBtn = m.type==="count" ? '<button title="1회 차감" onclick="useOne(\''+m.id+'\')">−1</button>' : "";
+    cards+='<div class="mcard '+b+'">'
+      + '<div class="mc-top"><div><div class="mc-name">'+esc(m.name)+'</div>'
+      + '<div class="mc-phone">'+esc(m.phone)+'</div></div>'+pill+'</div>'
+      + '<div class="mc-mid"><span class="mc-left">'+left+'</span>'
+      + '<span class="mc-plan">'+esc(m.plan)+' · '+sub+'</span></div>'
+      + '<div class="mc-act">'
+      + '<button class="renew" onclick="openRenew(\''+m.id+'\')">＋ 연장 / 재등록</button>'
+      + useBtn
+      + '<button title="수정" onclick="editMember(\''+m.id+'\')">✎</button>'
+      + '<button class="del" title="삭제" onclick="delMember(\''+m.id+'\')">🗑</button>'
+      + '</div></div>';
   });
-  wrap.innerHTML=`<table><thead><tr><th>회원</th><th>회원권</th><th>잔여</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  wrap.innerHTML='<div class="mlist">'+cards+'</div>'
+    + (list.length>shown ? '<button class="more-btn" id="moreBtn">더 보기 ('+(list.length-shown)+'명 남음)</button>' : "");
+  const mb=document.getElementById("moreBtn");
+  if(mb) mb.onclick=()=>{ shown+=PAGE; renderTable(); };
+}
+
+/* ====== 연장 / 재등록 ====== */
+let renewId=null, renewVal=null;
+
+function renewBase(m){
+  const st=memberStatus(m);
+  if(st.kind!=="unknown" && st.end && st.daysLeft>0) return st.end;   // 아직 유효 → 만료일부터 이어서
+  const d=new Date(); d.setHours(0,0,0,0); return d;                   // 만료됨 → 오늘부터
+}
+function renewPreview(m,v){
+  if(!v) return "";
+  if(m.type==="count"){
+    const total=(Number(m.total)||0)+v, used=Number(m.used)||0;
+    return "연장 후 잔여 "+(total-used)+"회 (총 "+total+"회)";
+  }
+  const b=renewBase(m);
+  const startStr=b.getFullYear()+"-"+pad2(b.getMonth()+1)+"-"+pad2(b.getDate());
+  const end=addMonths(startStr,v);
+  return fmtDate(b)+" 부터 "+fmtDate(end)+" 까지";
+}
+function openRenew(id){
+  const m=members.find(x=>x.id===id); if(!m) return;
+  if(m.type!=="period" && m.type!=="count"){
+    toast("먼저 회원권 종류를 지정해 주세요");
+    closeRenew(); editMember(id); return;
+  }
+  renewId=id; renewVal=null;
+  const isCount=(m.type==="count"), st=memberStatus(m), b=bucket(m);
+  $("#rnName").textContent=(m.name||"회원")+" 님";
+  let cur;
+  if(b==="none")      cur="회원권 정보 없음 — 오늘부터 새로 시작합니다";
+  else if(isCount)    cur="현재 "+st.countLeft+"회 남음 · "+(m.plan||"");
+  else                cur=(st.kind==="exp" ? (-st.daysLeft)+"일 전 만료" : st.daysLeft+"일 남음")+" · "+(m.plan||"");
+  $("#rnSub").textContent=cur;
+
+  const opts = isCount ? [10,20,30] : [1,3,6];
+  const unit = isCount ? "회" : "개월";
+  $("#rnChips").innerHTML=opts.map(v=>'<button data-v="'+v+'">'+v+unit+'</button>').join("");
+  $("#rnChips").querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{
+      renewVal=Number(btn.dataset.v);
+      $("#rnChips").querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===btn));
+      $("#rnNote").textContent=renewPreview(m,renewVal);
+    };
+  });
+  $("#rnNote").textContent = isCount ? "추가할 횟수를 선택하세요" : "연장할 기간을 선택하세요";
+  $("#renewSheet").classList.remove("hidden");
+}
+function closeRenew(){ $("#renewSheet").classList.add("hidden"); renewId=null; renewVal=null; }
+
+async function saveRenew(){
+  const m=members.find(x=>x.id===renewId); if(!m) return;
+  if(!renewVal){ toast("연장할 값을 먼저 선택하세요"); return; }
+  const base={ id:m.id, name:m.name, phone:m.phone, plan:m.plan, type:m.type };
+  if(m.type==="count"){
+    base.total=(Number(m.total)||0)+renewVal;
+    base.used=Number(m.used)||0;
+    base.start=""; base.months=null;
+  } else {
+    const b=renewBase(m);
+    base.start=b.getFullYear()+"-"+pad2(b.getMonth()+1)+"-"+pad2(b.getDate());
+    base.months=renewVal;
+    base.total=null;
+  }
+  $("#rnSave").disabled=true;
+  const r=await apiPost({action:"update", member:base});
+  $("#rnSave").disabled=false;
+  if(r){ closeRenew(); renderTable(); toast((m.name||"회원")+" 연장 완료"); }
 }
 
 /* ====== PHONE FORMAT ====== */
@@ -768,7 +1057,32 @@ async function init(){
   $("#gateCancel").onclick=closeGate;
   $("#backBtn").onclick=closeAdmin;
   $("#saveBtn").onclick=saveMember;
-  $("#searchInput").oninput=renderTable;
+  $("#searchInput").oninput=e=>{
+    query=e.target.value.trim();
+    $("#searchBar").classList.toggle("filled", query.length>0);
+    shown=PAGE;
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(renderTable,120);
+  };
+  $("#clearSearch").onclick=()=>{
+    $("#searchInput").value=""; query=""; shown=PAGE;
+    $("#searchBar").classList.remove("filled");
+    renderTable(); $("#searchInput").focus();
+  };
+  document.querySelectorAll("#statBar .stat").forEach(b=>{
+    b.onclick=()=>{
+      filter=b.dataset.f; shown=PAGE;
+      document.querySelectorAll("#statBar .stat").forEach(x=>x.classList.toggle("on", x===b));
+      renderTable();
+    };
+  });
+  $("#sortSel").onchange=e=>{ sortBy=e.target.value; shown=PAGE; renderTable(); };
+  $("#rnCancel").onclick=closeRenew;
+  $("#rnSave").onclick=saveRenew;
+  $("#renewSheet").onclick=e=>{ if(e.target.id==="renewSheet") closeRenew(); };
+  $("#newMemberBtn").onclick=()=>{ resetForm(); openForm(); $("#fName").focus(); };
+  $("#formClose").onclick=closeForm;
+  $("#formSheet").onclick=e=>{ if(e.target.id==="formSheet") closeForm(); };
   $("#refreshBtn").onclick=async()=>{ setSync("sync"); await fetchMembers(); renderTable(); toast("최신 명단으로 갱신했습니다"); };
   document.querySelectorAll("#planTypeSeg button").forEach(b=> b.onclick=()=>setPlanType(b.dataset.type));
   $("#fPlan").onchange=syncPlanToFields;
