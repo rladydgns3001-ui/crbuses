@@ -359,6 +359,19 @@
     .fsheet-card{border-radius:24px;}
   }
 
+  /* ===== 홀딩 ===== */
+  .p-hold{background:rgba(239,176,42,.18);color:var(--amber);}
+  .mcard.holding{border-color:rgba(239,176,42,.45);}
+  .mc-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .hold-box{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .hold-state{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:12px;}
+  .hold-state b{color:var(--white);}
+  .hold-btn{width:100%;height:48px;border-radius:12px;border:1px solid var(--amber);
+            background:rgba(239,176,42,.12);color:var(--amber);
+            font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;}
+  .hold-btn.release{border-color:var(--lime);background:rgba(155,209,58,.12);color:var(--lime);}
+  .hold-btn:disabled{opacity:.5;cursor:default;}
+
   /* 폰 */
   @media(max-width:680px){
     .stats{gap:6px;}
@@ -481,6 +494,13 @@
           <label>총 횟수</label>
           <input id="fCount" type="number" inputmode="numeric" value="20" min="1">
         </div>
+        <div class="field hidden" id="holdField">
+          <label>홀딩 관리</label>
+          <div class="hold-box">
+            <div class="hold-state" id="holdState">홀딩 아님</div>
+            <button type="button" class="hold-btn" id="holdBtn">홀딩 시작</button>
+          </div>
+        </div>
         <input type="hidden" id="editId">
         <button class="btn-primary" id="saveBtn">등록하기</button>
     </div>
@@ -507,6 +527,12 @@
 const SHEET_API = "https://script.google.com/macros/s/AKfycbwZUaEkkvY1ooArcHRRRG_LwQEjbhPam4069hDI35KsXQQU1skwqUwAVbpFHLI_hCVxWA/exec";
 // ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
+// ▼▼▼ 출석·홀딩 확장 API 주소 ▼▼▼
+// appsscript_추가코드.gs 를 새 Apps Script 프로젝트로 배포한 뒤 그 웹앱 URL(.../exec)을 넣으세요.
+// 비워두면 홀딩 기능(뱃지·시작/해제 버튼)이 화면에 나타나지 않습니다.
+const ATTEND_API = "";
+// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
+
 const ADMIN_PIN = "8290";        // 관리자 비밀번호 (원하면 바꾸세요)
 const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
 const PLANS = {
@@ -524,24 +550,83 @@ let lastSync = 0;
 let apiReady = false;            // SHEET_API가 설정됐는지
 
 /* ====== SHEET API ====== */
+/* [진단용] 이 값이 콘솔에 안 찍히면 = 브라우저가 옛 파일을 보고 있는 것 (배포/캐시 문제) */
+const BUILD_ID = "diag-2026-08-13";
+console.log("%c[GRX] BUILD_ID = " + BUILD_ID, "background:#9bd13a;color:#000;padding:2px 6px;font-weight:700");
+console.log("[GRX] SHEET_API =", SHEET_API);
+
 function apiConfigured(){
   return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("script.google.com") !== -1;
+}
+
+/* [진단용] 요청 URL / status / 응답 원문을 그대로 콘솔에 남긴다.
+   res.json()을 바로 쓰면 서버가 HTML 에러페이지를 줘도 "그냥 실패"로만 보이므로
+   반드시 text()로 먼저 받고 직접 JSON.parse 한다. */
+async function apiCall(method, payload){
+  const opts = {
+    method: method,
+    redirect: "follow",     // Apps Script /exec 는 302 → googleusercontent 로 리다이렉트됨
+    cache: "no-store"
+  };
+  if(method === "POST"){
+    // Apps Script는 text/plain 본문이면 preflight(OPTIONS) 없이 통과합니다.
+    // application/json 으로 보내면 preflight에서 막힙니다.
+    opts.headers = {"Content-Type":"text/plain;charset=utf-8"};
+    opts.body = JSON.stringify(payload);
+  }
+  console.groupCollapsed("[GRX] " + method + " " + SHEET_API);
+  if(opts.body) console.log("요청 body:", opts.body);
+  let res, raw;
+  try{
+    res = await fetch(SHEET_API, opts);
+  }catch(e){
+    console.error("fetch 자체가 실패 (CORS 차단 / 네트워크 / URL 오류):", e);
+    console.groupEnd();
+    throw new Error("fetch 실패: " + e.message);
+  }
+  console.log("status:", res.status, res.statusText, "| type:", res.type, "| 최종 URL:", res.url);
+  try{
+    raw = await res.text();
+  }catch(e){
+    console.error("응답 본문을 읽지 못함:", e);
+    console.groupEnd();
+    throw new Error("응답 읽기 실패: " + e.message);
+  }
+  console.log("응답 원문(앞 800자):", raw.slice(0, 800));
+  console.groupEnd();
+
+  if(!res.ok) throw new Error("HTTP " + res.status + " — " + raw.slice(0,200));
+  let data;
+  try{
+    data = JSON.parse(raw);
+  }catch(e){
+    // 여기로 오면 대부분: 웹앱 접근권한이 "Anyone"이 아니어서 구글 로그인 HTML이 온 경우
+    throw new Error("JSON이 아닌 응답을 받았습니다 (권한/배포 설정 확인): " + raw.slice(0,120));
+  }
+  return data;
 }
 
 /* 시트에서 전체 명단을 받아와 캐시 갱신 */
 async function fetchMembers(){
   if(!apiConfigured()) return false;
   try{
-    const res = await fetch(SHEET_API, {method:"GET"});
-    const data = await res.json();
+    const data = await apiCall("GET");
     if(data.ok && Array.isArray(data.members)){
       members = data.members;
+      await fetchHolds();          // 홀딩 상태를 members 에 합침
       lastSync = Date.now();
       setSync("ok");
+      console.log("[GRX] 명단 " + members.length + "건 로드 완료");
       return true;
     }
+    console.warn("[GRX] 서버가 ok:false 를 반환:", data);
+    toast("시트 응답 오류: " + (data.error || "형식이 다릅니다"));
     setSync("err"); return false;
-  }catch(e){ setSync("err"); return false; }
+  }catch(e){
+    console.error("[GRX] fetchMembers 실패:", e.message);
+    toast("불러오기 실패: " + e.message.slice(0,60));
+    setSync("err"); return false;
+  }
 }
 
 /* 시트에 변경 요청 (add/update/delete/use). 성공 시 캐시도 재동기화 */
@@ -549,17 +634,84 @@ async function apiPost(payload){
   if(!apiConfigured()){ toast("시트 URL이 설정되지 않았습니다"); return null; }
   setSync("sync");
   try{
-    const res = await fetch(SHEET_API, {
-      method:"POST",
-      // Apps Script는 text/plain 본문이면 preflight 없이 통과합니다
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if(!data.ok){ toast("시트 처리 실패: "+(data.error||"")); setSync("err"); return null; }
+    const data = await apiCall("POST", payload);
+    if(!data.ok){
+      console.warn("[GRX] 저장 실패 응답:", data);
+      toast("시트 처리 실패: "+(data.error||""));
+      setSync("err"); return null;
+    }
     await fetchMembers();   // 변경 후 최신 명단으로 갱신
     return data;
-  }catch(e){ toast("네트워크 오류 — 다시 시도하세요"); setSync("err"); return null; }
+  }catch(e){
+    console.error("[GRX] apiPost 실패:", e.message);
+    toast("저장 실패: " + e.message.slice(0,60));
+    setSync("err"); return null;
+  }
+}
+
+/* [진단용] 콘솔에서 __grxDiag() 를 실행하면 GET/POST를 한 번씩 테스트합니다.
+   POST는 존재하지 않는 action이라 시트를 건드리지 않습니다. */
+window.__grxDiag = async function(){
+  console.log("===== GRX 진단 시작 (BUILD " + BUILD_ID + ") =====");
+  try{ console.log("GET 결과:", await apiCall("GET")); }
+  catch(e){ console.error("GET 실패:", e.message); }
+  try{ console.log("POST 결과(unknown_action 이 정상):", await apiCall("POST", {action:"__diag__"})); }
+  catch(e){ console.error("POST 실패:", e.message); }
+  console.log("===== GRX 진단 끝 =====");
+};
+
+/* ====== 홀딩(출석 확장 API) ====== */
+let holdMap = {};
+
+function attendConfigured(){
+  return ATTEND_API && ATTEND_API.indexOf("script.google.com") !== -1;
+}
+/* 회원 식별 키 — 시트에 id 열이 없어도 전화번호 뒤 4자리로 대체된다 */
+function memberKey(m){
+  return m.id ? String(m.id) : ("p:" + last4(m.phone));
+}
+/* 전체 회원의 홀딩 상태를 받아와 members 에 합친다 */
+async function fetchHolds(){
+  if(!attendConfigured()){ applyHolds(); return; }
+  try{
+    const res  = await fetch(ATTEND_API + "?action=holds", {redirect:"follow", cache:"no-store"});
+    const data = JSON.parse(await res.text());
+    if(data && data.ok && data.holds) holdMap = data.holds;
+  }catch(e){
+    console.warn("[GRX] 홀딩 정보 불러오기 실패:", e && e.message);
+  }
+  applyHolds();
+}
+function applyHolds(){
+  members.forEach(function(m){
+    const h = holdMap[memberKey(m)] || {};
+    m.holding    = !!h.holding;
+    m.holdStart  = h.holdStart || "";
+    m.holdEnd    = h.holdEnd   || "";
+    m.holdDays   = Number(h.holdDays)   || 0;
+    m.holdingFor = Number(h.holdingFor) || 0;
+  });
+}
+/* 만료일에 더할 홀딩 일수. 홀딩이 진행 중이면 지금까지 지난 일수도 미리 반영해
+   홀딩 동안 남은 기간이 줄어들지 않게 한다 (해제 시 값이 그대로 확정된다). */
+function holdExtraDays(m){
+  let d = Number(m.holdDays) || 0;
+  if(m.holding && m.holdingFor > 0) d += (m.holdingFor - 1);
+  return d;
+}
+async function holdCall(action, m){
+  try{
+    const res = await fetch(ATTEND_API, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:action, id:memberKey(m), phone4:last4(m.phone), name:m.name}),
+      redirect:"follow", cache:"no-store"
+    });
+    return JSON.parse(await res.text());
+  }catch(e){
+    console.error("[GRX] 홀딩 요청 실패:", e && e.message);
+    return null;
+  }
 }
 
 /* 동기화 상태 점 표시 */
@@ -609,8 +761,10 @@ function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
 /* status for a member -> {kind, daysLeft, endDate} */
 function memberStatus(m){
   if(m.type==="period"){
-    const end = addMonths(m.start, m.months);
+    let end = addMonths(m.start, m.months);
     if(!end) return {kind:"unknown", daysLeft:null, end:null}; // 날짜 누락/오류
+    const extra = holdExtraDays(m);              // 홀딩한 일수만큼 만료일 연장
+    if(extra > 0) end = new Date(end.getFullYear(), end.getMonth(), end.getDate() + extra);
     const now = new Date(); now.setHours(0,0,0,0);
     const left = daysBetween(now, end);
     let kind = "ok";
@@ -798,6 +952,7 @@ function resetForm(){
   $("#fStart").value=todayStr(); $("#fMonths").value="3"; $("#fCount").value="20";
   setPlanType("period");
   $("#formTitle").textContent="신규 회원 등록"; $("#saveBtn").textContent="등록하기";
+  const hf=$("#holdField"); if(hf) hf.classList.add("hidden");   // 신규 등록 시엔 홀딩 숨김
 }
 function openForm(){ $("#formSheet").classList.remove("hidden"); }
 function closeForm(){ $("#formSheet").classList.add("hidden"); resetForm(); }
@@ -836,8 +991,56 @@ function editMember(id){
   if(m.type==="period"){ $("#fStart").value=m.start; $("#fMonths").value=m.months; }
   else { $("#fCount").value=m.total; }
   $("#formTitle").textContent="회원 수정"; $("#saveBtn").textContent="수정 저장";
+  renderHoldField(m);
   openForm();
 }
+/* ====== 홀딩 시작 / 해제 (회원 상세) ====== */
+function renderHoldField(m){
+  const f = $("#holdField");
+  if(!f) return;
+  if(!m || !attendConfigured()){ f.classList.add("hidden"); return; }
+  f.classList.remove("hidden");
+
+  const st  = $("#holdState");
+  const btn = $("#holdBtn");
+  const cum = m.holdDays ? '<br>지금까지 누적 홀딩 <b>'+m.holdDays+'일</b>' : "";
+
+  if(m.holding){
+    st.innerHTML = '<b>홀딩 중</b> · '+(m.holdStart||"").replace(/-/g,".")+' 부터 <b>'+(m.holdingFor||1)+'일째</b>'
+                 + '<br>해제하면 홀딩한 일수만큼 만료일이 자동 연장됩니다.' + cum;
+    btn.textContent = "홀딩 해제 (기간 연장)";
+    btn.className   = "hold-btn release";
+  } else {
+    st.innerHTML = '홀딩 아님<br>홀딩 중에는 키오스크 출석이 기록되지 않습니다.' + cum;
+    btn.textContent = "홀딩 시작 (오늘부터)";
+    btn.className   = "hold-btn";
+  }
+  btn.onclick = function(){ toggleHold(m.id); };
+}
+
+async function toggleHold(id){
+  const m = members.find(x=>x.id===id); if(!m) return;
+  const who = m.name || "이 회원";
+  if(m.holding){
+    if(!confirm(who+" 님의 홀딩을 해제할까요?\n홀딩한 일수만큼 만료일이 자동으로 연장됩니다.")) return;
+  } else {
+    if(!confirm(who+" 님을 오늘부터 홀딩할까요?\n홀딩 중에는 키오스크 출석이 기록되지 않습니다.")) return;
+  }
+  const btn = $("#holdBtn");
+  btn.disabled = true;
+  const r = await holdCall(m.holding ? "hold_end" : "hold_start", m);
+  btn.disabled = false;
+
+  if(!r || !r.ok){ toast("홀딩 처리 실패: " + ((r && r.error) || "연결을 확인하세요")); return; }
+  toast(r.result === "hold_ended"
+    ? who + " 홀딩 해제 · " + (r.extendedDays || 0) + "일 연장"
+    : who + " 홀딩을 시작했습니다");
+
+  await fetchMembers();
+  renderHoldField(members.find(x=>x.id===id));
+  renderTable();
+}
+
 async function delMember(id){
   const m=members.find(x=>x.id===id);
   if(!confirm((m?m.name:"이 회원")+" 님의 등록을 취소(삭제)할까요?")) return;
@@ -949,14 +1152,21 @@ function renderTable(){
       sub="총 "+m.total+"회 중 "+(m.used||0)+"회 사용";
     }
     const useBtn = m.type==="count" ? '<button title="1회 차감" onclick="useOne(\''+m.id+'\')">−1</button>' : "";
-    cards+='<div class="mcard '+b+'">'
+    const holdPill = m.holding ? '<span class="pill p-hold">홀딩중</span>' : "";
+    const holdBtn  = attendConfigured()
+      ? '<button title="'+(m.holding?"홀딩 해제":"홀딩")+'" onclick="editMember(\''+m.id+'\')">'+(m.holding?"▶":"⏸")+'</button>'
+      : "";
+    if(m.holding) sub = "홀딩 중" + (m.holdStart ? " ("+m.holdStart.replace(/-/g,".")+"~)" : "") + " · " + sub;
+    cards+='<div class="mcard '+b+(m.holding?" holding":"")+'">'
       + '<div class="mc-top"><div><div class="mc-name">'+esc(m.name)+'</div>'
-      + '<div class="mc-phone">'+esc(m.phone)+'</div></div>'+pill+'</div>'
+      + '<div class="mc-phone">'+esc(m.phone)+'</div></div>'
+      + '<div class="mc-pills">'+holdPill+pill+'</div></div>'
       + '<div class="mc-mid"><span class="mc-left">'+left+'</span>'
       + '<span class="mc-plan">'+esc(m.plan)+' · '+sub+'</span></div>'
       + '<div class="mc-act">'
       + '<button class="renew" onclick="openRenew(\''+m.id+'\')">＋ 연장 / 재등록</button>'
       + useBtn
+      + holdBtn
       + '<button title="수정" onclick="editMember(\''+m.id+'\')">✎</button>'
       + '<button class="del" title="삭제" onclick="delMember(\''+m.id+'\')">🗑</button>'
       + '</div></div>';
