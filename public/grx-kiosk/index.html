@@ -464,6 +464,7 @@ async function fetchMembers(){
     const data = await res.json();
     if(data.ok && Array.isArray(data.members)){
       members = data.members;
+      applyHolds();                // 홀딩 정보를 회원 데이터에 반영
       lastSync = Date.now();
       setSync("ok");
       return true;
@@ -582,11 +583,62 @@ function addMonths(dateStr, m){
 }
 function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
 
+/* ====== 홀딩 (관리자 v4가 시트의 '상품명' 칸에 태그로 저장) ======
+   저장 형태 : "3개월권 #H:2026-09-12/14"
+               #H:홀딩시작일/누적홀딩일수   (홀딩중이 아니면 시작일 자리에 -)
+   화면에는 태그를 지우고 상품명만 보여줍니다.                       */
+const HOLD_RE = /\s*#H:(\S*)/;
+
+function cleanPlan(p){ return String(p==null?"":p).replace(HOLD_RE,"").trim(); }
+function parseHold(p){
+  const m = String(p==null?"":p).match(HOLD_RE);
+  if(!m) return { holding:false, holdStart:"", holdDays:0 };
+  const parts = String(m[1]||"").split("/");
+  const s = parts[0] || "-";
+  return {
+    holding: (s !== "-" && s !== ""),
+    holdStart: (s === "-" ? "" : s),
+    holdDays: Number(parts[1]||0) || 0
+  };
+}
+
+function withHold(planName, h){
+  const base = cleanPlan(planName);
+  if(!h || (!h.holding && !h.holdDays)) return base;
+  return base + " #H:" + (h.holding ? h.holdStart : "-") + "/" + (h.holdDays||0);
+}
+function holdOf(m){ return { holding:!!m.holding, holdStart:m.holdStart||"", holdDays:Number(m.holdDays)||0 }; }
+
+/* 받아온 회원 데이터에 홀딩 정보를 채워 넣습니다 */
+function applyHolds(){
+  members.forEach(function(m){
+    const h = parseHold(m.plan);
+    m.planName  = cleanPlan(m.plan);
+    m.holding   = h.holding;
+    m.holdStart = h.holdStart;
+    m.holdDays  = h.holdDays;
+    m.holdingFor = h.holding ? (holdElapsed(m) + 1) : 0;
+  });
+}
+/* 홀딩 시작일부터 오늘까지 지난 일수 (당일 = 0) */
+function holdElapsed(m){
+  if(!m.holding || !m.holdStart) return 0;
+  const s = parseDate(m.holdStart);
+  if(!s) return 0;
+  const t = new Date(); t.setHours(0,0,0,0);
+  const d = daysBetween(s, t);
+  return d > 0 ? d : 0;
+}
+/* 만료일에 더할 일수 = 지금 진행 중인 홀딩 일수 (지난 홀딩은 시작일에 이미 반영됨) */
+function holdExtraDays(m){ return holdElapsed(m); }
+
 /* status for a member -> {kind, daysLeft, endDate} */
 function memberStatus(m){
   if(m.type==="period"){
-    const end = addMonths(m.start, m.months);
+    let end = addMonths(m.start, m.months);
     if(!end) return {kind:"unknown", daysLeft:null, end:null}; // 날짜 누락/오류
+    const extra = holdExtraDays(m);   // 홀딩 중에는 그만큼 만료일이 뒤로 밀립니다
+    if(extra > 0) end = new Date(end.getFullYear(), end.getMonth(), end.getDate() + extra);
     const now = new Date(); now.setHours(0,0,0,0);
     const left = daysBetween(now, end);
     let kind = "ok";
@@ -706,7 +758,7 @@ function showResult(matches, code){
     let btns = matches.map(function(m){
       return '<button class="pick-btn" onclick="event.stopPropagation();pickMember(\''+m.id+'\')">'
         + maskName(m.name)
-        + '<span class="pick-plan">'+(m.plan||'')+'</span></button>';
+        + '<span class="pick-plan">'+(m.planName||m.plan||'')+'</span></button>';
     }).join("");
     html = `<div class="card">
       <div class="r-name" style="font-size:24px;">회원 선택</div>
@@ -742,6 +794,9 @@ function showResult(matches, code){
       const barColor = st.kind==="exp"?"var(--red)":st.kind==="warn"?"var(--amber)":"var(--lime)";
       bar=`<div class="r-bar"><i style="width:${pct}%;background:${barColor}"></i></div>`;
       }
+      if(m.holding){
+        statusCls="s-warn"; statusTxt="홀딩 중 — 데스크 문의";
+      }
     } else {
       if(st.kind==="exp"){
         big=`<div class="r-big" style="color:var(--red)">소진됨</div>`;
@@ -758,7 +813,7 @@ function showResult(matches, code){
     }
     html=`<div class="card">
       <div class="r-name">${m.name}</div>
-      <div class="r-plan">${m.plan}</div>
+      <div class="r-plan">${m.planName||m.plan||""}</div>
       ${big}
       ${bar}
       <div><span class="r-status ${statusCls}">${statusTxt}</span></div>
@@ -854,7 +909,7 @@ function showAttendResult(d, m){
   }
 
   const streak = (d.streakWeeks>0) ? ' · <b>'+d.streakWeeks+'</b>주 연속 출석 중' : '';
-  const sub = [esc(d.plan||m.plan||""), d.time||""].filter(Boolean).join(" · ");
+  const sub = [esc(cleanPlan(d.plan||m.planName||m.plan||"")), d.time||""].filter(Boolean).join(" · ");
 
   view.innerHTML =
       '<div class="card att-card">'
@@ -955,7 +1010,10 @@ async function saveMember(){
   if(!name){ toast("이름을 입력하세요"); return; }
   if(last4(phone).length<4){ toast("전화번호를 정확히 입력하세요"); return; }
   const id=$("#editId").value;
-  const base={ name, phone, plan, type:planType };
+  // 홀딩 태그 보존: 수정일 때만 기존 회원의 홀딩 정보를 다시 붙입니다 (신규 등록은 태그 없음)
+  const existing = id ? members.find(function(x){ return x.id===id; }) : null;
+  const planToSave = existing ? withHold(plan, holdOf(existing)) : cleanPlan(plan);
+  const base={ name, phone, plan:planToSave, type:planType };
   if(planType==="period"){
     base.start=$("#fStart").value||todayStr();
     base.months=parseInt($("#fMonths").value||"1",10);
@@ -979,7 +1037,7 @@ async function saveMember(){
 function editMember(id){
   const m=members.find(x=>x.id===id); if(!m) return;
   $("#editId").value=m.id; $("#fName").value=m.name; $("#fPhone").value=m.phone;
-  setPlanType(m.type); $("#fPlan").value=m.plan;
+  setPlanType(m.type); $("#fPlan").value=m.planName||m.plan||"";
   if(m.type==="period"){ $("#fStart").value=m.start; $("#fMonths").value=m.months; }
   else { $("#fCount").value=m.total; }
   $("#formTitle").textContent="회원 수정"; $("#saveBtn").textContent="수정 저장";
@@ -1014,6 +1072,7 @@ function renderTable(){
       if(st.kind==="unknown"){pillCls="p-warn";pillTxt="정보없음";leftTxt="—";}
       else if(st.kind==="exp"){pillCls="p-exp";pillTxt="만료";leftTxt=`${-st.daysLeft}일 지남`;}
       else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.daysLeft}일`;}
+      if(m.holding){pillCls="p-warn";pillTxt="홀딩중";}
     } else {
       if(st.kind==="exp"){pillCls="p-exp";pillTxt="소진";leftTxt="0회";}
       else{pillCls=st.kind==="warn"?"p-warn":"p-ok";pillTxt=st.kind==="warn"?"임박":"이용중";leftTxt=`${st.countLeft}회`;}
@@ -1021,7 +1080,7 @@ function renderTable(){
     const useBtn = m.type==="count" ? `<button title="1회 차감" onclick="useOne('${m.id}')">−1</button>` : "";
     rows+=`<tr>
       <td><div class="m-name">${m.name}</div><div class="m-phone">${m.phone||""}</div></td>
-      <td>${m.plan}</td>
+      <td>${m.planName||m.plan||""}</td>
       <td><b>${leftTxt}</b></td>
       <td><span class="pill ${pillCls}">${pillTxt}</span></td>
       <td><div class="act">${useBtn}<button title="수정" onclick="editMember('${m.id}')">✎</button><button class="del" title="삭제" onclick="delMember('${m.id}')">🗑</button></div></td>

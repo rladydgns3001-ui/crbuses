@@ -372,6 +372,74 @@
   .hold-btn.release{border-color:var(--lime);background:rgba(155,209,58,.12);color:var(--lime);}
   .hold-btn:disabled{opacity:.5;cursor:default;}
 
+  /* ===== 상품 선택 칩 ===== */
+  .plan-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  .plan-chip{
+    display:flex;flex-direction:column;gap:3px;align-items:flex-start;text-align:left;
+    background:var(--panel2);border:1px solid var(--line);border-radius:14px;
+    padding:12px 13px;cursor:pointer;font-family:inherit;color:var(--white);transition:.12s;
+  }
+  .plan-chip b{font-size:15px;font-weight:800;}
+  .plan-chip span{font-size:11px;color:var(--muted2);}
+  .plan-chip i{font-size:14px;font-style:normal;font-weight:800;color:var(--lime);}
+  .plan-chip.on{background:var(--lime);border-color:var(--lime);color:#0b0b0b;}
+  .plan-chip.on span{color:rgba(0,0,0,.6);}
+  .plan-chip.on i{color:#0b0b0b;}
+  .plan-chip:active{transform:scale(.98);}
+
+  /* 금액 / 체크박스 */
+  .amt-wrap{position:relative;}
+  .amt-wrap .suffix{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted2);font-size:14px;pointer-events:none;}
+  .chk{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);
+       border-radius:14px;padding:13px 14px;cursor:pointer;}
+  .chk input{width:20px;height:20px;accent-color:var(--lime);margin:0;flex:0 0 auto;}
+  .chk span{font-size:14px;color:var(--muted);line-height:1.4;}
+  .chk b{color:var(--white);}
+  .hint{font-size:12px;color:var(--muted2);margin-top:7px;line-height:1.5;}
+
+  /* ===== 매출 ===== */
+  .a-acts{display:flex;gap:8px;align-items:center;}
+  .a-back.sales{border-color:var(--lime);color:var(--lime);}
+  .sales-tot{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;}
+  .st-label{font-size:13px;color:var(--muted);}
+  .st-amt{font-size:30px;font-weight:800;color:var(--lime);margin:4px 0 2px;}
+  .st-sub{font-size:12px;color:var(--muted2);}
+  .sl-box{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px;}
+  .sl-box h4{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:700;}
+  .sl-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:14px;border-top:1px solid var(--line);}
+  .sl-box .sl-row:first-of-type{border-top:none;}
+  .sl-row em{font-style:normal;color:var(--muted2);font-size:12px;}
+  .sl-row b{font-weight:800;}
+  .sl-row.on b{color:var(--lime);}
+  .sl-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);}
+  .sl-box .sl-item:first-of-type{border-top:none;}
+  .sl-item b{font-size:15px;}
+  .sl-item span{font-size:12px;color:var(--muted);margin-left:6px;}
+  .sl-item .sl-d{display:block;margin:3px 0 0;font-size:11px;color:var(--muted2);}
+  .sl-item .sl-d i{color:var(--amber);font-style:normal;}
+  .sl-r{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+  .sl-r b{color:var(--lime);white-space:nowrap;}
+  .sl-r button{background:none;border:1px solid var(--line);color:var(--muted2);border-radius:9px;
+               width:34px;height:34px;cursor:pointer;font-size:13px;font-family:inherit;}
+  .sl-r button:active{color:var(--red);border-color:var(--red);}
+  .sales-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+  .btn-ghost{height:50px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);
+             color:var(--white);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .btn-ghost:active{background:#1d1d1d;}
+
+  /* 연장 시트 칩 */
+  .chips{grid-template-columns:repeat(3,1fr);}
+  .chips button{height:auto;padding:11px 6px;display:flex;flex-direction:column;gap:3px;align-items:center;}
+  .chips button b{font-size:14px;font-weight:800;}
+  .chips button i{font-style:normal;font-size:12px;color:var(--lime);font-weight:700;}
+  .chips button.on i{color:#0b0b0b;}
+
+  @media(max-width:680px){
+    .plan-grid{grid-template-columns:1fr 1fr;}
+    .a-top h1{font-size:16px;}
+    .a-acts .a-back{padding:9px 11px;font-size:13px;}
+  }
+
   /* 폰 */
   @media(max-width:680px){
     .stats{gap:6px;}
@@ -402,7 +470,10 @@
   <div class="admin hidden" id="adminView">
     <div class="a-top">
       <h1>GR<span>X</span> 회원 관리 <span class="sync-dot ok" id="syncDot" title="동기화됨"></span></h1>
-      <button class="a-back" id="backBtn">잠그기 🔒</button>
+      <div class="a-acts">
+        <button class="a-back sales" id="salesBtn">📊 매출</button>
+        <button class="a-back" id="backBtn">잠그기 🔒</button>
+      </div>
     </div>
     <div class="a-body">
       <div class="list-wrap">
@@ -477,8 +548,9 @@
           </div>
         </div>
         <div class="field" id="planNameField">
-          <label>상품명</label>
-          <select id="fPlan"></select>
+          <label>상품 선택</label>
+          <div class="plan-grid" id="planGrid"></div>
+          <input type="hidden" id="fPlan">
         </div>
         <div class="row2">
           <div class="field" id="startField">
@@ -487,12 +559,30 @@
           </div>
           <div class="field" id="periodField">
             <label>기간(개월)</label>
-            <input id="fMonths" type="number" inputmode="numeric" value="3" min="1">
+            <input id="fMonths" type="number" inputmode="numeric" value="1" min="1">
           </div>
+        </div>
+        <div class="field" id="endField">
+          <label>만료일 (직접 수정 가능)</label>
+          <input id="fEnd" type="date">
+          <div class="hint">만료일을 바꾸면 시작일이 자동으로 다시 계산됩니다.</div>
         </div>
         <div class="field hidden" id="countField">
           <label>총 횟수</label>
           <input id="fCount" type="number" inputmode="numeric" value="20" min="1">
+        </div>
+        <div class="field">
+          <label>결제 금액</label>
+          <div class="amt-wrap">
+            <input id="fAmount" type="number" inputmode="numeric" placeholder="180000" min="0">
+            <span class="suffix">원</span>
+          </div>
+        </div>
+        <div class="field" id="recordField">
+          <label class="chk">
+            <input type="checkbox" id="fRecord" checked>
+            <span><b>매출로 기록</b><br>체크하면 결제 금액이 매출 시트에 자동 저장됩니다.</span>
+          </label>
         </div>
         <div class="field hidden" id="holdField">
           <label>홀딩 관리</label>
@@ -512,9 +602,44 @@
     <div class="sub" id="rnSub"></div>
     <div class="chips" id="rnChips"></div>
     <div class="sheet-note" id="rnNote"></div>
+    <div class="field">
+      <label>결제 금액</label>
+      <div class="amt-wrap">
+        <input id="rnAmount" type="number" inputmode="numeric" placeholder="180000" min="0">
+        <span class="suffix">원</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="chk">
+        <input type="checkbox" id="rnRecord" checked>
+        <span><b>매출로 기록</b><br>연장 금액을 매출 시트에 자동 저장합니다.</span>
+      </label>
+    </div>
     <div class="sheet-btns">
       <button id="rnCancel">취소</button>
       <button class="ok" id="rnSave">연장하기</button>
+    </div>
+  </div>
+</div>
+<div class="fsheet hidden" id="salesSheet">
+  <div class="fsheet-card">
+    <div class="fsheet-head">
+      <h2>매출 관리</h2>
+      <button class="fsheet-close" id="salesClose" aria-label="닫기">✕</button>
+    </div>
+    <div class="fsheet-body">
+      <div class="sales-tot" id="salesTot"></div>
+      <div class="field">
+        <label>월 선택</label>
+        <select id="salesMonth"></select>
+      </div>
+      <div id="salesMonths"></div>
+      <div id="salesSummary"></div>
+      <div id="salesList"></div>
+      <div class="sales-btns">
+        <button class="btn-ghost" id="salesCsvMonth">이 달 엑셀(CSV)</button>
+        <button class="btn-ghost" id="salesCsvAll">전체 엑셀(CSV)</button>
+      </div>
     </div>
   </div>
 </div>
@@ -527,18 +652,34 @@
 const SHEET_API = "https://script.google.com/macros/s/AKfycbwZUaEkkvY1ooArcHRRRG_LwQEjbhPam4069hDI35KsXQQU1skwqUwAVbpFHLI_hCVxWA/exec";
 // ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
-// ▼▼▼ 출석·홀딩 확장 API 주소 ▼▼▼
-// appsscript_추가코드.gs 를 새 Apps Script 프로젝트로 배포한 뒤 그 웹앱 URL(.../exec)을 넣으세요.
-// 비워두면 홀딩 기능(뱃지·시작/해제 버튼)이 화면에 나타나지 않습니다.
+// 출석 확장 API (선택). 홀딩 기능은 이 값이 없어도 동작합니다.
 const ATTEND_API = "";
-// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
 const ADMIN_PIN = "8290";        // 관리자 비밀번호 (원하면 바꾸세요)
 const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
-const PLANS = {
-  period: ["1개월권","3개월권","6개월권","주2회권","주3회권"],
-  count:  ["10회권","20회권","30회권","PT 10회","PT 20회"]
+
+/* ====== 상품 & 가격표 ======
+   여기 숫자만 고치면 화면·매출이 전부 같이 바뀝니다.               */
+const PLAN_DEFS = {
+  period: [
+    { name:"1개월권", months:1, price:180000, sub:"1개월 · 무제한" },
+    { name:"3개월권", months:3, price:480000, sub:"3개월 · 무제한" },
+    { name:"6개월권", months:6, price:640000, sub:"6개월 · 무제한" },
+    { name:"주2회권", months:1, price:120000, sub:"1개월 · 주 2회" },
+    { name:"주3회권", months:1, price:150000, sub:"1개월 · 주 3회" }
+  ],
+  count: [
+    { name:"10회권",  count:10, price:null, sub:"10회" },
+    { name:"20회권",  count:20, price:null, sub:"20회" },
+    { name:"30회권",  count:30, price:null, sub:"30회" },
+    { name:"PT 10회", count:10, price:null, sub:"PT 10회" },
+    { name:"PT 20회", count:20, price:null, sub:"PT 20회" }
+  ]
 };
+function planDef(name){
+  const n = cleanPlan(name);
+  return PLAN_DEFS.period.find(p=>p.name===n) || PLAN_DEFS.count.find(p=>p.name===n) || null;
+}
 
 /* ====== STATE ====== */
 let members = [];                // 시트에서 받아온 회원 명단 (캐시)
@@ -547,62 +688,34 @@ let gInput = "";
 let resultTimer = null;
 let planType = "period";
 let lastSync = 0;
-let apiReady = false;            // SHEET_API가 설정됐는지
 
 /* ====== SHEET API ====== */
-/* [진단용] 이 값이 콘솔에 안 찍히면 = 브라우저가 옛 파일을 보고 있는 것 (배포/캐시 문제) */
-const BUILD_ID = "diag-2026-08-13";
+const BUILD_ID = "grx-2026-09-12-sales";
 console.log("%c[GRX] BUILD_ID = " + BUILD_ID, "background:#9bd13a;color:#000;padding:2px 6px;font-weight:700");
-console.log("[GRX] SHEET_API =", SHEET_API);
 
 function apiConfigured(){
   return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("script.google.com") !== -1;
 }
 
-/* [진단용] 요청 URL / status / 응답 원문을 그대로 콘솔에 남긴다.
-   res.json()을 바로 쓰면 서버가 HTML 에러페이지를 줘도 "그냥 실패"로만 보이므로
-   반드시 text()로 먼저 받고 직접 JSON.parse 한다. */
 async function apiCall(method, payload){
-  const opts = {
-    method: method,
-    redirect: "follow",     // Apps Script /exec 는 302 → googleusercontent 로 리다이렉트됨
-    cache: "no-store"
-  };
+  const opts = { method: method, redirect: "follow", cache: "no-store" };
   if(method === "POST"){
-    // Apps Script는 text/plain 본문이면 preflight(OPTIONS) 없이 통과합니다.
-    // application/json 으로 보내면 preflight에서 막힙니다.
     opts.headers = {"Content-Type":"text/plain;charset=utf-8"};
     opts.body = JSON.stringify(payload);
   }
-  console.groupCollapsed("[GRX] " + method + " " + SHEET_API);
-  if(opts.body) console.log("요청 body:", opts.body);
   let res, raw;
   try{
     res = await fetch(SHEET_API, opts);
   }catch(e){
-    console.error("fetch 자체가 실패 (CORS 차단 / 네트워크 / URL 오류):", e);
-    console.groupEnd();
     throw new Error("fetch 실패: " + e.message);
   }
-  console.log("status:", res.status, res.statusText, "| type:", res.type, "| 최종 URL:", res.url);
-  try{
-    raw = await res.text();
-  }catch(e){
-    console.error("응답 본문을 읽지 못함:", e);
-    console.groupEnd();
-    throw new Error("응답 읽기 실패: " + e.message);
-  }
-  console.log("응답 원문(앞 800자):", raw.slice(0, 800));
-  console.groupEnd();
+  try{ raw = await res.text(); }
+  catch(e){ throw new Error("응답 읽기 실패: " + e.message); }
 
   if(!res.ok) throw new Error("HTTP " + res.status + " — " + raw.slice(0,200));
   let data;
-  try{
-    data = JSON.parse(raw);
-  }catch(e){
-    // 여기로 오면 대부분: 웹앱 접근권한이 "Anyone"이 아니어서 구글 로그인 HTML이 온 경우
-    throw new Error("JSON이 아닌 응답을 받았습니다 (권한/배포 설정 확인): " + raw.slice(0,120));
-  }
+  try{ data = JSON.parse(raw); }
+  catch(e){ throw new Error("JSON이 아닌 응답을 받았습니다 (권한/배포 설정 확인): " + raw.slice(0,120)); }
   return data;
 }
 
@@ -613,17 +726,14 @@ async function fetchMembers(){
     const data = await apiCall("GET");
     if(data.ok && Array.isArray(data.members)){
       members = data.members;
-      await fetchHolds();          // 홀딩 상태를 members 에 합침
+      applyHolds();                // 홀딩 정보를 회원 데이터에 반영
       lastSync = Date.now();
       setSync("ok");
-      console.log("[GRX] 명단 " + members.length + "건 로드 완료");
       return true;
     }
-    console.warn("[GRX] 서버가 ok:false 를 반환:", data);
     toast("시트 응답 오류: " + (data.error || "형식이 다릅니다"));
     setSync("err"); return false;
   }catch(e){
-    console.error("[GRX] fetchMembers 실패:", e.message);
     toast("불러오기 실패: " + e.message.slice(0,60));
     setSync("err"); return false;
   }
@@ -636,83 +746,70 @@ async function apiPost(payload){
   try{
     const data = await apiCall("POST", payload);
     if(!data.ok){
-      console.warn("[GRX] 저장 실패 응답:", data);
       toast("시트 처리 실패: "+(data.error||""));
       setSync("err"); return null;
     }
-    await fetchMembers();   // 변경 후 최신 명단으로 갱신
+    await fetchMembers();
     return data;
   }catch(e){
-    console.error("[GRX] apiPost 실패:", e.message);
     toast("저장 실패: " + e.message.slice(0,60));
     setSync("err"); return null;
   }
 }
 
-/* [진단용] 콘솔에서 __grxDiag() 를 실행하면 GET/POST를 한 번씩 테스트합니다.
-   POST는 존재하지 않는 action이라 시트를 건드리지 않습니다. */
 window.__grxDiag = async function(){
-  console.log("===== GRX 진단 시작 (BUILD " + BUILD_ID + ") =====");
   try{ console.log("GET 결과:", await apiCall("GET")); }
   catch(e){ console.error("GET 실패:", e.message); }
-  try{ console.log("POST 결과(unknown_action 이 정상):", await apiCall("POST", {action:"__diag__"})); }
+  try{ console.log("POST 결과:", await apiCall("POST", {action:"__diag__"})); }
   catch(e){ console.error("POST 실패:", e.message); }
-  console.log("===== GRX 진단 끝 =====");
 };
 
-/* ====== 홀딩(출석 확장 API) ====== */
-let holdMap = {};
+/* ====== 홀딩 (시트의 '상품명' 칸에 태그로 저장 → 별도 API 불필요) ======
+   저장 형태 : "3개월권 #H:2026-09-12/14"
+               #H:홀딩시작일/누적홀딩일수   (홀딩중이 아니면 시작일 자리에 -)
+   화면에는 태그를 지우고 상품명만 보여줍니다.                       */
+const HOLD_RE = /\s*#H:(\S*)/;
 
-function attendConfigured(){
-  return ATTEND_API && ATTEND_API.indexOf("script.google.com") !== -1;
+function cleanPlan(p){ return String(p==null?"":p).replace(HOLD_RE,"").trim(); }
+function parseHold(p){
+  const m = String(p==null?"":p).match(HOLD_RE);
+  if(!m) return { holding:false, holdStart:"", holdDays:0 };
+  const parts = String(m[1]||"").split("/");
+  const s = parts[0] || "-";
+  return {
+    holding: (s !== "-" && s !== ""),
+    holdStart: (s === "-" ? "" : s),
+    holdDays: Number(parts[1]||0) || 0
+  };
 }
-/* 회원 식별 키 — 시트에 id 열이 없어도 전화번호 뒤 4자리로 대체된다 */
-function memberKey(m){
-  return m.id ? String(m.id) : ("p:" + last4(m.phone));
+function withHold(planName, h){
+  const base = cleanPlan(planName);
+  if(!h || (!h.holding && !h.holdDays)) return base;
+  return base + " #H:" + (h.holding ? h.holdStart : "-") + "/" + (h.holdDays||0);
 }
-/* 전체 회원의 홀딩 상태를 받아와 members 에 합친다 */
-async function fetchHolds(){
-  if(!attendConfigured()){ applyHolds(); return; }
-  try{
-    const res  = await fetch(ATTEND_API + "?action=holds", {redirect:"follow", cache:"no-store"});
-    const data = JSON.parse(await res.text());
-    if(data && data.ok && data.holds) holdMap = data.holds;
-  }catch(e){
-    console.warn("[GRX] 홀딩 정보 불러오기 실패:", e && e.message);
-  }
-  applyHolds();
-}
+function holdOf(m){ return { holding:!!m.holding, holdStart:m.holdStart||"", holdDays:Number(m.holdDays)||0 }; }
+
 function applyHolds(){
   members.forEach(function(m){
-    const h = holdMap[memberKey(m)] || {};
-    m.holding    = !!h.holding;
-    m.holdStart  = h.holdStart || "";
-    m.holdEnd    = h.holdEnd   || "";
-    m.holdDays   = Number(h.holdDays)   || 0;
-    m.holdingFor = Number(h.holdingFor) || 0;
+    const h = parseHold(m.plan);
+    m.planName  = cleanPlan(m.plan);
+    m.holding   = h.holding;
+    m.holdStart = h.holdStart;
+    m.holdDays  = h.holdDays;
+    m.holdingFor = h.holding ? (holdElapsed(m) + 1) : 0;
   });
 }
-/* 만료일에 더할 홀딩 일수. 홀딩이 진행 중이면 지금까지 지난 일수도 미리 반영해
-   홀딩 동안 남은 기간이 줄어들지 않게 한다 (해제 시 값이 그대로 확정된다). */
-function holdExtraDays(m){
-  let d = Number(m.holdDays) || 0;
-  if(m.holding && m.holdingFor > 0) d += (m.holdingFor - 1);
-  return d;
+/* 홀딩 시작일부터 오늘까지 지난 일수 (당일 = 0) */
+function holdElapsed(m){
+  if(!m.holding || !m.holdStart) return 0;
+  const s = parseDate(m.holdStart);
+  if(!s) return 0;
+  const t = new Date(); t.setHours(0,0,0,0);
+  const d = daysBetween(s, t);
+  return d > 0 ? d : 0;
 }
-async function holdCall(action, m){
-  try{
-    const res = await fetch(ATTEND_API, {
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify({action:action, id:memberKey(m), phone4:last4(m.phone), name:m.name}),
-      redirect:"follow", cache:"no-store"
-    });
-    return JSON.parse(await res.text());
-  }catch(e){
-    console.error("[GRX] 홀딩 요청 실패:", e && e.message);
-    return null;
-  }
-}
+/* 만료일에 더할 일수 = 지금 진행 중인 홀딩 일수 (지난 홀딩은 시작일에 이미 반영됨) */
+function holdExtraDays(m){ return holdElapsed(m); }
 
 /* 동기화 상태 점 표시 */
 function setSync(state){
@@ -726,24 +823,23 @@ function setSync(state){
 /* ====== HELPERS ====== */
 const $ = s => document.querySelector(s);
 const pad2 = n => String(n).padStart(2,"0");
-function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+function today0(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function dstr(d){ return d ? d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()) : ""; }
+function todayStr(){ return dstr(new Date()); }
 function last4(phone){ const d=(phone||"").replace(/\D/g,""); return d.slice(-4); }
+function won(n){ const v=Number(n)||0; return v.toLocaleString("ko-KR")+"원"; }
 
-/* 어떤 형식이든 받아서 Date로 파싱 (실패 시 null) */
 function parseDate(v){
   if(!v) return null;
   if(v instanceof Date) return isNaN(v) ? null : v;
   let s = String(v).trim();
-  // ISO 문자열(2026-06-29T...)이면 날짜 부분만
   if(s.indexOf("T") !== -1) s = s.split("T")[0];
-  // "2026. 6. 29", "2026/6/29", "2026.06.29" 형태 정규화
   let norm = s.replace(/[.\/\s]+/g, "-").replace(/-+$/,"").replace(/-+/g,"-");
   const m = norm.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
   if(m){
     const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
     return isNaN(d) ? null : d;
   }
-  // 마지막 폴백: 원본 문자열을 Date에 직접 넘김 (Mon Jun 29 2026 GMT+0900 등)
   const d2 = new Date(String(v));
   if(!isNaN(d2)) return new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
   return null;
@@ -756,16 +852,43 @@ function addMonths(dateStr, m){
   d.setMonth(d.getMonth() + (isNaN(months)?0:months));
   return d;
 }
+function addDays(date, n){
+  const d = parseDate(date); if(!d) return null;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (Number(n)||0));
+}
 function daysBetween(a,b){ return Math.round((b-a)/(1000*60*60*24)); }
+/* 만료일이 정확히 end 가 되는 시작일을 찾는다.
+   (시작일 + N개월 = 만료일 구조라, 2월·31일 같은 경우엔 딱 맞는 날이 없을 수 있다.
+    그때는 가장 가까운 날을 쓰고 exact:false 로 알려준다.)                       */
+function startFromEnd(endStr, months){
+  const end = parseDate(endStr); if(!end) return null;
+  const m = parseInt(months,10) || 0;
+  const target = dstr(end);
+  const approx = new Date(end.getFullYear(), end.getMonth()-m, end.getDate());
+  let best = null, bestGap = Infinity;
+  for(let d=0; d<=60; d++){
+    const signs = (d===0) ? [0] : [-1, 1];
+    for(let k=0;k<signs.length;k++){
+      const cand = new Date(approx.getFullYear(), approx.getMonth(), approx.getDate() + signs[k]*d);
+      const got  = addMonths(dstr(cand), m);
+      if(!got) continue;
+      if(dstr(got) === target) return { start:cand, end:got, exact:true };
+      const gap = Math.abs(daysBetween(got, end));
+      if(gap < bestGap){ bestGap = gap; best = { start:cand, end:got, exact:false }; }
+    }
+    if(best && bestGap === 0) break;
+  }
+  return best;
+}
 
 /* status for a member -> {kind, daysLeft, endDate} */
 function memberStatus(m){
   if(m.type==="period"){
     let end = addMonths(m.start, m.months);
-    if(!end) return {kind:"unknown", daysLeft:null, end:null}; // 날짜 누락/오류
-    const extra = holdExtraDays(m);              // 홀딩한 일수만큼 만료일 연장
+    if(!end) return {kind:"unknown", daysLeft:null, end:null};
+    const extra = holdExtraDays(m);
     if(extra > 0) end = new Date(end.getFullYear(), end.getMonth(), end.getDate() + extra);
-    const now = new Date(); now.setHours(0,0,0,0);
+    const now = today0();
     const left = daysBetween(now, end);
     let kind = "ok";
     if(left < 0) kind = "exp";
@@ -819,7 +942,6 @@ async function kSubmit(){
   const code = kInput;
   kClear();
   let matches = members.filter(m=>last4(m.phone)===code);
-  // 캐시에 없으면 시트를 한 번 더 확인 (방금 등록한 회원 대비)
   if(matches.length===0 && apiConfigured()){
     showLoadingResult();
     await fetchMembers();
@@ -843,7 +965,6 @@ function showResult(matches, code){
       <div class="r-meta">뒤 4자리 <b>${code}</b> 회원을 찾을 수 없습니다.<br>데스크에 문의해 주세요.</div>
       <div class="r-close">화면을 누르면 닫힙니다</div></div>`;
   } else {
-    // if multiple share last4, show each compactly; usually 1
     const m = matches[0];
     const st = memberStatus(m);
     let big, statusCls, statusTxt, meta="", bar="";
@@ -871,6 +992,9 @@ function showResult(matches, code){
       const barColor = st.kind==="exp"?"var(--red)":st.kind==="warn"?"var(--amber)":"var(--lime)";
       bar=`<div class="r-bar"><i style="width:${pct}%;background:${barColor}"></i></div>`;
       }
+      if(m.holding){
+        statusCls="s-warn"; statusTxt="홀딩 중 — 데스크 문의";
+      }
     } else {
       if(st.kind==="exp"){
         big=`<div class="r-big" style="color:var(--red)">소진됨</div>`;
@@ -886,8 +1010,8 @@ function showResult(matches, code){
       bar=`<div class="r-bar"><i style="width:${pct}%;background:${barColor}"></i></div>`;
     }
     html=`<div class="card">
-      <div class="r-name">${m.name}</div>
-      <div class="r-plan">${m.plan}</div>
+      <div class="r-name">${esc(m.name)}</div>
+      <div class="r-plan">${esc(m.planName || cleanPlan(m.plan))}</div>
       ${big}
       ${bar}
       <div><span class="r-status ${statusCls}">${statusTxt}</span></div>
@@ -924,19 +1048,40 @@ function closeAdmin(){ $("#adminView").classList.add("hidden"); resetForm(); ope
 
 /* ====== FORM ====== */
 function fillPlanOptions(){
-  const sel=$("#fPlan"); sel.innerHTML="";
-  PLANS[planType].forEach(p=>{ const o=document.createElement("option"); o.value=p; o.textContent=p; sel.appendChild(o); });
+  const grid = $("#planGrid");
+  grid.innerHTML = "";
+  PLAN_DEFS[planType].forEach(function(p){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "plan-chip";
+    b.dataset.plan = p.name;
+    b.innerHTML = '<b>'+esc(p.name)+'</b>'
+                + '<span>'+esc(p.sub)+'</span>'
+                + '<i>'+(p.price==null ? "금액 입력" : won(p.price))+'</i>';
+    b.onclick = function(){ selectPlan(p.name, true); };
+    grid.appendChild(b);
+  });
 }
-/* 상품명에서 숫자를 뽑아 기간(개월) 또는 총횟수 칸을 자동으로 채운다 */
-function syncPlanToFields(){
-  const plan = $("#fPlan").value || "";
-  const num = (plan.match(/\d+/)||[])[0];   // "3개월권"->3, "10회권"->10
-  if(planType==="period"){
-    if(/개월/.test(plan) && num) $("#fMonths").value = num;     // N개월권 -> 기간 N
-    // 주N회권 같은 건 개월 정보가 없으니 기간은 그대로 둠
-  } else {
-    if(num) $("#fCount").value = num;        // 10회권 -> 총 10회
+function markPlanChip(name){
+  document.querySelectorAll("#planGrid .plan-chip").forEach(function(b){
+    b.classList.toggle("on", b.dataset.plan === name);
+  });
+}
+/* 상품을 고르면 기간/횟수/금액 칸을 자동으로 채운다 */
+function selectPlan(name, autofill){
+  $("#fPlan").value = name;
+  markPlanChip(name);
+  const def = planDef(name);
+  if(def && autofill){
+    if(planType === "period"){
+      if(def.months) $("#fMonths").value = def.months;
+    } else {
+      if(def.count) $("#fCount").value = def.count;
+    }
+    if(def.price != null) $("#fAmount").value = def.price;
+    else if(!$("#fAmount").value) $("#fAmount").value = "";
   }
+  syncEndFromStart();
 }
 function setPlanType(t){
   planType=t;
@@ -944,61 +1089,124 @@ function setPlanType(t){
   fillPlanOptions();
   $("#startField").classList.toggle("hidden", t!=="period");
   $("#periodField").classList.toggle("hidden", t!=="period");
+  $("#endField").classList.toggle("hidden", t!=="period");
   $("#countField").classList.toggle("hidden", t!=="count");
-  syncPlanToFields();
+  const first = PLAN_DEFS[t][0];
+  selectPlan(($("#fPlan").value && planDef($("#fPlan").value) && PLAN_DEFS[t].some(p=>p.name===$("#fPlan").value))
+             ? $("#fPlan").value : first.name, true);
 }
+
+/* 시작일 + 기간(개월) → 만료일 */
+function syncEndFromStart(){
+  if(planType !== "period") return;
+  const s = $("#fStart").value, m = $("#fMonths").value;
+  const end = addMonths(s, m);
+  if(end) $("#fEnd").value = dstr(end);
+}
+/* 만료일을 직접 고치면 → 시작일을 거꾸로 계산 */
+function syncStartFromEnd(){
+  if(planType !== "period") return;
+  const e = $("#fEnd").value, m = $("#fMonths").value;
+  if(!e) return;
+  const r = startFromEnd(e, m);
+  if(!r) return;
+  $("#fStart").value = dstr(r.start);
+  if(!r.exact){
+    $("#fEnd").value = dstr(r.end);
+    toast("기간 "+(parseInt(m,10)||0)+"개월로는 그 날짜가 안 나와 "+fmtDate(r.end)+"로 맞췄습니다");
+  }
+}
+
 function resetForm(){
   $("#editId").value=""; $("#fName").value=""; $("#fPhone").value="";
-  $("#fStart").value=todayStr(); $("#fMonths").value="3"; $("#fCount").value="20";
+  $("#fStart").value=todayStr(); $("#fMonths").value="1"; $("#fCount").value="20";
+  $("#fPlan").value=""; $("#fAmount").value="";
+  $("#fRecord").checked = true;
+  $("#recordField").classList.remove("hidden");
   setPlanType("period");
   $("#formTitle").textContent="신규 회원 등록"; $("#saveBtn").textContent="등록하기";
-  const hf=$("#holdField"); if(hf) hf.classList.add("hidden");   // 신규 등록 시엔 홀딩 숨김
+  const hf=$("#holdField"); if(hf) hf.classList.add("hidden");
 }
 function openForm(){ $("#formSheet").classList.remove("hidden"); }
 function closeForm(){ $("#formSheet").classList.add("hidden"); resetForm(); }
+
 async function saveMember(){
   const name=$("#fName").value.trim();
   const phone=$("#fPhone").value.trim();
-  const plan=$("#fPlan").value;
+  const planName=cleanPlan($("#fPlan").value);
   if(!name){ toast("이름을 입력하세요"); return; }
   if(last4(phone).length<4){ toast("전화번호를 정확히 입력하세요"); return; }
+  if(!planName){ toast("상품을 선택하세요"); return; }
+
   const id=$("#editId").value;
-  const base={ name, phone, plan, type:planType };
+  const old = id ? members.find(m=>m.id===id) : null;
+  const base={ name, phone, type:planType };
+  base.plan = withHold(planName, old ? holdOf(old) : null);
+
   if(planType==="period"){
     base.start=$("#fStart").value||todayStr();
     base.months=parseInt($("#fMonths").value||"1",10);
     base.total=null;
   } else {
     base.total=parseInt($("#fCount").value||"1",10);
-    base.used = id ? (members.find(m=>m.id===id)?.used||0) : 0;
+    base.used = old ? (old.used||0) : 0;
     base.start=""; base.months=null;
   }
+
+  const amount = parseInt(String($("#fAmount").value||"").replace(/\D/g,""),10) || 0;
+  const doRecord = $("#fRecord").checked && amount > 0;
+
   $("#saveBtn").disabled=true;
+  let r;
   if(id){
     base.id=id;
-    const r=await apiPost({action:"update", member:base});
-    if(r){ toast("수정되었습니다"); closeForm(); renderTable(); }
+    r=await apiPost({action:"update", member:base});
+    if(r){ toast("수정되었습니다"); }
   } else {
-    const r=await apiPost({action:"add", member:base});
-    if(r){ toast("등록되었습니다"); closeForm(); renderTable(); }
+    r=await apiPost({action:"add", member:base});
+    if(r){ toast("등록되었습니다"); }
   }
+  if(r && doRecord){
+    await recordSale({
+      date: todayStr(),
+      name: name, phone: phone, plan: planName,
+      type: planType,
+      months: planType==="period" ? base.months : "",
+      count:  planType==="count"  ? base.total  : "",
+      amount: amount,
+      kind: id ? "수정" : "신규"
+    });
+    toast((id?"수정":"등록")+" · 매출 "+won(amount)+" 기록");
+  }
+  if(r){ closeForm(); renderTable(); }
   $("#saveBtn").disabled=false;
 }
+
 function editMember(id){
   const m=members.find(x=>x.id===id); if(!m) return;
   $("#editId").value=m.id; $("#fName").value=m.name; $("#fPhone").value=m.phone;
-  setPlanType(m.type); $("#fPlan").value=m.plan;
-  if(m.type==="period"){ $("#fStart").value=m.start; $("#fMonths").value=m.months; }
-  else { $("#fCount").value=m.total; }
+  $("#fPlan").value = m.planName || cleanPlan(m.plan);
+  setPlanType(m.type==="count" ? "count" : "period");
+  selectPlan(m.planName || cleanPlan(m.plan), false);
+  if(m.type==="period"){
+    $("#fStart").value = dstr(parseDate(m.start)) || todayStr();
+    $("#fMonths").value = m.months || 1;
+    syncEndFromStart();
+  } else {
+    $("#fCount").value = m.total || 1;
+  }
+  $("#fAmount").value = "";
+  $("#fRecord").checked = false;     // 단순 수정은 기본적으로 매출 미기록
   $("#formTitle").textContent="회원 수정"; $("#saveBtn").textContent="수정 저장";
   renderHoldField(m);
   openForm();
 }
-/* ====== 홀딩 시작 / 해제 (회원 상세) ====== */
+
+/* ====== 홀딩 시작 / 해제 ====== */
 function renderHoldField(m){
   const f = $("#holdField");
   if(!f) return;
-  if(!m || !attendConfigured()){ f.classList.add("hidden"); return; }
+  if(!m){ f.classList.add("hidden"); return; }
   f.classList.remove("hidden");
 
   const st  = $("#holdState");
@@ -1007,11 +1215,11 @@ function renderHoldField(m){
 
   if(m.holding){
     st.innerHTML = '<b>홀딩 중</b> · '+(m.holdStart||"").replace(/-/g,".")+' 부터 <b>'+(m.holdingFor||1)+'일째</b>'
-                 + '<br>해제하면 홀딩한 일수만큼 만료일이 자동 연장됩니다.' + cum;
+                 + '<br>해제하면 홀딩한 일수(현재 '+holdElapsed(m)+'일)만큼 만료일이 자동 연장됩니다.' + cum;
     btn.textContent = "홀딩 해제 (기간 연장)";
     btn.className   = "hold-btn release";
   } else {
-    st.innerHTML = '홀딩 아님<br>홀딩 중에는 키오스크 출석이 기록되지 않습니다.' + cum;
+    st.innerHTML = '홀딩 아님<br>홀딩 중에는 만료일이 멈추고, 해제할 때 그만큼 연장됩니다.' + cum;
     btn.textContent = "홀딩 시작 (오늘부터)";
     btn.className   = "hold-btn";
   }
@@ -1021,23 +1229,37 @@ function renderHoldField(m){
 async function toggleHold(id){
   const m = members.find(x=>x.id===id); if(!m) return;
   const who = m.name || "이 회원";
-  if(m.holding){
-    if(!confirm(who+" 님의 홀딩을 해제할까요?\n홀딩한 일수만큼 만료일이 자동으로 연장됩니다.")) return;
-  } else {
-    if(!confirm(who+" 님을 오늘부터 홀딩할까요?\n홀딩 중에는 키오스크 출석이 기록되지 않습니다.")) return;
-  }
   const btn = $("#holdBtn");
-  btn.disabled = true;
-  const r = await holdCall(m.holding ? "hold_end" : "hold_start", m);
-  btn.disabled = false;
 
-  if(!r || !r.ok){ toast("홀딩 처리 실패: " + ((r && r.error) || "연결을 확인하세요")); return; }
-  toast(r.result === "hold_ended"
-    ? who + " 홀딩 해제 · " + (r.extendedDays || 0) + "일 연장"
-    : who + " 홀딩을 시작했습니다");
+  const base = { id:m.id, name:m.name, phone:m.phone, type:m.type };
+  if(m.type==="period"){ base.months = m.months; base.total = null; }
+  else { base.total = m.total; base.used = m.used||0; base.start=""; base.months=null; }
 
-  await fetchMembers();
-  renderHoldField(members.find(x=>x.id===id));
+  if(m.holding){
+    const days = holdElapsed(m);
+    if(!confirm(who+" 님의 홀딩을 해제할까요?\n홀딩한 "+days+"일만큼 만료일이 자동으로 연장됩니다.")) return;
+    if(m.type==="period"){
+      const ns = addDays(m.start, days);
+      base.start = ns ? dstr(ns) : m.start;
+    }
+    base.plan = withHold(m.planName, { holding:false, holdDays:(m.holdDays||0)+days });
+    btn.disabled = true;
+    const r = await apiPost({action:"update", member:base});
+    btn.disabled = false;
+    if(!r) return;
+    toast(who+" 홀딩 해제 · "+days+"일 연장");
+  } else {
+    if(!confirm(who+" 님을 오늘부터 홀딩할까요?\n홀딩 중에는 남은 기간이 줄어들지 않습니다.")) return;
+    if(m.type==="period") base.start = dstr(parseDate(m.start)) || m.start;
+    base.plan = withHold(m.planName, { holding:true, holdStart:todayStr(), holdDays:m.holdDays||0 });
+    btn.disabled = true;
+    const r = await apiPost({action:"update", member:base});
+    btn.disabled = false;
+    if(!r) return;
+    toast(who+" 홀딩을 시작했습니다");
+  }
+  const nm = members.find(x=>x.id===id);
+  if(nm) renderHoldField(nm);
   renderTable();
 }
 
@@ -1075,7 +1297,6 @@ function digitsOnly(v){ return String(v==null?"":v).replace(/\D/g,""); }
 function norm(v){ return String(v==null?"":v).replace(/\s/g,"").toLowerCase(); }
 function esc(v){ return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-/* 상태 구분: ok(유효) / exp(만료·소진) / none(정보 미입력) */
 function bucket(m){
   if(m.type==="period"){
     if(!m.start || !m.months || !addMonths(m.start,m.months)) return "none";
@@ -1089,7 +1310,6 @@ function bucket(m){
   if(st.kind==="unknown") return "none";
   return st.kind==="exp" ? "exp" : "ok";
 }
-/* 정렬용 잔여치 — 작을수록 임박 */
 function urgency(m){
   if(bucket(m)==="none") return 99999;
   const st=memberStatus(m);
@@ -1099,12 +1319,11 @@ function urgency(m){
 function matchQuery(m,q){
   if(!q) return true;
   const qd=digitsOnly(q);
-  /* 숫자만 입력했을 때만 전화번호 대조 (예: "10회권"이 전화번호에 걸리지 않도록) */
   if(qd && /^[0-9\s-]+$/.test(q) && digitsOnly(m.phone).indexOf(qd)!==-1) return true;
   const qn=norm(q);
   if(!qn) return false;
   if(norm(m.name).indexOf(qn)!==-1) return true;
-  if(norm(m.plan).indexOf(qn)!==-1) return true;
+  if(norm(m.planName||m.plan).indexOf(qn)!==-1) return true;
   if(/^[ㄱ-ㅎ]+$/.test(qn) && toCho(norm(m.name)).indexOf(qn)!==-1) return true;
   return false;
 }
@@ -1153,16 +1372,14 @@ function renderTable(){
     }
     const useBtn = m.type==="count" ? '<button title="1회 차감" onclick="useOne(\''+m.id+'\')">−1</button>' : "";
     const holdPill = m.holding ? '<span class="pill p-hold">홀딩중</span>' : "";
-    const holdBtn  = attendConfigured()
-      ? '<button title="'+(m.holding?"홀딩 해제":"홀딩")+'" onclick="editMember(\''+m.id+'\')">'+(m.holding?"▶":"⏸")+'</button>'
-      : "";
-    if(m.holding) sub = "홀딩 중" + (m.holdStart ? " ("+m.holdStart.replace(/-/g,".")+"~)" : "") + " · " + sub;
+    const holdBtn  = '<button title="'+(m.holding?"홀딩 해제":"홀딩 시작")+'" onclick="toggleHold(\''+m.id+'\')">'+(m.holding?"▶":"⏸")+'</button>';
+    if(m.holding) sub = "홀딩 중" + (m.holdStart ? " ("+m.holdStart.replace(/-/g,".")+"~, "+holdElapsed(m)+"일)" : "") + " · " + sub;
     cards+='<div class="mcard '+b+(m.holding?" holding":"")+'">'
       + '<div class="mc-top"><div><div class="mc-name">'+esc(m.name)+'</div>'
       + '<div class="mc-phone">'+esc(m.phone)+'</div></div>'
       + '<div class="mc-pills">'+holdPill+pill+'</div></div>'
       + '<div class="mc-mid"><span class="mc-left">'+left+'</span>'
-      + '<span class="mc-plan">'+esc(m.plan)+' · '+sub+'</span></div>'
+      + '<span class="mc-plan">'+esc(m.planName||cleanPlan(m.plan))+' · '+sub+'</span></div>'
       + '<div class="mc-act">'
       + '<button class="renew" onclick="openRenew(\''+m.id+'\')">＋ 연장 / 재등록</button>'
       + useBtn
@@ -1179,22 +1396,21 @@ function renderTable(){
 }
 
 /* ====== 연장 / 재등록 ====== */
-let renewId=null, renewVal=null;
+let renewId=null, renewPlan=null;
 
 function renewBase(m){
   const st=memberStatus(m);
-  if(st.kind!=="unknown" && st.end && st.daysLeft>0) return st.end;   // 아직 유효 → 만료일부터 이어서
-  const d=new Date(); d.setHours(0,0,0,0); return d;                   // 만료됨 → 오늘부터
+  if(st.kind!=="unknown" && st.end && st.daysLeft>0) return st.end;
+  return today0();
 }
-function renewPreview(m,v){
-  if(!v) return "";
+function renewPreview(m,def){
+  if(!def) return "";
   if(m.type==="count"){
-    const total=(Number(m.total)||0)+v, used=Number(m.used)||0;
+    const total=(Number(m.total)||0)+(def.count||0), used=Number(m.used)||0;
     return "연장 후 잔여 "+(total-used)+"회 (총 "+total+"회)";
   }
   const b=renewBase(m);
-  const startStr=b.getFullYear()+"-"+pad2(b.getMonth()+1)+"-"+pad2(b.getDate());
-  const end=addMonths(startStr,v);
+  const end=addMonths(dstr(b), def.months);
   return fmtDate(b)+" 부터 "+fmtDate(end)+" 까지";
 }
 function openRenew(id){
@@ -1203,48 +1419,217 @@ function openRenew(id){
     toast("먼저 회원권 종류를 지정해 주세요");
     closeRenew(); editMember(id); return;
   }
-  renewId=id; renewVal=null;
+  renewId=id; renewPlan=null;
   const isCount=(m.type==="count"), st=memberStatus(m), b=bucket(m);
   $("#rnName").textContent=(m.name||"회원")+" 님";
   let cur;
   if(b==="none")      cur="회원권 정보 없음 — 오늘부터 새로 시작합니다";
-  else if(isCount)    cur="현재 "+st.countLeft+"회 남음 · "+(m.plan||"");
-  else                cur=(st.kind==="exp" ? (-st.daysLeft)+"일 전 만료" : st.daysLeft+"일 남음")+" · "+(m.plan||"");
+  else if(isCount)    cur="현재 "+st.countLeft+"회 남음 · "+(m.planName||"");
+  else                cur=(st.kind==="exp" ? (-st.daysLeft)+"일 전 만료" : st.daysLeft+"일 남음")+" · "+(m.planName||"");
   $("#rnSub").textContent=cur;
 
-  const opts = isCount ? [10,20,30] : [1,3,6];
-  const unit = isCount ? "회" : "개월";
-  $("#rnChips").innerHTML=opts.map(v=>'<button data-v="'+v+'">'+v+unit+'</button>').join("");
-  $("#rnChips").querySelectorAll("button").forEach(btn=>{
-    btn.onclick=()=>{
-      renewVal=Number(btn.dataset.v);
+  const defs = isCount ? PLAN_DEFS.count : PLAN_DEFS.period;
+  $("#rnChips").innerHTML = defs.map(function(p){
+    return '<button data-plan="'+esc(p.name)+'"><b>'+esc(p.name)+'</b><i>'+(p.price==null?"금액 입력":won(p.price))+'</i></button>';
+  }).join("");
+  $("#rnChips").querySelectorAll("button").forEach(function(btn){
+    btn.onclick=function(){
+      renewPlan = defs.find(p=>p.name===btn.dataset.plan);
       $("#rnChips").querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===btn));
-      $("#rnNote").textContent=renewPreview(m,renewVal);
+      $("#rnNote").textContent=renewPreview(m,renewPlan);
+      if(renewPlan && renewPlan.price!=null) $("#rnAmount").value = renewPlan.price;
     };
   });
-  $("#rnNote").textContent = isCount ? "추가할 횟수를 선택하세요" : "연장할 기간을 선택하세요";
+  $("#rnAmount").value = "";
+  $("#rnRecord").checked = true;
+  $("#rnNote").textContent = isCount ? "추가할 상품을 선택하세요" : "연장할 상품을 선택하세요";
   $("#renewSheet").classList.remove("hidden");
 }
-function closeRenew(){ $("#renewSheet").classList.add("hidden"); renewId=null; renewVal=null; }
+function closeRenew(){ $("#renewSheet").classList.add("hidden"); renewId=null; renewPlan=null; }
 
 async function saveRenew(){
   const m=members.find(x=>x.id===renewId); if(!m) return;
-  if(!renewVal){ toast("연장할 값을 먼저 선택하세요"); return; }
-  const base={ id:m.id, name:m.name, phone:m.phone, plan:m.plan, type:m.type };
+  if(!renewPlan){ toast("상품을 먼저 선택하세요"); return; }
+  const base={ id:m.id, name:m.name, phone:m.phone, type:m.type };
+  base.plan = withHold(renewPlan.name, holdOf(m));
   if(m.type==="count"){
-    base.total=(Number(m.total)||0)+renewVal;
+    base.total=(Number(m.total)||0)+(renewPlan.count||0);
     base.used=Number(m.used)||0;
     base.start=""; base.months=null;
   } else {
     const b=renewBase(m);
-    base.start=b.getFullYear()+"-"+pad2(b.getMonth()+1)+"-"+pad2(b.getDate());
-    base.months=renewVal;
+    base.start=dstr(b);
+    base.months=renewPlan.months;
     base.total=null;
   }
+  const amount = parseInt(String($("#rnAmount").value||"").replace(/\D/g,""),10) || 0;
+  const doRecord = $("#rnRecord").checked && amount > 0;
+
   $("#rnSave").disabled=true;
   const r=await apiPost({action:"update", member:base});
+  if(r && doRecord){
+    await recordSale({
+      date: todayStr(),
+      name: m.name, phone: m.phone, plan: renewPlan.name,
+      type: m.type,
+      months: m.type==="period" ? renewPlan.months : "",
+      count:  m.type==="count"  ? renewPlan.count  : "",
+      amount: amount,
+      kind: "연장"
+    });
+  }
   $("#rnSave").disabled=false;
-  if(r){ closeRenew(); renderTable(); toast((m.name||"회원")+" 연장 완료"); }
+  if(r){
+    closeRenew(); renderTable();
+    toast((m.name||"회원")+" 연장 완료"+(doRecord?" · 매출 "+won(amount):""));
+  }
+}
+
+/* ====== 매출 (엑셀 자동 저장 + 월별 집계) ====== */
+const SALES_KEY = "grx_sales_v1";
+let sales = [];
+
+function loadLocalSales(){
+  try{ sales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]") || []; }
+  catch(e){ sales = []; }
+}
+function saveLocalSales(){
+  try{ localStorage.setItem(SALES_KEY, JSON.stringify(sales)); }catch(e){}
+}
+function ymOf(dateStr){ const d=parseDate(dateStr); return d ? d.getFullYear()+"-"+pad2(d.getMonth()+1) : ""; }
+
+async function recordSale(sale){
+  sale.id = sale.id || ("s" + Date.now() + Math.random().toString(36).slice(2,6));
+  sale.ym = ymOf(sale.date);
+  sale.synced = false;
+  sales.push(sale);
+  saveLocalSales();
+  if(apiConfigured()){
+    try{
+      const r = await apiCall("POST", {action:"sale", sale:sale});
+      sale.synced = !!(r && r.ok);
+      if(!sale.synced) console.warn("[GRX] 매출 시트 저장 실패:", r);
+    }catch(e){
+      console.warn("[GRX] 매출 시트 저장 실패:", e.message);
+    }
+    saveLocalSales();
+  }
+}
+
+async function fetchSales(){
+  if(!apiConfigured()) return;
+  try{
+    const res = await fetch(SHEET_API + "?action=sales", {redirect:"follow", cache:"no-store"});
+    const data = JSON.parse(await res.text());
+    if(data && data.ok && Array.isArray(data.sales)){
+      const map = {};
+      sales.forEach(s=>{ if(s && s.id) map[s.id] = s; });
+      data.sales.forEach(function(s){
+        if(!s) return;
+        const id = s.id || ("srv"+(s.date||"")+(s.name||"")+(s.amount||""));
+        map[id] = Object.assign({}, map[id]||{}, s, {id:id, ym:ymOf(s.date), synced:true});
+      });
+      sales = Object.keys(map).map(k=>map[k]);
+      saveLocalSales();
+    }
+  }catch(e){
+    console.warn("[GRX] 매출 불러오기 실패(로컬 기록만 사용):", e.message);
+  }
+}
+
+function salesMonths(){
+  const set = {};
+  sales.forEach(s=>{ const y=s.ym||ymOf(s.date); if(y) set[y]=1; });
+  const cur = ymOf(todayStr()); set[cur]=1;
+  return Object.keys(set).sort().reverse();
+}
+function salesOf(ym){
+  return sales.filter(s=>(s.ym||ymOf(s.date))===ym)
+              .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+}
+function sumAmount(list){ return list.reduce((t,s)=>t+(Number(s.amount)||0),0); }
+
+function openSales(){
+  const sel = $("#salesMonth");
+  const months = salesMonths();
+  const keep = sel.value;
+  sel.innerHTML = months.map(y=>'<option value="'+y+'">'+y.replace("-",". ")+'월</option>').join("");
+  sel.value = months.indexOf(keep)>=0 ? keep : (months[0]||"");
+  renderSales();
+  $("#salesSheet").classList.remove("hidden");
+}
+function closeSales(){ $("#salesSheet").classList.add("hidden"); }
+
+function renderSales(){
+  const ym = $("#salesMonth").value;
+  const list = salesOf(ym);
+  const total = sumAmount(list);
+
+  $("#salesTot").innerHTML =
+      '<div class="st-label">'+esc(ym.replace("-",". "))+'월 매출</div>'
+    + '<div class="st-amt">'+won(total)+'</div>'
+    + '<div class="st-sub">'+list.length+'건 · 전체 누적 '+won(sumAmount(sales))+'</div>';
+
+  const byPlan = {};
+  list.forEach(function(s){
+    const k = s.plan || "기타";
+    if(!byPlan[k]) byPlan[k] = {n:0, amt:0};
+    byPlan[k].n++; byPlan[k].amt += Number(s.amount)||0;
+  });
+  const planRows = Object.keys(byPlan).sort((a,b)=>byPlan[b].amt-byPlan[a].amt).map(function(k){
+    return '<div class="sl-row"><span>'+esc(k)+' <em>'+byPlan[k].n+'건</em></span><b>'+won(byPlan[k].amt)+'</b></div>';
+  }).join("");
+  $("#salesSummary").innerHTML = planRows ? '<div class="sl-box"><h4>상품별</h4>'+planRows+'</div>' : "";
+
+  const months = salesMonths().slice(0,6).map(function(y){
+    const t = sumAmount(salesOf(y));
+    return '<div class="sl-row'+(y===ym?' on':'')+'"><span>'+esc(y.replace("-",". "))+'월</span><b>'+won(t)+'</b></div>';
+  }).join("");
+  $("#salesMonths").innerHTML = '<div class="sl-box"><h4>월별 매출</h4>'+months+'</div>';
+
+  if(list.length===0){
+    $("#salesList").innerHTML = '<div class="empty">이 달에 기록된 매출이 없습니다</div>';
+    return;
+  }
+  $("#salesList").innerHTML = '<div class="sl-box"><h4>내역</h4>' + list.map(function(s){
+    return '<div class="sl-item">'
+      + '<div><b>'+esc(s.name||"")+'</b> <span>'+esc(s.plan||"")+' · '+esc(s.kind||"")+'</span>'
+      + '<span class="sl-d">'+esc(s.date||"")+(s.synced?'':' · <i>시트 미동기화</i>')+'</span></div>'
+      + '<div class="sl-r"><b>'+won(s.amount)+'</b>'
+      + '<button onclick="delSale(\''+esc(s.id)+'\')" title="삭제">🗑</button></div>'
+      + '</div>';
+  }).join("") + '</div>';
+}
+
+async function delSale(id){
+  const s = sales.find(x=>x.id===id);
+  if(!s) return;
+  if(!confirm((s.name||"")+" · "+won(s.amount)+" 매출 기록을 삭제할까요?")) return;
+  sales = sales.filter(x=>x.id!==id);
+  saveLocalSales();
+  renderSales();
+  if(apiConfigured()){
+    try{ await apiCall("POST", {action:"sale_delete", id:id}); }catch(e){}
+  }
+  toast("매출 기록을 삭제했습니다");
+}
+
+/* CSV(엑셀) 내려받기 */
+function downloadCSV(list, filename){
+  if(!list.length){ toast("내려받을 기록이 없습니다"); return; }
+  const head = ["날짜","이름","전화번호","상품","구분","개월","횟수","금액"];
+  const rows = list.map(s=>[
+    s.date||"", s.name||"", s.phone||"", s.plan||"", s.kind||"",
+    s.months||"", s.count||"", Number(s.amount)||0
+  ]);
+  const esc2 = v => '"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const body = [head].concat(rows).map(r=>r.map(esc2).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF"+body], {type:"text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
 /* ====== PHONE FORMAT ====== */
@@ -1260,6 +1645,8 @@ async function init(){
   buildKeys($("#keys"), kDigit, kClear, kBack);
   buildKeys($("#gateKeys"), gDigit, gClear, gBack);
   kRender(); gRender();
+
+  loadLocalSales();
 
   $("#submitBtn").onclick=kSubmit;
   $("#resultView").onclick=closeResult;
@@ -1293,10 +1680,27 @@ async function init(){
   $("#newMemberBtn").onclick=()=>{ resetForm(); openForm(); $("#fName").focus(); };
   $("#formClose").onclick=closeForm;
   $("#formSheet").onclick=e=>{ if(e.target.id==="formSheet") closeForm(); };
-  $("#refreshBtn").onclick=async()=>{ setSync("sync"); await fetchMembers(); renderTable(); toast("최신 명단으로 갱신했습니다"); };
+  $("#refreshBtn").onclick=async()=>{ setSync("sync"); await fetchMembers(); await fetchSales(); renderTable(); toast("최신 명단으로 갱신했습니다"); };
   document.querySelectorAll("#planTypeSeg button").forEach(b=> b.onclick=()=>setPlanType(b.dataset.type));
-  $("#fPlan").onchange=syncPlanToFields;
   $("#fPhone").oninput=e=>{ e.target.value=formatPhone(e.target.value); };
+
+  /* 날짜 자동 계산 */
+  $("#fStart").onchange = syncEndFromStart;
+  $("#fMonths").oninput = syncEndFromStart;
+  $("#fEnd").onchange   = syncStartFromEnd;
+
+  /* 매출 화면 */
+  $("#salesBtn").onclick = openSales;
+  $("#salesClose").onclick = closeSales;
+  $("#salesSheet").onclick = e=>{ if(e.target.id==="salesSheet") closeSales(); };
+  $("#salesMonth").onchange = renderSales;
+  $("#salesCsvMonth").onclick = ()=>{
+    const ym=$("#salesMonth").value;
+    downloadCSV(salesOf(ym), "GRX_매출_"+ym+".csv");
+  };
+  $("#salesCsvAll").onclick = ()=>{
+    downloadCSV(sales.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))), "GRX_매출_전체.csv");
+  };
 
   document.addEventListener("keydown", e=>{
     if(!$("#kioskView").classList.contains("hidden") && $("#resultView").classList.contains("hidden") && $("#gateView").classList.contains("hidden")){
@@ -1312,16 +1716,14 @@ async function init(){
   let taps=0,tt;
   $("#logoImg").onclick=()=>{ taps++; clearTimeout(tt); tt=setTimeout(()=>taps=0,600); if(taps>=3){taps=0;openGate();} };
 
-  // 시트 연동 시작
   $("#loading").classList.add("hidden");
-  // 관리자 전용 페이지: 키오스크 숨기고 비밀번호 게이트부터 표시
   $("#kioskView").classList.add("hidden");
   openGate();
   if(apiConfigured()){
     setSync("sync");
-    await fetchMembers();        // 첫 로딩
+    await fetchMembers();
+    await fetchSales();
     renderTable();
-    // 주기적 갱신: 키오스크 화면이고 결과창이 닫혀 있을 때만 갱신
     setInterval(async()=>{
       if($("#resultView").classList.contains("hidden")){
         await fetchMembers();
