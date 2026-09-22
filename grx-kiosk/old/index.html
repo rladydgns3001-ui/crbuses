@@ -44,7 +44,7 @@
   .k-left{display:flex;flex-direction:column;align-items:flex-start;gap:18px;padding-left:8px;}
   .k-left img{width:340px;max-width:70vw;height:auto;}
   .k-tag{font-size:15px;letter-spacing:3px;color:var(--lime);font-weight:600;}
-  .k-title{font-size:34px;font-weight:800;line-height:1.15;margin:4px 0 0;}
+  .k-title{font-size:46px;font-weight:900;letter-spacing:-1px;line-height:1.15;}
   .k-sub{font-size:17px;color:var(--muted);line-height:1.5;}
   .k-hint{font-size:14px;color:var(--muted2);}
 
@@ -213,19 +213,42 @@
   .att-badge.warn{background:rgba(239,176,42,.16);color:var(--amber);}
   .att-plan{font-size:14px;color:var(--muted);margin:6px 0 18px;}
 
-  .cal{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:15px 13px 12px;}
+  .cal{background:var(--panel2);border:1px solid var(--line);border-radius:20px;
+       padding:15px 11px 12px;--stampc:var(--lime);}
   .cal-title{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:11px;letter-spacing:.5px;}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
   .cal-dow{font-size:11px;font-weight:700;color:var(--muted2);padding-bottom:3px;}
   .cal-dow.sun{color:#c96a6a;}
   .cal-dow.sat{color:#6a8fc9;}
-  .cal-cell{height:36px;display:flex;align-items:center;justify-content:center;
-            font-size:14px;color:var(--muted2);border-radius:11px;}
-  .cal-cell.on{background:var(--lime);color:#0b0b0b;font-weight:800;
-               box-shadow:0 0 10px rgba(155,209,58,.35);}
-  .cal-cell.today{box-shadow:inset 0 0 0 2px var(--lime);color:var(--lime);font-weight:800;}
-  .cal-cell.on.today{box-shadow:inset 0 0 0 2px var(--white),0 0 10px rgba(155,209,58,.45);color:#0b0b0b;}
+  .cal-cell{height:52px;display:flex;align-items:center;justify-content:center;
+    font-size:14px;color:var(--muted2);border-radius:12px;position:relative;}
+  .cal-cell.today{color:var(--lime);font-weight:800;}
+  .cal-cell.today:not(.on){box-shadow:inset 0 0 0 2px rgba(155,209,58,.28);}
   .cal-cell.empty{visibility:hidden;}
+
+  /* 인감 도장 */
+  .ink{width:48px;height:48px;display:block;transform:rotate(var(--rot,0deg));
+       filter:drop-shadow(0 0 7px rgba(155,209,58,.30));}
+  .ink .txt,.ink .num,.ink .star{fill:var(--stampc);}
+  .ink .ring{fill:none;stroke:var(--stampc);}
+  .cal-cell.today .ink{filter:drop-shadow(0 0 11px rgba(155,209,58,.65));}
+
+  @keyframes stampIn{
+    0%   {transform:scale(2.8) rotate(calc(var(--rot,0deg) - 24deg));opacity:0;}
+    55%  {transform:scale(.85) rotate(calc(var(--rot,0deg) + 7deg));opacity:1;}
+    78%  {transform:scale(1.12) rotate(calc(var(--rot,0deg) - 3deg));}
+    100% {transform:scale(1) rotate(var(--rot,0deg));}
+  }
+  @keyframes stampRing{
+    0%{box-shadow:0 0 0 0 currentColor;opacity:.5;}
+    100%{box-shadow:0 0 0 26px currentColor;opacity:0;}
+  }
+  .cal-cell.stamp .ink{animation:stampIn .55s cubic-bezier(.2,1.5,.4,1) both;}
+  .cal-cell.stamp::after{content:"";position:absolute;width:46px;height:46px;border-radius:50%;
+    color:var(--stampc);animation:stampRing .9s ease-out .3s both;}
+  @media (prefers-reduced-motion: reduce){
+    .cal-cell.stamp .ink,.cal-cell.stamp::after{animation:none;}
+  }
 
   .att-streak{margin-top:17px;font-size:16px;font-weight:700;line-height:1.5;}
   .att-streak b{color:var(--lime);font-size:21px;}
@@ -235,11 +258,42 @@
   .att-box b{font-size:22px;font-weight:800;}
   .att-close{margin-top:18px;font-size:13px;color:var(--muted2);}
 
+  /* ===== 출석왕 ===== */
+  .king-btn{
+    width:100%;height:56px;margin-top:12px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--muted);border-radius:16px;
+    font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;transition:.15s;
+  }
+  .king-btn:active{background:#1d1d1d;color:var(--lime);border-color:var(--lime);}
+
+  .king-card{max-width:520px;padding:28px 24px 24px;}
+  .king-h{font-size:26px;font-weight:900;margin-bottom:2px;}
+  .king-sub{font-size:13px;color:var(--muted2);margin-bottom:18px;}
+  .king-list{display:flex;flex-direction:column;gap:7px;}
+  .king-row{display:flex;align-items:center;gap:12px;padding:11px 14px;
+    background:var(--panel2);border:1px solid var(--line);border-radius:14px;}
+  .king-row .rk{flex:0 0 38px;height:38px;border-radius:12px;display:flex;align-items:center;
+    justify-content:center;font-weight:900;font-size:16px;background:#1d1d1d;color:var(--muted);}
+  .king-row.top1 .rk{background:#d4af37;color:#0b0b0b;}
+  .king-row.top2 .rk{background:#c0c4cc;color:#0b0b0b;}
+  .king-row.top3 .rk{background:#cd7f32;color:#0b0b0b;}
+  .king-row.top1,.king-row.top2,.king-row.top3{border-color:rgba(155,209,58,.25);}
+  .king-row .nm{flex:1;text-align:left;font-size:17px;font-weight:700;}
+  .king-row .ct{font-size:17px;font-weight:900;color:var(--lime);}
+  .king-row .ct span{font-size:13px;color:var(--muted2);font-weight:700;margin-left:2px;}
+  .king-empty{color:var(--muted2);font-size:15px;padding:26px 0;}
+  @media(max-width:680px){
+    .king-card{padding:22px 16px 18px;}
+    .king-h{font-size:22px;}
+    .king-row{padding:9px 11px;}
+    .king-row .nm{font-size:15px;}
+  }
+
   /* ===== TABLET PORTRAIT / smaller landscape ===== */
   @media(max-width:1000px){
     .kiosk-grid{gap:32px;}
     .k-left img{width:280px;}
-    .k-title{font-size:30px;}
+    .k-title{font-size:38px;}
   }
 
   /* ===== PHONE (portrait) ===== */
@@ -248,7 +302,7 @@
     .kiosk-grid{grid-template-columns:1fr;gap:22px;max-width:440px;margin:0 auto;}
     .k-left{align-items:center;text-align:center;padding-left:0;gap:10px;margin-top:8px;}
     .k-left img{width:200px;}
-    .k-title{font-size:26px;}
+    .k-title{font-size:32px;}
     .k-sub{font-size:15px;}
     .k-hint{font-size:13px;}
     .keypad-wrap{padding:20px;border-radius:24px;max-width:440px;}
@@ -267,7 +321,10 @@
     /* 출석 화면 */
     .att-card{padding:24px 18px 20px;}
     .att-name{font-size:23px;}
-    .cal-cell{height:32px;font-size:13px;border-radius:9px;}
+    .cal{padding:13px 7px 10px;}
+    .cal-cell{height:44px;font-size:13px;}
+    .ink{width:40px;height:40px;}
+    .cal-cell.stamp::after{width:38px;height:38px;}
     .att-streak{font-size:15px;}
     .att-streak b{font-size:19px;}
     .att-box b{font-size:20px;}
@@ -323,6 +380,10 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <path id="arcTop" d="M 18,50 A 32,32 0 0 1 82,50"></path>
+  <path id="arcBot" d="M 82,50 A 32,32 0 0 1 18,50"></path>
+</defs></svg>
 <div id="app">
   <!-- KIOSK -->
   <div class="kiosk" id="kioskView">
@@ -337,6 +398,7 @@
         <div class="display" id="display"></div>
         <div class="keys" id="keys"></div>
         <button class="submit" id="submitBtn" disabled>출석하기</button>
+        <button class="king-btn" id="kingBtn">🏆 이번 달 출석왕</button>
       </div>
     </div>
   </div>
@@ -428,11 +490,8 @@
 const SHEET_API = "https://script.google.com/macros/s/AKfycbwZUaEkkvY1ooArcHRRRG_LwQEjbhPam4069hDI35KsXQQU1skwqUwAVbpFHLI_hCVxWA/exec";
 // ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
-// ▼▼▼ 출석·홀딩 확장 API 주소 ▼▼▼
-// appsscript_추가코드.gs 를 새 Apps Script 프로젝트로 배포한 뒤 그 웹앱 URL(.../exec)을 넣으세요.
-// 비워두면 출석 기록 없이 기존 "회원 정보" 카드만 표시됩니다(안전 폴백).
+// 사용하지 않음 (SHEET_API 로 통합)
 const ATTEND_API = "";
-// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
 const ADMIN_PIN = "0000";        // 관리자 비밀번호 (원하면 바꾸세요)
 const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
@@ -493,22 +552,21 @@ async function apiPost(payload){
 
 /* ====== 출석·홀딩 API ====== */
 function attendConfigured(){
-  return ATTEND_API && ATTEND_API.indexOf("script.google.com") !== -1;
+  return apiConfigured();
 }
 /* 출석 API 호출. 실패하면 null 을 돌려주고 호출한 쪽이 기존 화면으로 폴백한다 */
 async function attendCall(payload){
-  if(!attendConfigured()) return null;
   try{
-    const res = await fetch(ATTEND_API, {
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},   // preflight 회피
-      body: JSON.stringify(payload),
-      redirect:"follow",
-      cache:"no-store"
+    const res = await fetch(SHEET_API, {
+      method: "POST",
+      redirect: "follow",
+      cache: "no-store",
+      headers: {"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
     });
-    const raw = await res.text();
-    const data = JSON.parse(raw);
-    return (data && data.ok) ? data : null;
+    const data = JSON.parse(await res.text());
+    if(!data || data.ok === false) return null;
+    return data;
   }catch(e){
     console.warn("[GRX] 출석 API 실패:", e && e.message);
     return null;
@@ -864,8 +922,23 @@ async function doAttend(m){
   showAttendResult(data, m);
 }
 
+/* 인감 도장 SVG — 이중 링 + 둘레 글자 + 가운데 날짜 */
+function stampSVG(day){
+  return '<svg class="ink" viewBox="0 0 100 100">'
+    + '<circle class="ring" cx="50" cy="50" r="47" stroke-width="5"/>'
+    + '<circle class="ring" cx="50" cy="50" r="38.5" stroke-width="2"/>'
+    + '<text class="txt" font-size="8.5" font-weight="800" letter-spacing="1.3">'
+    +   '<textPath href="#arcTop" startOffset="50%" text-anchor="middle">GRX HYROX</textPath></text>'
+    + '<text class="txt" font-size="8.5" font-weight="800" letter-spacing="1.3">'
+    +   '<textPath href="#arcBot" startOffset="50%" text-anchor="middle">출석체크</textPath></text>'
+    + '<circle class="star" cx="12.5" cy="50" r="2"/>'
+    + '<circle class="star" cx="87.5" cy="50" r="2"/>'
+    + '<text class="num" x="50" y="62" text-anchor="middle" font-size="33" font-weight="900">'+day+'</text>'
+    + '</svg>';
+}
+
 /* 이번 달 달력 (출석일 = 도장, 오늘 = 테두리 강조) */
-function buildCalendar(year, month, days, todayDay){
+function buildCalendar(year, month, days, todayDay, stampDay){
   const startDow = new Date(year, month-1, 1).getDay();   // 0=일
   const dim      = new Date(year, month, 0).getDate();    // 이번 달 마지막 날
   const on = {};
@@ -879,9 +952,13 @@ function buildCalendar(year, month, days, todayDay){
   for(let i=0;i<startDow;i++) h += '<div class="cal-cell empty"></div>';
   for(let d=1;d<=dim;d++){
     let cls = "cal-cell";
-    if(on[d])          cls += " on";
-    if(d===todayDay)   cls += " today";
-    h += '<div class="'+cls+'">'+d+'</div>';
+    if(on[d])        cls += " on";
+    if(d===todayDay) cls += " today";
+    if(stampDay && d===stampDay) cls += " stamp";
+    const rot = ((d*37)%15)-7;                    // 날짜마다 -7~7도
+    h += on[d]
+      ? '<div class="'+cls+'" style="--rot:'+rot+'deg">'+stampSVG(d)+'</div>'
+      : '<div class="'+cls+'">'+d+'</div>';
   }
   return h + '</div></div>';
 }
@@ -915,7 +992,8 @@ function showAttendResult(d, m){
       '<div class="card att-card">'
     +   '<div class="att-head"><div class="att-name">'+esc(d.name||m.name||"")+' 님</div>'+badge+'</div>'
     +   '<div class="att-plan">'+sub+'</div>'
-    +   buildCalendar(d.year, d.month, d.monthDays, todayDay)
+    +   buildCalendar(d.year, d.month, d.monthDays, todayDay,
+                        d.result === "attended" ? todayDay : null)
     +   '<div class="att-streak">이번 달 <b>'+(d.monthCount||0)+'</b>회차'+streak+'</div>'
     +   '<div class="att-2">'
     +     '<div class="att-box"><span>함께한 지</span><b>'+(d.togetherDays||1)+'일째</b></div>'
@@ -927,7 +1005,7 @@ function showAttendResult(d, m){
   view.classList.remove("hidden");
   resultShownAt = Date.now();
   clearTimeout(resultTimer);
-  resultTimer = setTimeout(closeResult, 3000);   // 3초 후 자동 복귀
+  resultTimer = setTimeout(closeResult, 5000);   // 5초 후 자동 복귀
 }
 
 /* 홀딩 중 안내 — 출석은 기록하지 않는다 */
@@ -950,6 +1028,52 @@ function showHolding(d, m){
   resultShownAt = Date.now();
   clearTimeout(resultTimer);
   resultTimer = setTimeout(closeResult, 4000);
+}
+
+/* ====== 출석왕 ====== */
+async function showKing(){
+  const view = $("#resultView");
+  view.innerHTML = '<div class="card"><div class="r-big" style="font-size:26px;color:var(--muted)">불러오는 중…</div></div>';
+  view.classList.remove("hidden");
+  resultShownAt = Date.now();
+  clearTimeout(resultTimer);
+
+  let data = null;
+  try{
+    const res = await fetch(SHEET_API + "?action=ranking", {redirect:"follow", cache:"no-store"});
+    data = JSON.parse(await res.text());
+  }catch(e){ data = null; }
+
+  if(!data || !data.ok){
+    view.innerHTML = '<div class="card">'
+      + '<div class="r-big" style="font-size:26px;color:var(--amber)">잠시 후 다시 시도해 주세요</div>'
+      + '<div class="r-close">화면을 누르면 닫힙니다</div></div>';
+    resultTimer = setTimeout(closeResult, 5000);
+    return;
+  }
+
+  const ymArr = String(data.ym || "").split("-");
+  const title = (ymArr[1] ? Number(ymArr[1]) : (new Date().getMonth()+1)) + "월 출석왕";
+  const rows = (data.top || []).map(function(r){
+    const cls = r.rank<=3 ? " top"+r.rank : "";
+    const medal = r.rank===1 ? "🥇" : r.rank===2 ? "🥈" : r.rank===3 ? "🥉" : r.rank;
+    return '<div class="king-row'+cls+'">'
+         +   '<div class="rk">'+medal+'</div>'
+         +   '<div class="nm">'+esc(r.name)+'</div>'
+         +   '<div class="ct">'+r.count+'<span>회</span></div>'
+         + '</div>';
+  }).join("");
+
+  view.innerHTML =
+      '<div class="card king-card">'
+    +   '<div class="king-h">🏆 '+title+'</div>'
+    +   '<div class="king-sub">이번 달 출석 횟수 상위 10명 · '+esc(data.updated||"")+' 기준</div>'
+    +   (rows ? '<div class="king-list">'+rows+'</div>'
+             : '<div class="king-empty">아직 이번 달 출석 기록이 없습니다</div>')
+    +   '<div class="r-close" style="margin-top:18px;">화면을 누르면 닫힙니다</div>'
+    + '</div>';
+
+  resultTimer = setTimeout(closeResult, 15000);
 }
 
 /* ====== ADMIN GATE ====== */
@@ -1105,6 +1229,7 @@ async function init(){
 
   $("#submitBtn").onclick=kSubmit;
   if(window.PointerEvent){ $("#submitBtn").addEventListener("pointerdown", function(e){ e.preventDefault(); kSubmit(); }); }
+  $("#kingBtn").onclick = showKing;
   $("#resultView").onclick=function(){ if(Date.now()-resultShownAt>400) closeResult(); };
   $("#gearBtn").onclick=openGate;
   $("#gateCancel").onclick=closeGate;
