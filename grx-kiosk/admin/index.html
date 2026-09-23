@@ -648,15 +648,15 @@
 
 <script>
 /* ====== CONFIG ====== */
-// ▼▼▼ 여기에 Apps Script 웹앱 배포 URL을 붙여넣으세요 ▼▼▼
-const SHEET_API = "https://script.google.com/macros/s/AKfycbwZUaEkkvY1ooArcHRRRG_LwQEjbhPam4069hDI35KsXQQU1skwqUwAVbpFHLI_hCVxWA/exec";
-// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
+// ▼▼▼ 회원 API 서버 주소 (자체 서버) ▼▼▼
+const SHEET_API = "https://grx.crbuses.com/exec?k=b669a13a4caae51b4f9d4d4998036980170400545a57815f";
+// ▲▲▲ 기존 Apps Script 와 API 형식 동일 ▲▲▲
 
 // 출석 확장 API (선택). 홀딩 기능은 이 값이 없어도 동작합니다.
 const ATTEND_API = "";
 
 const ADMIN_PIN = "8290";        // 관리자 비밀번호 (원하면 바꾸세요)
-const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
+const REFRESH_MS = 300000;       // 주기적 갱신 주기 (밀리초). 300000 = 5분
 
 /* ====== 상품 & 가격표 ======
    여기 숫자만 고치면 화면·매출이 전부 같이 바뀝니다.               */
@@ -694,7 +694,7 @@ const BUILD_ID = "grx-2026-09-12-sales";
 console.log("%c[GRX] BUILD_ID = " + BUILD_ID, "background:#9bd13a;color:#000;padding:2px 6px;font-weight:700");
 
 function apiConfigured(){
-  return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("script.google.com") !== -1;
+  return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("http") === 0;
 }
 
 async function apiCall(method, payload){
@@ -719,13 +719,32 @@ async function apiCall(method, payload){
   return data;
 }
 
-/* 시트에서 전체 명단을 받아와 캐시 갱신 */
-async function fetchMembers(){
+/* ===== 명단 로컬 캐시 ===== */
+const MEM_CACHE_KEY = "grx_members_cache_v1";
+
+function saveMemberCache(list){
+  try{
+    localStorage.setItem(MEM_CACHE_KEY, JSON.stringify({t:Date.now(), m:list}));
+  }catch(e){}
+}
+function loadMemberCache(){
+  try{
+    const raw = localStorage.getItem(MEM_CACHE_KEY);
+    if(!raw) return null;
+    const o = JSON.parse(raw);
+    if(!o || !Array.isArray(o.m)) return null;
+    return o;
+  }catch(e){ return null; }
+}
+
+/* 시트에서 전체 명단을 받아와 캐시 갱신 (실제 본문) */
+async function _fetchMembersOnce(retried){
   if(!apiConfigured()) return false;
   try{
     const data = await apiCall("GET");
     if(data.ok && Array.isArray(data.members)){
       members = data.members;
+      saveMemberCache(members);
       applyHolds();                // 홀딩 정보를 회원 데이터에 반영
       lastSync = Date.now();
       setSync("ok");
@@ -734,9 +753,25 @@ async function fetchMembers(){
     toast("시트 응답 오류: " + (data.error || "형식이 다릅니다"));
     setSync("err"); return false;
   }catch(e){
-    toast("불러오기 실패: " + e.message.slice(0,60));
-    setSync("err"); return false;
+    // 일시적인 지연일 때가 많으므로 2초 뒤 한 번만 조용히 재시도
+    if(!retried){
+      await new Promise(function(r){ setTimeout(r, 2000); });
+      if(await _fetchMembersOnce(true)) return true;
+    }
+    // 캐시가 있으면 오프라인 표시만 하고 화면은 유지
+    setSync(members.length ? "off" : "err");
+    toast("불러오기 실패: " + String((e && e.message) || e).slice(0,60));
+    return false;
   }
+}
+
+/* 중복 호출 가드 — 갱신이 겹쳐도 요청은 한 번만 나간다 */
+let _fetching = null;
+async function fetchMembers(){
+  if(_fetching) return _fetching;        // 이미 진행 중이면 그걸 기다린다
+  _fetching = _fetchMembersOnce(false);
+  try{ return await _fetching; }
+  finally{ _fetching = null; }
 }
 
 /* 시트에 변경 요청 (add/update/delete/use). 성공 시 캐시도 재동기화 */
@@ -749,7 +784,18 @@ async function apiPost(payload){
       toast("시트 처리 실패: "+(data.error||""));
       setSync("err"); return null;
     }
-    await fetchMembers();
+    // 서버가 돌려준 회원만 로컬에 반영 (전체 재조회 생략)
+    if(data.member && data.member.id){
+      const i = members.findIndex(x=>String(x.id)===String(data.member.id));
+      if(i >= 0) members[i] = Object.assign({}, members[i], data.member);
+      else       members.push(data.member);
+      applyHolds();
+      saveMemberCache(members);
+      lastSync = Date.now();
+      setSync("ok");
+    } else {
+      await fetchMembers();     // 삭제·차감 등은 기존대로 전체 재조회
+    }
     return data;
   }catch(e){
     toast("저장 실패: " + e.message.slice(0,60));
@@ -1519,7 +1565,7 @@ async function recordSale(sale){
 async function fetchSales(){
   if(!apiConfigured()) return;
   try{
-    const res = await fetch(SHEET_API + "?action=sales", {redirect:"follow", cache:"no-store"});
+    const res = await fetch(SHEET_API + "&action=sales", {redirect:"follow", cache:"no-store"});
     const data = JSON.parse(await res.text());
     if(data && data.ok && Array.isArray(data.sales)){
       const map = {};
@@ -1720,15 +1766,27 @@ async function init(){
   $("#kioskView").classList.add("hidden");
   openGate();
   if(apiConfigured()){
+    // 저장된 명단을 먼저 적용해 화면을 띄우고, 갱신은 뒤에서 조용히 진행
+    const cached = loadMemberCache();
+    if(cached && cached.m.length){
+      members = cached.m;
+      if(typeof applyHolds === "function") applyHolds();
+      if(typeof renderTable === "function") renderTable();
+      setSync("ok");
+    }
+    // 화면이 다시 보일 때 한 번 갱신
+    document.addEventListener("visibilitychange", function(){
+      if(!document.hidden) fetchMembers();
+    });
     setSync("sync");
     await fetchMembers();
     await fetchSales();
     renderTable();
     setInterval(async()=>{
-      if($("#resultView").classList.contains("hidden")){
-        await fetchMembers();
-        if(!$("#adminView").classList.contains("hidden")) renderTable();
-      }
+      if(document.hidden) return;                   // 화면이 안 보이면 건너뜀
+      if(!$("#resultView").classList.contains("hidden")) return;
+      await fetchMembers();
+      if(!$("#adminView").classList.contains("hidden")) renderTable();
     }, REFRESH_MS);
   } else {
     setSync("off");

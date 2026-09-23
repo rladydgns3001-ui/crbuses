@@ -135,6 +135,7 @@
   .sync-dot.sync{background:var(--amber);animation:pulse 1s infinite;}
   .sync-dot.err{background:var(--red);}
   .sync-dot.off{background:var(--muted2);}
+  .sync-dot.offline{background:var(--amber);}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .a-back{
     background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 16px;
@@ -486,15 +487,15 @@
 
 <script>
 /* ====== CONFIG ====== */
-// ▼▼▼ 여기에 Apps Script 웹앱 배포 URL을 붙여넣으세요 ▼▼▼
-const SHEET_API = "https://script.google.com/macros/s/AKfycbwZUaEkkvY1ooArcHRRRG_LwQEjbhPam4069hDI35KsXQQU1skwqUwAVbpFHLI_hCVxWA/exec";
-// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
+// ▼▼▼ 회원 API 서버 주소 (자체 서버) ▼▼▼
+const SHEET_API = "https://grx.crbuses.com/exec?k=b669a13a4caae51b4f9d4d4998036980170400545a57815f";
+// ▲▲▲ 기존 Apps Script 와 API 형식 동일 ▲▲▲
 
 // 사용하지 않음 (SHEET_API 로 통합)
 const ATTEND_API = "";
 
 const ADMIN_PIN = "0000";        // 관리자 비밀번호 (원하면 바꾸세요)
-const REFRESH_MS = 120000;       // 주기적 갱신 주기 (밀리초). 120000 = 2분
+const REFRESH_MS = 600000;       // 주기적 갱신 주기 (밀리초). 600000 = 10분
 const PLANS = {
   period: ["1개월권","3개월권","6개월권","주2회권","주3회권"],
   count:  ["10회권","20회권","30회권","PT 10회","PT 20회"]
@@ -512,24 +513,61 @@ let apiReady = false;            // SHEET_API가 설정됐는지
 
 /* ====== SHEET API ====== */
 function apiConfigured(){
-  return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("script.google.com") !== -1;
+  return SHEET_API && SHEET_API.indexOf("PASTE_YOUR") === -1 && SHEET_API.indexOf("http") === 0;
 }
 
-/* 시트에서 전체 명단을 받아와 캐시 갱신 */
-async function fetchMembers(){
+/* ===== 명단 로컬 캐시 ===== */
+const MEM_CACHE_KEY = "grx_members_cache_v1";
+
+function saveMemberCache(list){
+  try{
+    localStorage.setItem(MEM_CACHE_KEY, JSON.stringify({t:Date.now(), m:list}));
+  }catch(e){}
+}
+function loadMemberCache(){
+  try{
+    const raw = localStorage.getItem(MEM_CACHE_KEY);
+    if(!raw) return null;
+    const o = JSON.parse(raw);
+    if(!o || !Array.isArray(o.m)) return null;
+    return o;
+  }catch(e){ return null; }
+}
+
+/* 시트에서 전체 명단을 받아와 캐시 갱신 (실제 본문) */
+async function _fetchMembersOnce(retried){
   if(!apiConfigured()) return false;
   try{
     const res = await fetch(SHEET_API, {method:"GET"});
     const data = await res.json();
     if(data.ok && Array.isArray(data.members)){
       members = data.members;
+      saveMemberCache(members);
       applyHolds();                // 홀딩 정보를 회원 데이터에 반영
       lastSync = Date.now();
       setSync("ok");
       return true;
     }
     setSync("err"); return false;
-  }catch(e){ setSync("err"); return false; }
+  }catch(e){
+    // 일시적인 지연일 때가 많으므로 2초 뒤 한 번만 조용히 재시도
+    if(!retried){
+      await new Promise(function(r){ setTimeout(r, 2000); });
+      if(await _fetchMembersOnce(true)) return true;
+    }
+    // 캐시가 있으면 오프라인 표시만 하고 화면은 유지
+    setSync(members.length ? "offline" : "err");
+    return false;
+  }
+}
+
+/* 중복 호출 가드 — 갱신이 겹쳐도 요청은 한 번만 나간다 */
+let _fetching = null;
+async function fetchMembers(){
+  if(_fetching) return _fetching;        // 이미 진행 중이면 그걸 기다린다
+  _fetching = _fetchMembersOnce(false);
+  try{ return await _fetching; }
+  finally{ _fetching = null; }
 }
 
 /* 시트에 변경 요청 (add/update/delete/use). 성공 시 캐시도 재동기화 */
@@ -594,7 +632,7 @@ document.addEventListener("fullscreenchange", function(){ requestWakeLock(); });
 
 /* 동기화 상태 점 표시 */
 function setSync(state){
-  const label = {ok:"시트 연결됨", sync:"확인 중…", err:"시트 연결 안 됨", off:"URL 미설정"};
+  const label = {ok:"시트 연결됨", sync:"확인 중…", err:"시트 연결 안 됨", off:"URL 미설정", offline:"오프라인 (저장된 명단 사용)"};
   const el = document.getElementById("syncDot");
   if(el){
     el.className = "sync-dot " + state;
@@ -1003,6 +1041,16 @@ function showAttendResult(d, m){
     + '</div>';
 
   view.classList.remove("hidden");
+
+  // 전체 명단을 다시 받지 않고, 출석 응답으로 해당 회원만 로컬 갱신
+  const idx = members.findIndex(x=>String(x.id)===String(d.id));
+  if(idx >= 0){
+    if(d.type === "count" && d.countLeft != null){
+      members[idx].used = (Number(members[idx].total)||0) - d.countLeft;
+    }
+    saveMemberCache(members);
+  }
+
   resultShownAt = Date.now();
   clearTimeout(resultTimer);
   resultTimer = setTimeout(closeResult, 5000);   // 5초 후 자동 복귀
@@ -1040,7 +1088,7 @@ async function showKing(){
 
   let data = null;
   try{
-    const res = await fetch(SHEET_API + "?action=ranking", {redirect:"follow", cache:"no-store"});
+    const res = await fetch(SHEET_API + "&action=ranking", {redirect:"follow", cache:"no-store"});
     data = JSON.parse(await res.text());
   }catch(e){ data = null; }
 
@@ -1280,6 +1328,18 @@ async function init(){
   $("#loading").classList.add("hidden");
   // 키오스크 전용 페이지: 관리자 진입 없음
   if(apiConfigured()){
+    // 저장된 명단을 먼저 적용해 화면을 띄우고, 갱신은 뒤에서 조용히 진행
+    const cached = loadMemberCache();
+    if(cached && cached.m.length){
+      members = cached.m;
+      if(typeof applyHolds === "function") applyHolds();
+      if(typeof renderTable === "function") renderTable();
+      setSync("ok");
+    }
+    // 화면이 다시 보일 때 한 번 갱신
+    document.addEventListener("visibilitychange", function(){
+      if(!document.hidden) fetchMembers();
+    });
     setSync("sync");
     let ok = await fetchMembers();   // 첫 로딩
     if(!ok){
@@ -1292,10 +1352,10 @@ async function init(){
     renderTable();
     // 주기적 갱신: 키오스크 화면이고 결과창이 닫혀 있을 때만 갱신
     setInterval(async()=>{
-      if($("#resultView").classList.contains("hidden")){
-        await fetchMembers();
-        if(!$("#adminView").classList.contains("hidden")) renderTable();
-      }
+      if(document.hidden) return;                   // 화면이 안 보이면 건너뜀
+      if(!$("#resultView").classList.contains("hidden")) return;
+      await fetchMembers();
+      if(!$("#adminView").classList.contains("hidden")) renderTable();
     }, REFRESH_MS);
   } else {
     setSync("off");
