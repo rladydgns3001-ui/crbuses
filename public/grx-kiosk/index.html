@@ -266,6 +266,9 @@
     font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;transition:.15s;
   }
   .king-btn:active{background:#1d1d1d;color:var(--lime);border-color:var(--lime);}
+  /* 지난달 출석왕: 같은 계열, 한 단계 약하게 */
+  .king-btn.prev{height:48px;margin-top:8px;background:transparent;color:var(--muted2);font-size:15px;}
+  .king-btn.prev:active{background:#1d1d1d;color:var(--lime);border-color:var(--lime);}
 
   .king-card{max-width:520px;padding:28px 24px 24px;}
   .king-h{font-size:26px;font-weight:900;margin-bottom:2px;}
@@ -283,44 +286,8 @@
   .king-row .ct{font-size:17px;font-weight:900;color:var(--lime);}
   .king-row .ct span{font-size:13px;color:var(--muted2);font-weight:700;margin-left:2px;}
   .king-empty{color:var(--muted2);font-size:15px;padding:26px 0;}
-  /* 지난달 출석왕 */
-  .result.king-open{overflow-y:auto;-webkit-overflow-scrolling:touch;align-items:flex-start;}
-  .king-card{margin:auto 0;}
-  .king-prev{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);text-align:left;}
-  .king-prev-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;}
-  .king-prev-h b{font-size:17px;font-weight:900;color:var(--lime);letter-spacing:.3px;}
-  .king-prev-h span{font-size:12px;color:var(--muted2);}
-  .king-prev-list{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin:0 -3px;}
-  .kp-row{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;
-    width:50%;-webkit-box-sizing:border-box;box-sizing:border-box;padding:3px;}
-  .kp-in{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;
-    width:100%;height:40px;padding:0 10px 0 6px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;
-    -webkit-box-sizing:border-box;box-sizing:border-box;}
-  .kp-rk{-webkit-flex:0 0 28px;flex:0 0 28px;height:28px;line-height:28px;border-radius:8px;text-align:center;
-    font-size:13px;font-weight:900;background:#1d1d1d;color:var(--muted);margin-right:8px;}
-  .kp-row.top1 .kp-rk{background:var(--lime);color:#0b0b0b;}
-  .kp-row.top2 .kp-rk,.kp-row.top3 .kp-rk{background:rgba(155,209,58,.18);color:var(--lime);}
-  .kp-nm{-webkit-flex:1;flex:1;min-width:0;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .kp-ct{font-size:15px;font-weight:900;color:var(--lime);margin-left:6px;white-space:nowrap;}
-  .kp-ct span{font-size:11px;color:var(--muted2);font-weight:700;margin-left:1px;}
-  .king-prev-empty{font-size:14px;color:var(--muted2);padding:12px 0 4px;text-align:center;}
-  /* 가로로 짧은 화면(가로 태블릿): 지난달 칸을 오른쪽 열로 */
-  @media(min-width:900px) and (max-height:900px){
-    .king-card.has-prev{max-width:960px;padding:22px 24px 18px;}
-    .has-prev .king-sub{margin-bottom:14px;}
-    .king-body{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-align-items:flex-start;align-items:flex-start;}
-    .king-cur{-webkit-flex:1.2;flex:1.2;min-width:0;}
-    .has-prev .king-list{gap:5px;}
-    .has-prev .king-row{padding:6px 12px;}
-    .has-prev .king-row .rk{height:36px;flex-basis:36px;}
-    .king-body .king-prev{-webkit-flex:1;flex:1;min-width:0;margin:0 0 0 18px;padding:0 0 0 18px;border-top:0;border-left:1px solid var(--line);}
-    .king-body .kp-row{width:100%;padding:2px 3px;}
-    .king-body .kp-in{height:46px;}
-    .has-prev .r-close{margin-top:12px !important;}
-  }
   @media(max-width:680px){
     .king-card{padding:22px 16px 18px;}
-    .kp-nm,.kp-ct{font-size:14px;}
     .king-h{font-size:22px;}
     .king-row{padding:9px 11px;}
     .king-row .nm{font-size:15px;}
@@ -436,6 +403,7 @@
         <div class="keys" id="keys"></div>
         <button class="submit" id="submitBtn" disabled>출석하기</button>
         <button class="king-btn" id="kingBtn">🏆 이번 달 출석왕</button>
+        <button class="king-btn prev" id="kingPrevBtn">지난달 출석왕</button>
       </div>
     </div>
   </div>
@@ -959,7 +927,7 @@ function showResult(matches, code){
   clearTimeout(resultTimer);
   resultTimer=setTimeout(closeResult, matches.length>1 ? 15000 : 7000);
 }
-function closeResult(){ var v=$("#resultView"); v.classList.add("hidden"); v.classList.remove("king-open"); clearTimeout(resultTimer); }
+function closeResult(){ $("#resultView").classList.add("hidden"); clearTimeout(resultTimer); }
 
 /* 이름 가리기: 김용훈 -> 김○훈, 김수 -> 김○, 남궁민수 -> 남궁○수 */
 function maskName(name){
@@ -1115,51 +1083,29 @@ function showHolding(d, m){
 }
 
 /* ====== 출석왕 ====== */
-function kingFetch(q){
-  return fetch(SHEET_API + "&action=ranking" + (q||""), {redirect:"follow", cache:"no-store"})
-    .then(function(res){ return res.text(); })
-    .then(function(t){ return JSON.parse(t); })
-    .catch(function(){ return null; });
-}
+/* 지난달 "YYYY-MM" */
 function prevYm(){
-  var d = new Date();
-  var y = d.getFullYear(), m = d.getMonth(); // getMonth()는 0부터 → 그대로 지난달(1~12) 번호
+  var d = new Date(), y = d.getFullYear(), m = d.getMonth(); // getMonth()는 0부터 → 그대로 지난달(1~12) 번호
   if(m===0){ y -= 1; m = 12; }
   return y + "-" + (m<10 ? "0"+m : ""+m);
 }
-function kingPrevHtml(prev, ym){
-  var mon = Number(ym.split("-")[1]);
-  var head = '<div class="king-prev-h"><b>지난달 출석왕 · '+mon+'월</b><span>상위 10명</span></div>';
-  /* 서버가 월 지정(ym)을 지원하지 않으면 이번 달 데이터가 돌아오므로 ym 이 맞을 때만 표시 */
-  if(!prev || !prev.ok || String(prev.ym||"") !== ym){
-    return '<div class="king-prev">'+head+'<div class="king-prev-empty">지난달 기록을 불러오지 못했습니다</div></div>';
-  }
-  var list = (prev.top || []).slice(0, 10);
-  if(!list.length){
-    return '<div class="king-prev">'+head+'<div class="king-prev-empty">지난달 출석 기록이 없습니다</div></div>';
-  }
-  var rows = list.map(function(r, i){
-    var rk = r.rank || (i+1);
-    var cls = rk<=3 ? " top"+rk : "";
-    return '<div class="kp-row'+cls+'"><div class="kp-in">'
-         +   '<div class="kp-rk">'+rk+'</div>'
-         +   '<div class="kp-nm">'+esc(r.name)+'</div>'
-         +   '<div class="kp-ct">'+r.count+'<span>일</span></div>'
-         + '</div></div>';
-  }).join("");
-  return '<div class="king-prev">'+head+'<div class="king-prev-list">'+rows+'</div></div>';
-}
-async function showKing(){
+function showKingPrev(){ return showKing(prevYm()); }
+async function showKing(ym){
+  ym = (typeof ym === "string") ? ym : "";
   const view = $("#resultView");
   view.innerHTML = '<div class="card"><div class="r-big" style="font-size:26px;color:var(--muted)">불러오는 중…</div></div>';
   view.classList.remove("hidden");
   resultShownAt = Date.now();
   clearTimeout(resultTimer);
 
-  const pym = prevYm();
-  const both = await Promise.all([kingFetch(""), kingFetch("&ym=" + pym)]);
-  const data = both[0], prev = both[1];
+  let data = null;
+  try{
+    const res = await fetch(SHEET_API + "&action=ranking" + (ym ? "&ym=" + ym : ""), {redirect:"follow", cache:"no-store"});
+    data = JSON.parse(await res.text());
+  }catch(e){ data = null; }
 
+  /* 지난달 요청인데 서버가 월 지정을 지원하지 않아 다른 달이 오면 실패로 처리 */
+  if(data && data.ok && ym && String(data.ym||"") !== ym) data = null;
   if(!data || !data.ok){
     view.innerHTML = '<div class="card">'
       + '<div class="r-big" style="font-size:26px;color:var(--amber)">잠시 후 다시 시도해 주세요</div>'
@@ -1170,6 +1116,8 @@ async function showKing(){
 
   const ymArr = String(data.ym || "").split("-");
   const title = (ymArr[1] ? Number(ymArr[1]) : (new Date().getMonth()+1)) + "월 출석왕";
+  const sub = ym ? "지난달 출석 횟수 상위 10명 · 최종 기록"
+                 : "이번 달 출석 횟수 상위 10명 · "+esc(data.updated||"")+" 기준";
   const rows = (data.top || []).map(function(r){
     const cls = r.rank<=3 ? " top"+r.rank : "";
     const medal = r.rank===1 ? "🥇" : r.rank===2 ? "🥈" : r.rank===3 ? "🥉" : r.rank;
@@ -1180,20 +1128,16 @@ async function showKing(){
          + '</div>';
   }).join("");
 
-  view.classList.add("king-open");
   view.innerHTML =
-      '<div class="card king-card has-prev">'
+      '<div class="card king-card">'
     +   '<div class="king-h">🏆 '+title+'</div>'
-    +   '<div class="king-sub">이번 달 출석 횟수 상위 10명 · '+esc(data.updated||"")+' 기준</div>'
-    +   '<div class="king-body"><div class="king-cur">'
+    +   '<div class="king-sub">'+sub+'</div>'
     +   (rows ? '<div class="king-list">'+rows+'</div>'
-             : '<div class="king-empty">아직 이번 달 출석 기록이 없습니다</div>')
-    +   '</div>' + kingPrevHtml(prev, pym) + '</div>'
+             : '<div class="king-empty">'+(ym ? "지난달 출석 기록이 없습니다" : "아직 이번 달 출석 기록이 없습니다")+'</div>')
     +   '<div class="r-close" style="margin-top:18px;">화면을 누르면 닫힙니다</div>'
     + '</div>';
-  view.scrollTop = 0;
 
-  resultTimer = setTimeout(closeResult, 20000);
+  resultTimer = setTimeout(closeResult, 15000);
 }
 
 /* ====== ADMIN GATE ====== */
@@ -1349,7 +1293,8 @@ async function init(){
 
   $("#submitBtn").onclick=kSubmit;
   if(window.PointerEvent){ $("#submitBtn").addEventListener("pointerdown", function(e){ e.preventDefault(); kSubmit(); }); }
-  $("#kingBtn").onclick = showKing;
+  $("#kingBtn").onclick = function(){ showKing(""); };
+  $("#kingPrevBtn").onclick = showKingPrev;
   $("#resultView").onclick=function(){ if(Date.now()-resultShownAt>400) closeResult(); };
   $("#gearBtn").onclick=openGate;
   $("#gateCancel").onclick=closeGate;
