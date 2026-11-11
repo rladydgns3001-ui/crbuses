@@ -403,7 +403,7 @@
         <div class="keys" id="keys"></div>
         <button class="submit" id="submitBtn" disabled>출석하기</button>
         <button class="king-btn" id="kingBtn">🏆 이번 달 출석왕</button>
-        <button class="king-btn" id="kingPrevBtn">🏆 지난달 출석왕</button>
+        <button class="king-btn" id="kingPrevBtn">🏆 지난 달 출석왕</button>
       </div>
     </div>
   </div>
@@ -1106,9 +1106,9 @@ function showHolding(d, m){
 }
 
 /* ====== 출석왕 ====== */
-/* 지난달 "YYYY-MM" */
+/* 지난 달 "YYYY-MM" */
 function prevYm(){
-  var d = new Date(), y = d.getFullYear(), m = d.getMonth(); // getMonth()는 0부터 → 그대로 지난달(1~12) 번호
+  var d = new Date(), y = d.getFullYear(), m = d.getMonth(); // getMonth()는 0부터 → 그대로 지난 달(1~12) 번호
   if(m===0){ y -= 1; m = 12; }
   return y + "-" + (m<10 ? "0"+m : ""+m);
 }
@@ -1127,7 +1127,7 @@ async function showKing(ym){
     data = JSON.parse(await res.text());
   }catch(e){ data = null; }
 
-  /* 지난달 요청인데 서버가 월 지정을 지원하지 않아 다른 달이 오면 실패로 처리 */
+  /* 지난 달 요청인데 서버가 월 지정을 지원하지 않아 다른 달이 오면 실패로 처리 */
   if(data && data.ok && ym && String(data.ym||"") !== ym) data = null;
   if(!data || !data.ok){
     view.innerHTML = '<div class="card">'
@@ -1139,7 +1139,7 @@ async function showKing(ym){
 
   const ymArr = String(data.ym || "").split("-");
   const title = (ymArr[1] ? Number(ymArr[1]) : (new Date().getMonth()+1)) + "월 출석왕";
-  const sub = ym ? "지난달 출석 횟수 상위 10명 · 최종 기록"
+  const sub = ym ? "지난 달 출석 횟수 상위 10명 · 최종 기록"
                  : "이번 달 출석 횟수 상위 10명 · "+esc(data.updated||"")+" 기준";
   const rows = (data.top || []).map(function(r){
     const cls = r.rank<=3 ? " top"+r.rank : "";
@@ -1156,7 +1156,7 @@ async function showKing(ym){
     +   '<div class="king-h">🏆 '+title+'</div>'
     +   '<div class="king-sub">'+sub+'</div>'
     +   (rows ? '<div class="king-list">'+rows+'</div>'
-             : '<div class="king-empty">'+(ym ? "지난달 출석 기록이 없습니다" : "아직 이번 달 출석 기록이 없습니다")+'</div>')
+             : '<div class="king-empty">'+(ym ? "지난 달 출석 기록이 없습니다" : "아직 이번 달 출석 기록이 없습니다")+'</div>')
     +   '<div class="r-close" style="margin-top:18px;">화면을 누르면 닫힙니다</div>'
     + '</div>';
 
