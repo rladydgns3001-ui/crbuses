@@ -400,6 +400,7 @@
         <div class="keys" id="keys"></div>
         <button class="submit" id="submitBtn" disabled>출석하기</button>
         <button class="king-btn" id="kingBtn">🏆 이번 달 출석왕</button>
+        <button class="king-btn" id="prevKingBtn">🏆 지난달 출석왕</button>
       </div>
     </div>
   </div>
@@ -1079,7 +1080,13 @@ function showHolding(d, m){
 }
 
 /* ====== 출석왕 ====== */
-async function showKing(){
+function prevYm(){
+  var d = new Date(); d.setDate(1); d.setMonth(d.getMonth()-1);
+  return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2);
+}
+async function showKing(prev){
+  prev = (prev === true);
+  var wantYm = prev ? prevYm() : "";
   const view = $("#resultView");
   view.innerHTML = '<div class="card"><div class="r-big" style="font-size:26px;color:var(--muted)">불러오는 중…</div></div>';
   view.classList.remove("hidden");
@@ -1088,7 +1095,7 @@ async function showKing(){
 
   let data = null;
   try{
-    const res = await fetch(SHEET_API + "&action=ranking", {redirect:"follow", cache:"no-store"});
+    const res = await fetch(SHEET_API + "&action=ranking" + (prev ? "&ym=" + wantYm : ""), {redirect:"follow", cache:"no-store"});
     data = JSON.parse(await res.text());
   }catch(e){ data = null; }
 
@@ -1100,7 +1107,14 @@ async function showKing(){
     return;
   }
 
-  const ymArr = String(data.ym || "").split("-");
+  if(prev && String(data.ym || "") !== wantYm){
+    view.innerHTML = '<div class="card">'
+      + '<div class="r-big" style="font-size:24px;color:var(--amber)">지난달 기록을 불러올 수 없습니다</div>'
+      + '<div class="r-close">화면을 누르면 닫힙니다</div></div>';
+    resultTimer = setTimeout(closeResult, 5000);
+    return;
+  }
+  const ymArr = String(data.ym || wantYm).split("-");
   const title = (ymArr[1] ? Number(ymArr[1]) : (new Date().getMonth()+1)) + "월 출석왕";
   const rows = (data.top || []).map(function(r){
     const cls = r.rank<=3 ? " top"+r.rank : "";
@@ -1115,9 +1129,9 @@ async function showKing(){
   view.innerHTML =
       '<div class="card king-card">'
     +   '<div class="king-h">🏆 '+title+'</div>'
-    +   '<div class="king-sub">이번 달 출석 횟수 상위 10명 · '+esc(data.updated||"")+' 기준</div>'
+    +   '<div class="king-sub">'+(prev ? '지난달 출석 횟수 상위 10명 · 최종 기록' : '이번 달 출석 횟수 상위 10명 · '+esc(data.updated||"")+' 기준')+'</div>'
     +   (rows ? '<div class="king-list">'+rows+'</div>'
-             : '<div class="king-empty">아직 이번 달 출석 기록이 없습니다</div>')
+             : '<div class="king-empty">'+(prev ? '지난달 출석 기록이 없습니다' : '아직 이번 달 출석 기록이 없습니다')+'</div>')
     +   '<div class="r-close" style="margin-top:18px;">화면을 누르면 닫힙니다</div>'
     + '</div>';
 
@@ -1277,7 +1291,8 @@ async function init(){
 
   $("#submitBtn").onclick=kSubmit;
   if(window.PointerEvent){ $("#submitBtn").addEventListener("pointerdown", function(e){ e.preventDefault(); kSubmit(); }); }
-  $("#kingBtn").onclick = showKing;
+  $("#kingBtn").onclick = function(){ showKing(false); };
+  $("#prevKingBtn").onclick = function(){ showKing(true); };
   $("#resultView").onclick=function(){ if(Date.now()-resultShownAt>400) closeResult(); };
   $("#gearBtn").onclick=openGate;
   $("#gateCancel").onclick=closeGate;
