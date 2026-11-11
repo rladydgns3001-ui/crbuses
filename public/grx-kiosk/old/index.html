@@ -259,6 +259,9 @@
   .att-box b{font-size:22px;font-weight:800;}
   .att-close{margin-top:18px;font-size:13px;color:var(--muted2);}
 
+  /* ===== 캐릭터 (출석 결과 화면) ===== */
+  .rpg-frame{display:block;width:100%;height:270px;border:0;margin:14px 0 2px;background:transparent;}
+
   /* ===== 출석왕 ===== */
   .king-btn{
     width:100%;height:56px;margin-top:12px;border:1px solid var(--line);
@@ -924,7 +927,8 @@ function showResult(matches, code){
   clearTimeout(resultTimer);
   resultTimer=setTimeout(closeResult, matches.length>1 ? 15000 : 7000);
 }
-function closeResult(){ $("#resultView").classList.add("hidden"); clearTimeout(resultTimer); }
+function closeResult(){ $("#resultView").classList.add("hidden"); clearTimeout(resultTimer);
+  var rf = $("#resultView").querySelector(".rpg-frame"); if(rf && rf.parentNode) rf.parentNode.removeChild(rf); }
 
 /* 이름 가리기: 김용훈 -> 김○훈, 김수 -> 김○, 남궁민수 -> 남궁○수 */
 function maskName(name){
@@ -1002,6 +1006,27 @@ function buildCalendar(year, month, days, todayDay, stampDay){
   return h + '</div></div>';
 }
 
+/* 캐릭터: 서버가 누적 출석 횟수(totalCount)를 주면 결과 화면에 표시 */
+function rpgTotal(d){
+  var t = (d.totalCount != null) ? d.totalCount : d.attendTotal;
+  t = parseInt(t, 10);
+  return isNaN(t) ? null : t;
+}
+function rpgFrame(d){
+  var t = rpgTotal(d);
+  if(t == null) return "";
+  var gain = (d.result === "attended") ? 1 : 0;
+  return '<iframe class="rpg-frame" scrolling="no" src="../rpg/?now='+t+'&gain='+gain+'" '
+       + 'onload="rpgFit(this)"></iframe>';
+}
+function rpgFit(f){
+  try{
+    var h = f.contentWindow.document.getElementById("stageCard").offsetHeight;
+    if(h > 60) f.style.height = (h + 2) + "px";
+  }catch(e){}
+}
+window.rpgFit = rpgFit;
+
 /* 출석 완료 화면 — 3초 뒤 자동으로 입력 화면 복귀 */
 function showAttendResult(d, m){
   const view = $("#resultView");
@@ -1031,6 +1056,7 @@ function showAttendResult(d, m){
       '<div class="card att-card">'
     +   '<div class="att-head"><div class="att-name">'+esc(d.name||m.name||"")+' 님</div>'+badge+'</div>'
     +   '<div class="att-plan">'+sub+'</div>'
+    +   rpgFrame(d)
     +   buildCalendar(d.year, d.month, d.monthDays, todayDay,
                         d.result === "attended" ? todayDay : null)
     +   '<div class="att-streak">이번 달 <b>'+(d.monthCount||0)+'</b>회차'+streak+'</div>'
@@ -1054,7 +1080,7 @@ function showAttendResult(d, m){
 
   resultShownAt = Date.now();
   clearTimeout(resultTimer);
-  resultTimer = setTimeout(closeResult, 5000);   // 5초 후 자동 복귀
+  resultTimer = setTimeout(closeResult, rpgTotal(d) == null ? 5000 : 7000);   // 자동 복귀 (캐릭터가 있으면 7초)
 }
 
 /* 홀딩 중 안내 — 출석은 기록하지 않는다 */
