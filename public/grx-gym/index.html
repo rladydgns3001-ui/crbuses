@@ -825,6 +825,7 @@ function syncRemotes(list){
   var seen = {};
   for(var i=0;i<list.length;i++){
     var p = list[i]; if(p.id === net.pub) continue;
+    if(typeof p.x !== "number" || typeof p.z !== "number") continue;   /* 위치를 안 보내는 예전 서버 */
     seen[p.id] = 1;
     var rm = remotes[p.id], lv = levelOf(p.a || 0);
     if(rm && rm.lv !== lv){ disposeCubi(rm.pl.c); rm = null; delete remotes[p.id]; }

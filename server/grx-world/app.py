@@ -169,8 +169,7 @@ async def hello(req: Request):
             p = {"n": "방문자" + str(random.randint(1000, 9999)), "m": 0, "a": 0}
         p.update({"st": -1, "r": 0, "seen": now, "act": 0, "pub": secrets.token_hex(4), "x": -15.2, "z": 0.5, "ry": 0.0, "mv": 0})
         players[pid] = p
-        return {"ok": True, "id": pid, "pub": p["pub"], "name": p["n"], "member": p["m"], "total": p["a"],
-                "realName": member["name"] if member else None}
+        return {"ok": True, "id": pid, "pub": p["pub"], "name": p["n"], "member": p["m"], "total": p["a"]}
 
 
 @app.post("/beat")
