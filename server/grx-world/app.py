@@ -29,7 +29,7 @@ KST = timezone(timedelta(hours=9))
 STATIONS = 8               # 스키 / 슬레드 푸시 / 슬레드 풀 / 버피 브로드점프 / 로잉 / 파머스 캐리 / 샌드백 런지 / 월볼
 PLAYER_TTL = 10            # 이 시간(초) 동안 신호가 없으면 퇴장 처리
 MAX_PLAYERS = 5000
-MAX_REPS_PER_BEAT = 6      # 한 번(약 0.7초)에 6회 넘게 누르면 잘라냄 (자동 클릭 방지)
+MAX_REPS_PER_BEAT = 6      # 한 번(약 0.4초)에 6회 넘게 누르면 잘라냄 (자동 클릭 방지)
 LIST_LIMIT = 60            # 화면에 그릴 최대 인원
 
 app = FastAPI()
@@ -136,7 +136,8 @@ RACE_MIN = 2            # 이 인원 이상 모이면 카운트다운 시작
 RACE_WAIT = 15          # 카운트다운(초). 그동안 더 참가 가능
 RACE_LIMIT = 300        # 5분 지나면 강제 종료
 RACE_SHOW = 15          # 결과 보여주는 시간(초)
-race = {"state": "idle", "rid": 0, "startAt": 0.0, "endAt": 0.0, "racers": {}, "results": []}
+RACE_GRACE = 30         # 1등이 골인하면 남은 선수에게 주는 시간(초). 지나면 레이스 끝 (마리오카트처럼)
+race = {"state": "idle", "rid": 0, "startAt": 0.0, "endAt": 0.0, "firstAt": None, "racers": {}, "results": []}
 
 
 def race_tick(now):
@@ -153,9 +154,13 @@ def race_tick(now):
             r["state"] = "running"
     if r["state"] == "running":
         alive = [v for v in r["racers"].values() if v["fin"] is None]
-        if not alive or now - r["startAt"] > RACE_LIMIT:
-            res = sorted(r["racers"].values(), key=lambda v: (v["fin"] is None, v["fin"] or 0, -v["prog"]))
-            r["results"] = [{"n": v["n"], "a": v["a"], "prog": v["prog"], "ms": v["fin"]} for v in res]
+        if r["firstAt"] is None and any(v["fin"] is not None for v in r["racers"].values()):
+            r["firstAt"] = now
+        grace_over = r["firstAt"] is not None and now - r["firstAt"] > RACE_GRACE
+        if not alive or grace_over or now - r["startAt"] > RACE_LIMIT or not r["racers"]:
+            res = sorted(r["racers"].items(), key=lambda kv: (kv[1]["fin"] is None, kv[1]["fin"] or 0, -kv[1]["prog"]))
+            r["results"] = [{"id": players[k]["pub"] if k in players else "", "n": v["n"], "a": v["a"], "prog": v["prog"], "ms": v["fin"]} for k, v in res]
+            res = [v for k, v in res]
             for v in res:
                 if v["fin"] is not None:
                     data["best"].append({"n": v["n"], "a": v["a"], "ms": v["fin"]})
@@ -163,7 +168,7 @@ def race_tick(now):
             dirty = True
             r["state"] = "done"; r["endAt"] = now
     if r["state"] == "done" and now - r["endAt"] > RACE_SHOW:
-        r["state"] = "idle"; r["racers"] = {}; r["results"] = []
+        r["state"] = "idle"; r["racers"] = {}; r["results"] = []; r["firstAt"] = None
 
 
 def race_view(now):
@@ -173,6 +178,7 @@ def race_view(now):
         "state": r["state"], "rid": r["rid"], "steps": RACE_STEPS, "min": RACE_MIN,
         "startIn": round(max(0.0, r["startAt"] - now), 2) if r["state"] == "countdown" else None,
         "elapsed": round(now - r["startAt"], 2) if r["state"] == "running" else None,
+        "graceLeft": round(max(0.0, RACE_GRACE - (now - r["firstAt"])), 1) if r["state"] == "running" and r["firstAt"] is not None else None,
         "racers": [{"id": players[k]["pub"] if k in players else "", "n": v["n"], "a": v["a"], "prog": v["prog"], "ms": v["fin"]} for k, v in rs],
         "results": r["results"],
         "best": data["best"][:5],
@@ -307,7 +313,7 @@ async def race_join(req: Request):
         if race["state"] in ("running", "done"):
             return {"ok": False, "error": "running", "race": race_view(now)}
         if race["state"] == "idle":
-            race["state"] = "lobby"; race["rid"] += 1; race["racers"] = {}; race["results"] = []
+            race["state"] = "lobby"; race["rid"] += 1; race["racers"] = {}; race["results"] = []; race["firstAt"] = None
         race["racers"][pid] = {"n": p["n"], "a": p["a"], "prog": 0, "fin": None}
         race_tick(now)
         return {"ok": True, "race": race_view(now)}

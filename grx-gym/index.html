@@ -77,6 +77,23 @@
   .racePanel .sub{margin-top:8px;font-size:11px;color:var(--muted2);}
   .big{position:fixed;left:0;right:0;top:38%;text-align:center;pointer-events:none;font-size:clamp(56px, 16vw, 120px);font-weight:900;
     color:var(--lime);text-shadow:0 6px 30px rgba(0,0,0,.8);letter-spacing:-2px;line-height:1;}
+  .wb{display:flex;align-items:baseline;gap:6px;padding:6px 16px;border-radius:14px;background:var(--panel);border:1px solid rgba(155,209,58,.45);
+    font-weight:900;font-variant-numeric:tabular-nums;}
+  .wb b{font-size:34px;color:var(--lime);line-height:1;} .wb span{font-size:16px;color:var(--muted);} .wb i{font-style:normal;font-size:12px;color:var(--muted);margin-right:4px;}
+  .result{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:15;
+    padding:16px max(16px, env(safe-area-inset-right,0px)) 16px max(16px, env(safe-area-inset-left,0px));}
+  .result .card{width:100%;max-width:380px;background:#121314;border:1px solid rgba(155,209,58,.45);border-radius:22px;padding:22px;}
+  .result h2{margin:0;font-size:12px;letter-spacing:3px;color:var(--lime);}
+  .result .head{font-size:26px;font-weight:900;margin:4px 0 14px;}
+  .result ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .result li{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:#1a1b1d;font-variant-numeric:tabular-nums;}
+  .result li .rk{width:26px;font-size:18px;font-weight:900;color:var(--muted);}
+  .result li:nth-child(1) .rk{color:var(--gold);} .result li:nth-child(2) .rk{color:#d6d9dc;} .result li:nth-child(3) .rk{color:#d08a4b;}
+  .result li .nm{flex:1;min-width:0;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .result li .tm{font-weight:800;}
+  .result li.me{outline:2px solid var(--lime);}
+  .result .foot{margin-top:12px;font-size:12px;color:var(--muted);}
+  .result button{margin-top:14px;width:100%;height:46px;border-radius:12px;border:0;background:var(--lime);color:#0b0b0b;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;}
   .big small{display:block;font-size:clamp(16px, 4vw, 24px);color:var(--white);letter-spacing:0;margin-top:10px;font-weight:800;}
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;
     padding:16px max(16px, env(safe-area-inset-right,0px)) 16px max(16px, env(safe-area-inset-left,0px));z-index:20;}
@@ -117,8 +134,18 @@
   <div class="sub" id="raceSub"></div>
 </div>
 <div class="big" id="big" hidden></div>
+<div class="result" id="result" hidden>
+  <div class="card">
+    <h2>ROX SPRINT 결과</h2>
+    <div class="head" id="resHead">레이스 종료</div>
+    <ol id="resList"></ol>
+    <div class="foot" id="resFoot"></div>
+    <button id="resClose">닫기</button>
+  </div>
+</div>
 
 <div class="bottom">
+  <div class="wb" id="wb" hidden><i>월볼</i><b id="wbN">0</b><span>/ 15</span></div>
   <button class="act" id="act" hidden>버피 브로드 점프 +1<small>누를 때마다 1회</small></button>
   <div class="hint" id="hint">바닥을 누르거나 끌어서 이동 · 스테이션 구역에 들어가면 운동 버튼이 나와요</div>
   <div class="me">
@@ -154,7 +181,7 @@ var OUT_X = IN_X + TRACK, OUT_Z = IN_Z + TRACK;
 
 var canvas = document.getElementById("view");
 var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));   /* 폰 발열·끊김 줄이기 */
 renderer.setClearColor(0x08090a);
 var scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x08090a, 55, 110);
@@ -521,14 +548,25 @@ function buildStation(i){
     }
   }
   if(i === 7){ box(UNIT_X[3]-UNIT_X[0] + 1.6, 0.14, 0.14, 0x2c3034, 0, 3.66, -1.7, g); }   /* 월볼 상단 바 */
-  var cnt = textSprite("0회", "#9bd13a", 0.34); cnt.position.set(ZONE_W/2 - 0.8, 0.3, ZONE_D/2 - 0.45); g.add(cnt); s.cnt = cnt;
-  stations.push(s);
+  var cnt = countSprite(); cnt.position.set(ZONE_W/2 - 0.8, 0.3, ZONE_D/2 - 0.45); g.add(cnt); s.cnt = cnt;
+  stations.push(s); setCount(s);
 }
 for(var si=0; si<ST.length; si++) buildStation(si);
 
+/* 횟수 간판: 캔버스 하나를 계속 다시 그려서 씀 (매번 새로 만들면 끊김) */
+function countSprite(){
+  var c = document.createElement("canvas"); c.width = 256; c.height = 72;
+  var tex = new THREE.CanvasTexture(c); tex.minFilter = THREE.LinearFilter;
+  var sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthWrite:false}));
+  sp.scale.set(0.34 * 256 / 72, 0.34, 1); sp.userData = {c:c, tex:tex, txt:""}; return sp;
+}
 function setCount(s){
-  var old = s.cnt, n = textSprite(fmt(s.count) + "회", "#9bd13a", 0.34); n.position.copy(old.position);
-  s.g.remove(old); old.material.map.dispose(); old.material.dispose(); s.g.add(n); s.cnt = n;
+  var sp = s.cnt, txt = fmt(s.count) + "회";
+  if(sp.userData.txt === txt) return;
+  sp.userData.txt = txt;
+  var g = sp.userData.c.getContext("2d"); g.clearRect(0, 0, 256, 72);
+  g.font = "800 48px " + FONT; g.fillStyle = "#9bd13a"; g.textAlign = "right"; g.textBaseline = "middle"; g.fillText(txt, 246, 38);
+  sp.userData.tex.needsUpdate = true;
 }
 function zoneOf(pos){
   for(var i=0;i<stations.length;i++){
@@ -852,7 +890,7 @@ function beat(){
     })
     .catch(function(){ net.pending += sent; net.id = null; net.wait = Date.now() + 5000; setNet(false); });
 }
-setInterval(beat, 700); beat();
+setInterval(beat, 400); beat();
 window.addEventListener("pagehide", function(){
   if(net.id && navigator.sendBeacon) navigator.sendBeacon(WORLD_API + "/bye", JSON.stringify({id:net.id}));
 });
@@ -868,8 +906,11 @@ function syncRemotes(list){
     if(!rm){
       var pl = newPlayer(lv, p.n + " Lv." + lv, false);
       pl.c.root.position.set(p.x, 0, p.z); pl.c.root.rotation.y = p.ry; pl.c.face = Math.random() * 6;
-      rm = remotes[p.id] = {pl:pl, lv:lv, r:p.r, queue:0};
+      rm = remotes[p.id] = {pl:pl, lv:lv, r:p.r, queue:0, snaps:[]};
     }
+    var nowMs = performance.now();
+    rm.snaps.push({t:nowMs, x:p.x, z:p.z, ry:p.ry});
+    if(rm.snaps.length > 6) rm.snaps.shift();
     if(p.r > rm.r && p.st >= 0) rm.queue = Math.min(3, rm.queue + (p.r - rm.r));
     rm.r = p.r; rm.tx = p.x; rm.tz = p.z; rm.ry = p.ry; rm.st = p.st; rm.mv = p.mv;
   }
@@ -878,11 +919,16 @@ function syncRemotes(list){
 function updateRemotes(t, dt){
   for(var k in remotes){
     var rm = remotes[k], pl = rm.pl, c = pl.c, pos = c.root.position;
-    var dx = rm.tx - pos.x, dz = rm.tz - pos.z, dist = Math.sqrt(dx*dx + dz*dz);
-    var walking = dist > 0.08 && rm.mv;
-    if(dist > 6){ pos.x = rm.tx; pos.z = rm.tz; }
-    else if(dist > 0.01){ var stp = Math.min(dist, Math.max(RUN_BASE * pl.spd, dist * 3) * dt); pos.x += dx/dist*stp; pos.z += dz/dist*stp; c.walkT += dt; }
-    turnTo(c, rm.ry, dt);
+    var rt = performance.now() - 450, sn = rm.snaps, a = sn[0], b = sn[sn.length - 1], tx = b.x, tz = b.z;
+    for(var si2 = 0; si2 < sn.length - 1; si2++){
+      if(sn[si2].t <= rt && sn[si2 + 1].t >= rt){ a = sn[si2]; b = sn[si2 + 1]; var f = (rt - a.t) / Math.max(1, b.t - a.t); tx = a.x + (b.x - a.x) * f; tz = a.z + (b.z - a.z) * f; break; }
+      if(si2 === 0 && rt < sn[0].t){ tx = sn[0].x; tz = sn[0].z; }
+    }
+    var dx = tx - pos.x, dz = tz - pos.z, dist = Math.sqrt(dx*dx + dz*dz);
+    if(dist > 6){ pos.x = tx; pos.z = tz; } else { pos.x = tx; pos.z = tz; }
+    var spd2 = dist / Math.max(0.001, dt), walking = spd2 > 0.6;
+    if(walking){ c.walkT += dt * Math.min(1.6, spd2 / RUN_BASE); turnTo(c, Math.atan2(dx, dz), dt); }
+    else turnTo(c, rm.ry, dt);
     var cardio = rm.st === 0 || rm.st === 4, dur = cardio ? 0.7 / pl.spd : 0.7;
     if(rm.queue > 0 && t - c.doT > dur && rm.st >= 0){
       rm.queue--; c.doT = t; c.doSt = rm.st; c.doDur = dur; hype = t;
@@ -965,8 +1011,8 @@ function handleRace(v){
     setTimeout(function(){ if(clock() - rc.goT >= 0.9) hideBig(); }, 1000);
     bgmBoost(true);
   }
-  if(v.state === "done" && prev !== "done"){ rc.lock = false; marker.visible = false; bgmBoost(false); }
-  if(v.state === "idle" && prev !== "idle"){ rc.joined = false; rc.placed = false; rc.prog = 0; hideBig(); }
+  if(v.state === "done" && prev !== "done"){ rc.lock = false; marker.visible = false; bgmBoost(false); hideBig(); if(rc.joined || v.results.length) showResults(v); }
+  if(v.state === "idle" && prev !== "idle"){ rc.joined = false; rc.placed = false; rc.prog = 0; rc.finMs = null; hideBig(); }
   renderRace();
 }
 function placeAtStart(v){
@@ -977,33 +1023,74 @@ function placeAtStart(v){
   rc.placed = true; rc.lock = true;
 }
 
+function phaseOf(prog, ms){
+  if(ms != null) return fmtMs(ms);
+  if(prog < 4) return "코너 " + prog + "/4";
+  if(prog < 4 + WB_REPS) return "월볼 " + (prog - 4) + "/" + WB_REPS;
+  if(prog < RACE_STEPS) return "피니시 직전";
+  return "골인";
+}
+var raceSig = "";
 function renderRace(){
   var v = rc.view, st = v ? v.state : "idle";
   /* 버튼 */
-  raceBtn.disabled = false; raceBtn.className = "tool race";
-  if(rc.joined && (st === "lobby" || st === "countdown")){ raceBtn.textContent = "참가 취소"; raceBtn.className = "tool race wait"; }
-  else if(st === "running"){ raceBtn.textContent = rc.joined ? "레이스 중" : "레이스 진행 중"; raceBtn.disabled = true; raceBtn.className = "tool race wait"; }
-  else if(st === "done"){ raceBtn.textContent = "결과 발표"; raceBtn.disabled = true; raceBtn.className = "tool race wait"; }
-  else raceBtn.textContent = st === "idle" ? "레이스 열기" : "레이스 참가";
+  var bt = "레이스 참가", cls = "tool race", dis = false;
+  if(rc.joined && (st === "lobby" || st === "countdown")){ bt = "참가 취소"; cls = "tool race wait"; }
+  else if(st === "running"){ bt = rc.joined ? (rc.finMs != null ? "완주" : "레이스 중") : "레이스 진행 중"; dis = true; cls = "tool race wait"; }
+  else if(st === "done"){ bt = "결과 발표"; dis = true; cls = "tool race wait"; }
+  else if(st === "idle") bt = "레이스 열기";
+  if(raceBtn.textContent !== bt) raceBtn.textContent = bt;
+  raceBtn.className = cls; raceBtn.disabled = dis;
+  /* 내 월볼 카운터 */
+  var inWB = rc.joined && st === "running" && rc.prog >= 4 && rc.prog < 4 + WB_REPS;
+  var wb = document.getElementById("wb");
+  if(inWB){ wb.hidden = false; document.getElementById("wbN").textContent = rc.prog - 4; wb.lastElementChild.textContent = "/ " + WB_REPS; }
+  else if(me.st === 7 && me.arrived){ wb.hidden = false; document.getElementById("wbN").textContent = me.repsAt7 || 0; wb.lastElementChild.textContent = "회"; }
+  else wb.hidden = true;
   /* 패널 */
-  if(!v || st === "idle"){ racePanel.hidden = true; return; }
+  if(!v || st === "idle" || st === "done"){ racePanel.hidden = true; raceSig = ""; return; }
   racePanel.hidden = false;
-  var title = {lobby:"선수 모집 중 · " + v.min + "명부터 출발", countdown:"곧 출발 " + Math.ceil(v.startIn || 0) + "초", running:"레이스 중 " + fmtMs((v.elapsed || 0) * 1000), done:"결과"}[st] || "";
-  document.getElementById("raceState").textContent = title;
-  document.getElementById("raceGoal").innerHTML = rc.joined && st === "running" ? goalText() : "트랙 한 바퀴 → 월볼 15회 → 피니시 라인";
-  var rows = st === "done" ? v.results.map(function(r){ return {n:r.n, a:r.a, prog:r.prog, ms:r.ms}; }) : v.racers;
+  var title;
+  if(st === "lobby") title = "선수 모집 중 · " + v.min + "명부터 출발";
+  else if(st === "countdown") title = "곧 출발 " + Math.ceil(v.startIn || 0) + "초";
+  else title = (v.graceLeft != null ? "1등 골인 · " + Math.ceil(v.graceLeft) + "초 뒤 종료" : "레이스 중 " + fmtMs((v.elapsed || 0) * 1000));
+  var goal = "트랙 한 바퀴 → 월볼 15회 → 피니시 라인";
+  if(rc.joined && st === "running") goal = rc.finMs != null ? "완주! <b>" + fmtMs(rc.finMs) + "</b> · 다른 선수를 기다리는 중" : goalText();
   var h = "";
-  for(var i=0;i<rows.length && i<8;i++){
-    var r = rows[i], isMe = st !== "done" && r.id === net.pub;
-    var pct = Math.round(100 * Math.min(1, (isMe ? Math.max(rc.prog, r.prog) : r.prog) / (v.steps || RACE_STEPS)));
+  for(var i=0;i<v.racers.length && i<8;i++){
+    var r = v.racers[i], isMe = r.id === net.pub, prog = isMe ? Math.max(rc.prog, r.prog) : r.prog;
+    var pct = Math.round(100 * Math.min(1, prog / (v.steps || RACE_STEPS)));
     h += '<li class="' + (isMe ? "me" : "") + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(r.n) + ' Lv.' + levelOf(r.a || 0) + '</span>'
-       + '<span class="bar"><i style="width:' + pct + '%"></i></span><span class="tm">' + (r.ms != null ? fmtMs(r.ms) : (st === "done" ? "기권" : pct + "%")) + '</span></li>';
+       + '<span class="bar"><i style="width:' + pct + '%"></i></span><span class="tm">' + phaseOf(prog, r.ms) + '</span></li>';
   }
-  document.getElementById("raceList").innerHTML = h;
   var sub = "";
   if(v.best && v.best.length) sub = "오늘 최고 " + esc(v.best[0].n) + " " + fmtMs(v.best[0].ms);
   if(st === "lobby" && !rc.joined) sub = "오른쪽 위 레이스 참가를 누르면 같이 뛸 수 있어요";
+  var sig = title + "|" + goal + "|" + h + "|" + sub;
+  if(sig === raceSig) return;          /* 바뀐 게 없으면 화면을 다시 그리지 않음 */
+  raceSig = sig;
+  document.getElementById("raceState").textContent = title;
+  document.getElementById("raceGoal").innerHTML = goal;
+  document.getElementById("raceList").innerHTML = h;
   document.getElementById("raceSub").innerHTML = sub;
+}
+
+/* 결과 화면 (레이스가 끝나면 모두에게) */
+var resultEl = document.getElementById("result");
+document.getElementById("resClose").addEventListener("click", function(){ resultEl.hidden = true; });
+resultEl.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+function showResults(v){
+  var myRank = -1, h = "";
+  for(var i=0;i<v.results.length;i++){
+    var r = v.results[i], isMe = r.id === net.pub;
+    if(isMe) myRank = i + 1;
+    h += '<li class="' + (isMe ? "me" : "") + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(r.n) + ' Lv.' + levelOf(r.a || 0) + '</span><span class="tm">' + (r.ms != null ? fmtMs(r.ms) : "기권 · " + phaseOf(r.prog, null)) + '</span></li>';
+  }
+  var meRow = myRank > 0 ? v.results[myRank - 1] : null;
+  document.getElementById("resHead").textContent = meRow && meRow.ms != null ? myRank + "위로 완주했어요" : (meRow ? "아쉽게 완주하지 못했어요" : (v.results.length && v.results[0].ms != null ? v.results[0].n + " 우승" : "레이스 종료"));
+  document.getElementById("resList").innerHTML = h;
+  document.getElementById("resFoot").textContent = (v.best && v.best.length ? "오늘 최고 기록 " + v.best[0].n + " " + fmtMs(v.best[0].ms) + " · " : "") + "잠시 후 다음 레이스를 열 수 있어요";
+  resultEl.hidden = false;
 }
 
 /* 매 프레임: 진행 판정, 카운트다운 숫자, 목표 기둥 */
@@ -1022,18 +1109,27 @@ function updateRace(t){
     } else if(rc.prog === 4 + WB_REPS){
       if(Math.abs(p.x - ARCH.x) < TRACK/2 + 0.4 && Math.abs(p.z - ARCH.z) < 0.7){
         rc.prog = RACE_STEPS; rc.finMs = performance.now() - rc.startedAt; rc.finT = t;
-        showBig("FINISH", fmtMs(rc.finMs)); setTimeout(hideBig, 2500); renderRace();
+        /* 지금까지 골인한 사람 수로 내 순위 */
+        var done = 0, v = rc.view;
+        if(v) for(var i=0;i<v.racers.length;i++) if(v.racers[i].ms != null && v.racers[i].id !== net.pub) done++;
+        showBig("FINISH", (done + 1) + "위 · " + fmtMs(rc.finMs)); setTimeout(hideBig, 3000);
+        hype = t + 2; renderRace();
       }
     }
-    if(Math.floor(t * 4) !== Math.floor((t - 0.016) * 4)) renderRace();
   }
+  if(Math.floor(t * 4) !== Math.floor((t - 0.02) * 4)) renderRace();
   var tp = racing ? targetPos() : null;
   marker.visible = !!tp;
   if(tp){ marker.position.set(tp[0], 0, tp[1]); mBeam.material.opacity = 0.12 + 0.06 * Math.sin(t * 5); mRing.scale.setScalar(1 + 0.08 * Math.sin(t * 5)); }
 }
-/* 월볼 1회 = 1단계 (레이스 중, 월볼 단계일 때만) */
+/* 월볼 1회 = 1단계 (레이스 중, 월볼 단계일 때만). 레이스가 아니어도 내 월볼 횟수는 따로 셈 */
 function raceRep(st){
-  if(rc.joined && rc.state === "running" && st === 7 && rc.prog >= 4 && rc.prog < 4 + WB_REPS){ rc.prog++; renderRace(); }
+  if(st === 7) me.repsAt7 = (me.repsAt7 || 0) + 1;
+  if(rc.joined && rc.state === "running" && st === 7 && rc.prog >= 4 && rc.prog < 4 + WB_REPS){
+    rc.prog++;
+    if(rc.prog === 4 + WB_REPS) spawnFloat("월볼 완료", me.c.root.position);
+  }
+  renderRace();
 }
 
 /* ================= 배경음악 (직접 만든 곡, Web Audio) ================= */
