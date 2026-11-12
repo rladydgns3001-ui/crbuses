@@ -765,7 +765,7 @@ document.getElementById("mOk").addEventListener("click", function(){
     .then(function(d){
       if(!d.ok){ errEl.textContent = d.error === "not_found" ? "일치하는 회원이 없어요. 이름과 번호를 확인해 주세요" : "잠시 후 다시 시도해 주세요"; return; }
       setMyLevel(levelOf(d.total || 0), d.name);
-      net.member = true; useIdentity(d); setNet(true, 1);
+      net.member = true; memberCred = {n:nm, p:ph}; useIdentity(d); setNet(true, 1);
       document.getElementById("memberBtn").hidden = true;
       modal.hidden = true; document.getElementById("inPhone").value = "";
     })
@@ -793,8 +793,9 @@ function useIdentity(d){
   if(net.id && net.id !== d.id) api("/bye", {id:net.id}).catch(function(){});
   net.id = d.id; net.pub = d.pub;
 }
+var memberCred = null;   /* 이 화면을 연 동안만 기억 (서버가 다시 켜지면 회원으로 자동 재입장) */
 function guestHello(){
-  api("/hello", {mode:"guest"}).then(function(d){
+  api("/hello", memberCred ? {mode:"member", name:memberCred.n, phone4:memberCred.p} : {mode:"guest"}).then(function(d){
     if(!d.ok) throw d;
     useIdentity(d);
     if(!net.member) document.getElementById("myName").textContent = d.name;
