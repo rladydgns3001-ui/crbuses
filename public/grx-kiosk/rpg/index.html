@@ -112,6 +112,11 @@
   #nextIcon{width:44px;height:44px;-webkit-flex:0 0 44px;flex:0 0 44px;}
   .nextbox small{font-size:10px;} #nextTxt{font-size:13px;}
   .cu .n{font-size:40px;} .cu .l{font-size:12px;letter-spacing:5px;} .cu .s{font-size:14px;}
+  /* 다음 장비는 경험치 줄 왼쪽에 한 줄로 (높이 절약) */
+  .nextbox{display:none !important;}
+  .hud{-webkit-flex-wrap:nowrap !important;flex-wrap:nowrap !important;margin-top:8px;}
+  .row2{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;}
+  #nextMini{font-size:13px;color:var(--muted);} #nextMini b{color:var(--lime);font-weight:900;}
 </style>
 </head>
 <body>
@@ -231,10 +236,20 @@ var TIERS = [
   /* 캔버스 크기는 가로폭으로만 정함 (iframe 높이에 따라 줄어들지 않게) */
   function fit(){
     var c = document.getElementById("stage"), w = document.getElementById("stageWrap");
-    var s = Math.max(1, Math.floor((w.clientWidth || 360) / c.width));
+    var s = Math.floor((w.clientWidth || 360) / c.width);
+    var mh = parseInt(q("mh"), 10); if(!isNaN(mh) && mh > 0) s = Math.min(s, Math.floor(mh / c.height));
+    s = Math.max(1, s);
     c.style.width = (c.width * s) + "px"; c.style.height = (c.height * s) + "px";
   }
   window.addEventListener("resize", fit); fit();
+  /* 다음 장비 문구를 경험치 줄 왼쪽으로 옮겨 표시 */
+  var row2 = document.querySelector(".row2"), src = document.getElementById("nextTxt");
+  if(row2 && src){
+    var mini = document.createElement("span"); mini.id = "nextMini";
+    row2.insertBefore(mini, row2.firstChild);
+    var sync = function(){ if(mini.innerHTML !== src.innerHTML) mini.innerHTML = src.innerHTML; };
+    sync(); setInterval(sync, 300);
+  }
   /* 캐릭터를 눌러도 결과 화면이 닫히게 */
   document.addEventListener("click", function(){
     try{ if(window.parent && window.parent !== window && window.parent.closeResult) window.parent.closeResult(); }catch(e){}

@@ -260,7 +260,16 @@
   .att-close{margin-top:18px;font-size:13px;color:var(--muted2);}
 
   /* ===== 캐릭터 (출석 결과 화면) ===== */
-  .rpg-frame{display:block;width:100%;height:270px;border:0;margin:14px 0 2px;background:transparent;}
+  .rpg-frame{display:block;width:100%;height:200px;border:0;margin:10px 0 2px;background:transparent;}
+  /* 캐릭터가 있는 결과 화면은 한 화면에 들어가게 촘촘하게 */
+  .att-card.has-rpg{padding:20px 20px 16px;-webkit-transform-origin:50% 50%;transform-origin:50% 50%;}
+  .att-card.has-rpg .cal{padding:10px 8px 8px;margin-top:8px;}
+  .att-card.has-rpg .cal-title{margin-bottom:6px;}
+  .att-card.has-rpg .cal-cell{height:40px;}
+  .att-card.has-rpg .att-streak{margin-top:10px;}
+  .att-card.has-rpg .att-2{margin-top:10px;}
+  .att-card.has-rpg .att-box{padding:9px 8px;}
+  .att-card.has-rpg .att-close{display:none;}
 
   /* ===== 출석왕 ===== */
   .king-btn{
@@ -1016,7 +1025,7 @@ function rpgFrame(d){
   var t = rpgTotal(d);
   if(t == null) return "";
   var gain = (d.result === "attended") ? 1 : 0;
-  return '<iframe class="rpg-frame" scrolling="no" src="../rpg/?now='+t+'&gain='+gain+'" '
+  return '<iframe class="rpg-frame" scrolling="no" src="../rpg/?now='+t+'&gain='+gain+'&mh='+Math.round((window.innerHeight||800)*0.19)+'" '
        + 'onload="rpgFit(this)"></iframe>';
 }
 function rpgFit(f){
@@ -1024,6 +1033,18 @@ function rpgFit(f){
     var h = f.contentWindow.document.getElementById("stageCard").offsetHeight;
     if(h > 60) f.style.height = (h + 2) + "px";
   }catch(e){}
+  fitAttCard();
+}
+/* 결과 카드가 화면 높이보다 크면 화면에 맞게 줄임 (잘림 방지) */
+function fitAttCard(){
+  var c = $("#resultView").querySelector(".att-card");
+  if(!c) return;
+  c.style.webkitTransform = c.style.transform = "";
+  var avail = (window.innerHeight || 800) - 24, h = c.offsetHeight;
+  if(h > avail){
+    var s = "scale(" + (avail / h).toFixed(3) + ")";
+    c.style.webkitTransform = c.style.transform = s;
+  }
 }
 window.rpgFit = rpgFit;
 
@@ -1053,7 +1074,7 @@ function showAttendResult(d, m){
   const sub = [esc(cleanPlan(d.plan||m.planName||m.plan||"")), d.time||""].filter(Boolean).join(" · ");
 
   view.innerHTML =
-      '<div class="card att-card">'
+      '<div class="card att-card'+(rpgTotal(d) == null ? '' : ' has-rpg')+'">'
     +   '<div class="att-head"><div class="att-name">'+esc(d.name||m.name||"")+' 님</div>'+badge+'</div>'
     +   '<div class="att-plan">'+sub+'</div>'
     +   rpgFrame(d)
@@ -1068,6 +1089,7 @@ function showAttendResult(d, m){
     + '</div>';
 
   view.classList.remove("hidden");
+  fitAttCard();
 
   // 전체 명단을 다시 받지 않고, 출석 응답으로 해당 회원만 로컬 갱신
   const idx = members.findIndex(x=>String(x.id)===String(d.id));
