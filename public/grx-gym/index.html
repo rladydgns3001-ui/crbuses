@@ -56,6 +56,28 @@
   .me .sub{font-size:12px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums;}
   .me .sub b{color:var(--white);}
   .hint{font-size:12px;color:var(--muted);text-shadow:0 1px 4px #000;text-align:center;}
+  .tools{flex-wrap:wrap;justify-content:flex-end;}
+  .tool.race{background:var(--lime);border-color:var(--lime);color:#0b0b0b;}
+  .tool.race.wait{background:var(--panel);color:var(--lime);border-color:rgba(155,209,58,.45);}
+  .tool:disabled{opacity:.55;}
+  .racePanel{position:fixed;left:max(16px, env(safe-area-inset-left,0px));top:calc(118px + env(safe-area-inset-top,0px));width:min(250px, 60vw);
+    background:var(--panel);border:1px solid rgba(155,209,58,.35);border-radius:14px;padding:11px 12px;pointer-events:none;}
+  .racePanel h3{margin:0 0 2px;font-size:11px;letter-spacing:2px;color:var(--lime);font-weight:800;}
+  .racePanel .st{font-size:14px;font-weight:800;margin-bottom:6px;}
+  .racePanel .goal{font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.45;}
+  .racePanel .goal b{color:var(--white);}
+  .racePanel ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;}
+  .racePanel li{display:flex;align-items:center;gap:7px;font-size:12px;font-variant-numeric:tabular-nums;}
+  .racePanel li .rk{width:18px;color:var(--muted2);font-weight:800;text-align:right;}
+  .racePanel li .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .racePanel li .bar{width:52px;height:5px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;}
+  .racePanel li .bar i{display:block;height:100%;background:var(--lime);}
+  .racePanel li .tm{min-width:46px;text-align:right;color:var(--muted);}
+  .racePanel li.me .nm{color:var(--lime);font-weight:800;}
+  .racePanel .sub{margin-top:8px;font-size:11px;color:var(--muted2);}
+  .big{position:fixed;left:0;right:0;top:38%;text-align:center;pointer-events:none;font-size:clamp(56px, 16vw, 120px);font-weight:900;
+    color:var(--lime);text-shadow:0 6px 30px rgba(0,0,0,.8);letter-spacing:-2px;line-height:1;}
+  .big small{display:block;font-size:clamp(16px, 4vw, 24px);color:var(--white);letter-spacing:0;margin-top:10px;font-weight:800;}
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;
     padding:16px max(16px, env(safe-area-inset-right,0px)) 16px max(16px, env(safe-area-inset-left,0px));z-index:20;}
   .box{width:100%;max-width:360px;background:#141516;border:1px solid var(--line2);border-radius:20px;padding:22px;}
@@ -80,10 +102,21 @@
 <div class="chips">
   <span class="proto" id="netState">서버 연결 중…</span>
   <div class="tools">
+    <button class="tool" id="bgmBtn">BGM 켜기</button>
     <button class="tool" id="viewBtn">전체 보기</button>
+    <button class="tool race" id="raceBtn">레이스 참가</button>
     <button class="tool lime" id="memberBtn">회원 입장</button>
   </div>
 </div>
+
+<div class="racePanel" id="racePanel" hidden>
+  <h3>ROX SPRINT</h3>
+  <div class="st" id="raceState">레이스 대기 중</div>
+  <div class="goal" id="raceGoal">트랙 한 바퀴 → 월볼 15회 → 피니시 라인</div>
+  <ol id="raceList"></ol>
+  <div class="sub" id="raceSub"></div>
+</div>
+<div class="big" id="big" hidden></div>
 
 <div class="bottom">
   <button class="act" id="act" hidden>버피 브로드 점프 +1<small>누를 때마다 1회</small></button>
@@ -644,6 +677,7 @@ function doRep(pl){
     if(m >= 1000){ m = 0; if(pl.isMe) spawnFloat("1000m 완주", pl.c.root.position, 0.4); }
     pl.meters[pl.st] = m;
   }
+  if(pl.isMe) raceRep(pl.st);
   if(pl.isMe){ net.pending++; myReps++; document.getElementById("myReps").textContent = myReps; spawnFloat(label, pl.c.root.position); shownZone = -2; }
   hype = t;
 }
@@ -808,12 +842,13 @@ function beat(){
     net.wait = Date.now() + 5000; guestHello(); return;
   }
   var p = me.c.root.position, sent = net.pending; net.pending = 0;
-  api("/beat", {id:net.id, x:p.x, z:p.z, ry:me.c.root.rotation.y, st:(me.st >= 0 && me.arrived) ? me.st : -1, reps:sent, mv:meWalking ? 1 : 0})
+  api("/beat", {id:net.id, x:p.x, z:p.z, ry:me.c.root.rotation.y, st:(me.st >= 0 && me.arrived) ? me.st : -1, reps:sent, mv:meWalking ? 1 : 0, rid:rc.rid, rp:rc.joined ? rc.prog : 0})
     .then(function(d){
       if(!d.ok){ net.id = null; net.wait = 0; net.pending += sent; return; }
       setNet(true, d.online);
       for(var i=0;i<stations.length;i++){ if(d.today && stations[i].count !== d.today[i]){ stations[i].count = d.today[i]; setCount(stations[i]); } }
       syncRemotes(d.players || []);
+      handleRace(d.race);
     })
     .catch(function(){ net.pending += sent; net.id = null; net.wait = Date.now() + 5000; setNet(false); });
 }
@@ -863,6 +898,183 @@ function updateRemotes(t, dt){
   }
 }
 
+/* ================= 레이스: ROX 스프린트 (접속자끼리 시합) ================= */
+/* 코스: 트랙 한 바퀴(코너 4곳 통과) → 월볼 15회 → 출발선(START·FINISH) 통과 = 20단계 */
+var RRX = IN_X + TRACK/2, RRZ = IN_Z + TRACK/2;
+var CPS = [[-RRX,-RRZ],[RRX,-RRZ],[RRX,RRZ],[-RRX,RRZ]];
+var ARCH = {x:-RRX, z:-2.5};
+var WB_REPS = 15, RACE_STEPS = 4 + WB_REPS + 1;
+var rc = {state:"idle", rid:0, joined:false, prog:0, startedAt:0, finMs:null, placed:false, lock:false, lastState:"", goT:-9, finT:-9, view:null};
+var raceBtn = document.getElementById("raceBtn"), racePanel = document.getElementById("racePanel"), bigEl = document.getElementById("big");
+
+/* 다음 목표 표시 기둥 */
+var marker = new THREE.Group(); scene.add(marker);
+var mBeam = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 7, 24, 1, true), new THREE.MeshBasicMaterial({color:LIME, transparent:true, opacity:.16, side:THREE.DoubleSide, depthWrite:false}));
+mBeam.position.y = 3.5; marker.add(mBeam);
+var mRing = new THREE.Mesh(new THREE.RingGeometry(1.0, 1.25, 36), new THREE.MeshBasicMaterial({color:LIME, transparent:true, opacity:.8, side:THREE.DoubleSide}));
+mRing.rotation.x = -Math.PI/2; mRing.position.y = 0.04; marker.add(mRing);
+marker.visible = false;
+
+function fmtMs(ms){ if(ms == null) return "-"; var s = ms/1000, m = Math.floor(s/60); return m + ":" + ("0" + (s - m*60).toFixed(1)).slice(-4); }
+function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+function showBig(txt, sub){ bigEl.innerHTML = esc(txt) + (sub ? "<small>" + esc(sub) + "</small>" : ""); bigEl.hidden = false; }
+function hideBig(){ bigEl.hidden = true; }
+
+function goalText(){
+  if(rc.prog < 4) return "트랙 코너 <b>" + (rc.prog + 1) + " / 4</b> 지점으로 달리기";
+  if(rc.prog < 4 + WB_REPS) return "8번 월볼 <b>" + (rc.prog - 4) + " / " + WB_REPS + "회</b>";
+  if(rc.prog < RACE_STEPS) return "<b>START · FINISH</b> 라인으로!";
+  return "완주 <b>" + fmtMs(rc.finMs) + "</b>";
+}
+function targetPos(){
+  if(rc.prog < 4) return CPS[rc.prog];
+  if(rc.prog < 4 + WB_REPS) return [ST[7].x, ST[7].z];
+  if(rc.prog < RACE_STEPS) return [ARCH.x, ARCH.z];
+  return null;
+}
+
+raceBtn.addEventListener("pointerdown", function(e){
+  e.stopPropagation();
+  if(!net.id){ showBig("연결 중", "서버에 연결되면 참가할 수 있어요"); setTimeout(hideBig, 1500); return; }
+  if(rc.joined && (rc.state === "lobby" || rc.state === "countdown")){
+    api("/race/leave", {id:net.id}).catch(function(){}); rc.joined = false; renderRace(); return;
+  }
+  if(rc.state === "running" || rc.state === "done") return;
+  api("/race/join", {id:net.id}).then(function(d){
+    if(d.ok){ rc.joined = true; rc.prog = 0; rc.finMs = null; rc.placed = false; handleRace(d.race); }
+  }).catch(function(){});
+});
+
+/* 서버가 알려준 레이스 상태 반영 (beat 마다) */
+function handleRace(v){
+  if(!v) return;
+  rc.view = v;
+  if(v.rid !== rc.rid){ rc.rid = v.rid; }
+  var mine = false;
+  for(var i=0;i<v.racers.length;i++) if(v.racers[i].id === net.pub) mine = true;
+  if(rc.joined && !mine && (v.state === "lobby" || v.state === "countdown" || v.state === "running")) rc.joined = false;
+  var prev = rc.state; rc.state = v.state;
+  if(rc.joined && v.state === "countdown"){
+    rc.startAt = performance.now() + v.startIn * 1000;
+    if(v.startIn <= 4.5 && !rc.placed) placeAtStart(v);
+  }
+  if(rc.joined && v.state === "running" && prev !== "running"){
+    rc.startedAt = performance.now() - (v.elapsed || 0) * 1000;
+    if(!rc.placed) placeAtStart(v);
+    rc.lock = false; rc.goT = clock(); showBig("GO!");
+    setTimeout(function(){ if(clock() - rc.goT >= 0.9) hideBig(); }, 1000);
+    bgmBoost(true);
+  }
+  if(v.state === "done" && prev !== "done"){ rc.lock = false; marker.visible = false; bgmBoost(false); }
+  if(v.state === "idle" && prev !== "idle"){ rc.joined = false; rc.placed = false; rc.prog = 0; hideBig(); }
+  renderRace();
+}
+function placeAtStart(v){
+  var idx = 0; for(var i=0;i<v.racers.length;i++) if(v.racers[i].id === net.pub) idx = i;
+  release(me); me.target = null;
+  me.c.root.position.set(ARCH.x - 0.78 + (idx % 3) * 0.78, 0, ARCH.z + 0.9 + Math.floor(idx / 3) * 0.95);
+  me.c.root.rotation.y = Math.PI;      /* 뒤쪽(코너 1) 방향 */
+  rc.placed = true; rc.lock = true;
+}
+
+function renderRace(){
+  var v = rc.view, st = v ? v.state : "idle";
+  /* 버튼 */
+  raceBtn.disabled = false; raceBtn.className = "tool race";
+  if(rc.joined && (st === "lobby" || st === "countdown")){ raceBtn.textContent = "참가 취소"; raceBtn.className = "tool race wait"; }
+  else if(st === "running"){ raceBtn.textContent = rc.joined ? "레이스 중" : "레이스 진행 중"; raceBtn.disabled = true; raceBtn.className = "tool race wait"; }
+  else if(st === "done"){ raceBtn.textContent = "결과 발표"; raceBtn.disabled = true; raceBtn.className = "tool race wait"; }
+  else raceBtn.textContent = st === "idle" ? "레이스 열기" : "레이스 참가";
+  /* 패널 */
+  if(!v || st === "idle"){ racePanel.hidden = true; return; }
+  racePanel.hidden = false;
+  var title = {lobby:"선수 모집 중 · " + v.min + "명부터 출발", countdown:"곧 출발 " + Math.ceil(v.startIn || 0) + "초", running:"레이스 중 " + fmtMs((v.elapsed || 0) * 1000), done:"결과"}[st] || "";
+  document.getElementById("raceState").textContent = title;
+  document.getElementById("raceGoal").innerHTML = rc.joined && st === "running" ? goalText() : "트랙 한 바퀴 → 월볼 15회 → 피니시 라인";
+  var rows = st === "done" ? v.results.map(function(r){ return {n:r.n, a:r.a, prog:r.prog, ms:r.ms}; }) : v.racers;
+  var h = "";
+  for(var i=0;i<rows.length && i<8;i++){
+    var r = rows[i], isMe = st !== "done" && r.id === net.pub;
+    var pct = Math.round(100 * Math.min(1, (isMe ? Math.max(rc.prog, r.prog) : r.prog) / (v.steps || RACE_STEPS)));
+    h += '<li class="' + (isMe ? "me" : "") + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(r.n) + ' Lv.' + levelOf(r.a || 0) + '</span>'
+       + '<span class="bar"><i style="width:' + pct + '%"></i></span><span class="tm">' + (r.ms != null ? fmtMs(r.ms) : (st === "done" ? "기권" : pct + "%")) + '</span></li>';
+  }
+  document.getElementById("raceList").innerHTML = h;
+  var sub = "";
+  if(v.best && v.best.length) sub = "오늘 최고 " + esc(v.best[0].n) + " " + fmtMs(v.best[0].ms);
+  if(st === "lobby" && !rc.joined) sub = "오른쪽 위 레이스 참가를 누르면 같이 뛸 수 있어요";
+  document.getElementById("raceSub").innerHTML = sub;
+}
+
+/* 매 프레임: 진행 판정, 카운트다운 숫자, 목표 기둥 */
+function updateRace(t){
+  var racing = rc.joined && rc.state === "running" && rc.prog < RACE_STEPS;
+  if(rc.joined && rc.state === "countdown" && rc.startAt){
+    var left = (rc.startAt - performance.now()) / 1000;
+    if(left <= 3.2 && left > 0){ showBig(String(Math.ceil(left)), "출발선에서 대기"); }
+    else if(left > 3.2 && rc.placed) showBig("READY", "곧 출발합니다");
+  }
+  if(racing){
+    var p = me.c.root.position;
+    if(rc.prog < 4){
+      var cp = CPS[rc.prog];
+      if(Math.hypot(p.x - cp[0], p.z - cp[1]) < 2.4){ rc.prog++; spawnFloat("코너 " + rc.prog + "/4", p); renderRace(); }
+    } else if(rc.prog === 4 + WB_REPS){
+      if(Math.abs(p.x - ARCH.x) < TRACK/2 + 0.4 && Math.abs(p.z - ARCH.z) < 0.7){
+        rc.prog = RACE_STEPS; rc.finMs = performance.now() - rc.startedAt; rc.finT = t;
+        showBig("FINISH", fmtMs(rc.finMs)); setTimeout(hideBig, 2500); renderRace();
+      }
+    }
+    if(Math.floor(t * 4) !== Math.floor((t - 0.016) * 4)) renderRace();
+  }
+  var tp = racing ? targetPos() : null;
+  marker.visible = !!tp;
+  if(tp){ marker.position.set(tp[0], 0, tp[1]); mBeam.material.opacity = 0.12 + 0.06 * Math.sin(t * 5); mRing.scale.setScalar(1 + 0.08 * Math.sin(t * 5)); }
+}
+/* 월볼 1회 = 1단계 (레이스 중, 월볼 단계일 때만) */
+function raceRep(st){
+  if(rc.joined && rc.state === "running" && st === 7 && rc.prog >= 4 && rc.prog < 4 + WB_REPS){ rc.prog++; renderRace(); }
+}
+
+/* ================= 배경음악 (직접 만든 곡, Web Audio) ================= */
+var bgm = {ctx:null, on:false, master:null, step:0, next:0, timer:null, boost:false, noise:null};
+var BPM = 128, STEP = 60 / BPM / 4;
+var BASS = [45, 45, 41, 41, 48, 48, 43, 43];           /* A, F, C, G (2마디씩 나눠서) */
+var LEAD = [69,72,76,72, 69,72,76,79, 65,69,72,69, 65,69,72,77, 72,76,79,76, 72,76,79,84, 67,71,74,71, 67,71,74,79];
+function mtof(m){ return 440 * Math.pow(2, (m - 69) / 12); }
+function bgmInit(){
+  var AC = window.AudioContext || window.webkitAudioContext; if(!AC) return false;
+  bgm.ctx = new AC(); bgm.master = bgm.ctx.createGain(); bgm.master.gain.value = 0.22; bgm.master.connect(bgm.ctx.destination);
+  var len = bgm.ctx.sampleRate * 0.5, buf = bgm.ctx.createBuffer(1, len, bgm.ctx.sampleRate), d = buf.getChannelData(0);
+  for(var i=0;i<len;i++) d[i] = Math.random() * 2 - 1;
+  bgm.noise = buf; return true;
+}
+function env(g, t, a, peak, dec){ g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
+function kick(t){ var c = bgm.ctx, o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.13); env(g, t, 0.002, 1.0, 0.18); o.connect(g); g.connect(bgm.master); o.start(t); o.stop(t + 0.22); }
+function noiseHit(t, hp, peak, dec){ var c = bgm.ctx, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = bgm.noise; f.type = "highpass"; f.frequency.value = hp; env(g, t, 0.001, peak, dec); s.connect(f); f.connect(g); g.connect(bgm.master); s.start(t); s.stop(t + dec + 0.05); }
+function synth(t, note, type, peak, dec, lp){ var c = bgm.ctx, o = c.createOscillator(), f = c.createBiquadFilter(), g = c.createGain(); o.type = type; o.frequency.value = mtof(note); f.type = "lowpass"; f.frequency.value = lp; env(g, t, 0.004, peak, dec); o.connect(f); f.connect(g); g.connect(bgm.master); o.start(t); o.stop(t + dec + 0.05); }
+function schedule(){
+  var c = bgm.ctx;
+  while(bgm.next < c.currentTime + 0.12){
+    var s = bgm.step % 64, t = bgm.next, beat = s % 16;
+    if(beat % 4 === 0) kick(t);
+    if(beat === 4 || beat === 12) noiseHit(t, 1800, 0.35, 0.14);
+    if(beat % 4 === 2 || (bgm.boost && beat % 2 === 1)) noiseHit(t, 7000, bgm.boost ? 0.12 : 0.09, 0.035);
+    if(beat % 2 === 0) synth(t, BASS[Math.floor(s / 8)] + (beat % 4 === 2 ? 12 : 0), "sawtooth", 0.16, 0.16, 700);
+    if(s % 2 === 0) synth(t, LEAD[(s / 2) % LEAD.length], "square", bgm.boost ? 0.055 : 0.04, 0.12, 2600);
+    bgm.step++; bgm.next += STEP;
+  }
+}
+function bgmBoost(v){ bgm.boost = v; }
+document.getElementById("bgmBtn").addEventListener("pointerdown", function(e){
+  e.stopPropagation();
+  if(!bgm.ctx && !bgmInit()) return;
+  bgm.on = !bgm.on;
+  if(bgm.on){ bgm.ctx.resume(); bgm.next = bgm.ctx.currentTime + 0.05; bgm.timer = setInterval(schedule, 25); this.textContent = "BGM 끄기"; }
+  else { clearInterval(bgm.timer); this.textContent = "BGM 켜기"; }
+});
+document.addEventListener("visibilitychange", function(){ if(bgm.ctx && bgm.on){ if(document.hidden) bgm.ctx.suspend(); else bgm.ctx.resume(); } });
+
 /* ================= 입력 ================= */
 var ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), dragging = false, tapT = -9;
 var tapMark = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 24), basic(LIME, {transparent:true, opacity:0}));
@@ -875,6 +1087,7 @@ function pickFloor(e){
   if(hit) goTo(hit.point.x, hit.point.z);
 }
 function goTo(x, z){
+  if(rc.lock) return;
   x = Math.max(-OUT_X + 0.5, Math.min(OUT_X - 0.5, x)); z = Math.max(-OUT_Z + 0.5, Math.min(OUT_Z - 0.5, z));
   me.target = new THREE.Vector3(x, 0, z);
   if(me.st >= 0 && zoneOf(me.target) !== me.st) release(me);
@@ -904,7 +1117,7 @@ window.addEventListener("resize", resize); resize();
 
 var tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpS = new THREE.Vector3(1,1,1), tmpP = new THREE.Vector3();
 function loop(){
-  var t = clock(), dt = Math.min(0.05, t - last); last = t;
+  var t = clock(), dt = Math.min(0.1, t - last); last = t;
 
   /* 나 */
   var walking = false, prev = me.c.root.position.clone();
@@ -928,6 +1141,7 @@ function loop(){
   for(var i=0;i<stations.length;i++) stations[i].edgeM.opacity = i === z ? 0.75 + 0.25*Math.sin(t*6) : 0.35;
 
   updateRemotes(t, dt);
+  updateRace(t);
   updateGear(t, dt);
 
   /* 관중 */
@@ -960,7 +1174,7 @@ function loop(){
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-window.__gym = {go:goTo, act:function(){ act.dispatchEvent(new PointerEvent("pointerdown")); }, level:setMyLevel, zone:function(){ return zoneOf(me.c.root.position); }, overview:function(v){ overview = v; }};
+window.__gym = {pos:function(){ var p = me.c.root.position; return [+p.x.toFixed(2), +p.z.toFixed(2), me.st, me.target ? [+me.target.x.toFixed(1), +me.target.z.toFixed(1)] : null, rc.lock]; }, go:goTo, act:function(){ act.dispatchEvent(new PointerEvent("pointerdown")); }, level:setMyLevel, zone:function(){ return zoneOf(me.c.root.position); }, overview:function(v){ overview = v; }};
 })();
 </script>
 

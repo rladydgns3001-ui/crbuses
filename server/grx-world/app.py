@@ -58,6 +58,7 @@ def load_data():
     d.setdefault("all", [0] * STATIONS)
     d.setdefault("today", [0] * STATIONS)
     d.setdefault("day", today())
+    d.setdefault("best", [])          # 오늘 레이스 최고 기록 [{n, a, ms}]
     return d
 
 
@@ -69,6 +70,7 @@ def roll_day():
     if data["day"] != today():
         data["day"] = today()
         data["today"] = [0] * STATIONS
+        data["best"] = []
 
 
 def saver():
@@ -124,6 +126,57 @@ def prune(now):
     dead = [k for k, p in players.items() if now - p["seen"] > PLAYER_TTL]
     for k in dead:
         del players[k]
+        race["racers"].pop(k, None)
+
+
+# ───────── 레이스 (접속자끼리 시합) ─────────
+# 코스: 트랙 한 바퀴(코너 4곳) → 월볼 15회 → 피니시 라인 = 20단계
+RACE_STEPS = 20
+RACE_MIN = 2            # 이 인원 이상 모이면 카운트다운 시작
+RACE_WAIT = 15          # 카운트다운(초). 그동안 더 참가 가능
+RACE_LIMIT = 300        # 5분 지나면 강제 종료
+RACE_SHOW = 15          # 결과 보여주는 시간(초)
+race = {"state": "idle", "rid": 0, "startAt": 0.0, "endAt": 0.0, "racers": {}, "results": []}
+
+
+def race_tick(now):
+    global dirty
+    r = race
+    if r["state"] in ("lobby", "countdown") and not r["racers"]:
+        r["state"] = "idle"
+    if r["state"] == "lobby" and len(r["racers"]) >= RACE_MIN:
+        r["state"] = "countdown"; r["startAt"] = now + RACE_WAIT
+    if r["state"] == "countdown":
+        if len(r["racers"]) < RACE_MIN:
+            r["state"] = "lobby"
+        elif now >= r["startAt"]:
+            r["state"] = "running"
+    if r["state"] == "running":
+        alive = [v for v in r["racers"].values() if v["fin"] is None]
+        if not alive or now - r["startAt"] > RACE_LIMIT:
+            res = sorted(r["racers"].values(), key=lambda v: (v["fin"] is None, v["fin"] or 0, -v["prog"]))
+            r["results"] = [{"n": v["n"], "a": v["a"], "prog": v["prog"], "ms": v["fin"]} for v in res]
+            for v in res:
+                if v["fin"] is not None:
+                    data["best"].append({"n": v["n"], "a": v["a"], "ms": v["fin"]})
+            data["best"] = sorted(data["best"], key=lambda b: b["ms"])[:10]
+            dirty = True
+            r["state"] = "done"; r["endAt"] = now
+    if r["state"] == "done" and now - r["endAt"] > RACE_SHOW:
+        r["state"] = "idle"; r["racers"] = {}; r["results"] = []
+
+
+def race_view(now):
+    r = race
+    rs = sorted(r["racers"].items(), key=lambda kv: (kv[1]["fin"] is None, kv[1]["fin"] or 0, -kv[1]["prog"]))
+    return {
+        "state": r["state"], "rid": r["rid"], "steps": RACE_STEPS, "min": RACE_MIN,
+        "startIn": round(max(0.0, r["startAt"] - now), 2) if r["state"] == "countdown" else None,
+        "elapsed": round(now - r["startAt"], 2) if r["state"] == "running" else None,
+        "racers": [{"id": players[k]["pub"] if k in players else "", "n": v["n"], "a": v["a"], "prog": v["prog"], "ms": v["fin"]} for k, v in rs],
+        "results": r["results"],
+        "best": data["best"][:5],
+    }
 
 
 def client_ip(req: Request):
@@ -207,6 +260,17 @@ async def beat(req: Request):
         p["ry"] = round(num("ry", -7, 7, p["ry"]), 2)
         p["mv"] = 1 if body.get("mv") else 0
         p["st"] = st if 0 <= st < STATIONS else -1
+        # 레이스 진행 보고 (한 번에 최대 3단계까지만 인정)
+        rv = race["racers"].get(pid)
+        if rv and race["state"] == "running" and rv["fin"] is None and body.get("rid") == race["rid"]:
+            try:
+                rp = int(body.get("rp", 0))
+            except (TypeError, ValueError):
+                rp = 0
+            rv["prog"] = max(rv["prog"], min(RACE_STEPS, rp, rv["prog"] + 3))
+            if rv["prog"] >= RACE_STEPS:
+                rv["fin"] = int((now - race["startAt"]) * 1000)
+        race_tick(now)
         if 0 <= st < STATIONS:
             if reps:
                 p["r"] += reps
@@ -224,7 +288,39 @@ async def beat(req: Request):
             "all": data["all"],
             "players": [{"id": v["pub"], "n": v["n"], "m": v["m"], "a": v["a"], "st": v["st"], "r": v["r"],
                          "x": v["x"], "z": v["z"], "ry": v["ry"], "mv": v["mv"]} for k, v in lst],
+            "race": race_view(now),
+            "me": {"racer": pid in race["racers"]},
         }
+
+
+@app.post("/race/join")
+async def race_join(req: Request):
+    body = await req.json()
+    now = time.time()
+    pid = str(body.get("id") or "")
+    with lock:
+        prune(now)
+        race_tick(now)
+        p = players.get(pid)
+        if not p:
+            return {"ok": False, "error": "expired"}
+        if race["state"] in ("running", "done"):
+            return {"ok": False, "error": "running", "race": race_view(now)}
+        if race["state"] == "idle":
+            race["state"] = "lobby"; race["rid"] += 1; race["racers"] = {}; race["results"] = []
+        race["racers"][pid] = {"n": p["n"], "a": p["a"], "prog": 0, "fin": None}
+        race_tick(now)
+        return {"ok": True, "race": race_view(now)}
+
+
+@app.post("/race/leave")
+async def race_leave(req: Request):
+    body = await req.json()
+    with lock:
+        if race["state"] in ("lobby", "countdown"):
+            race["racers"].pop(str(body.get("id") or ""), None)
+            race_tick(time.time())
+    return {"ok": True}
 
 
 @app.post("/bye")
@@ -234,5 +330,7 @@ async def bye(req: Request):
     except Exception:
         return {"ok": True}
     with lock:
-        players.pop(str(body.get("id") or ""), None)
+        k = str(body.get("id") or "")
+        players.pop(k, None)
+        race["racers"].pop(k, None)
     return {"ok": True}
