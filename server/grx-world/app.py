@@ -1,5 +1,5 @@
 """
-GRX 온라인 체육관 실시간 서버 (grx-world)
+GRX 3D 체육관 실시간 서버 (grx-world)
 
 - 키오스크 서버(grx-api)와 완전히 분리된 작은 서비스. 이게 죽어도 키오스크 출석은 영향 없음
 - 접속자 목록과 운동 횟수는 메모리에만 둠. 종목별 누적 횟수만 data.json 에 저장
@@ -27,10 +27,10 @@ DATA_FILE = os.environ.get("WORLD_DATA", os.path.join(os.path.dirname(os.path.ab
 KST = timezone(timedelta(hours=9))
 
 STATIONS = 8               # 스키 / 슬레드 푸시 / 슬레드 풀 / 버피 브로드점프 / 로잉 / 파머스 캐리 / 샌드백 런지 / 월볼
-PLAYER_TTL = 12            # 이 시간(초) 동안 신호가 없으면 퇴장 처리
+PLAYER_TTL = 10            # 이 시간(초) 동안 신호가 없으면 퇴장 처리
 MAX_PLAYERS = 5000
-MAX_REPS_PER_BEAT = 15     # 2초에 15회 넘게 누르면 잘라냄 (자동 클릭 방지)
-LIST_LIMIT = 80            # 화면에 그릴 최대 인원
+MAX_REPS_PER_BEAT = 6      # 한 번(약 0.7초)에 6회 넘게 누르면 잘라냄 (자동 클릭 방지)
+LIST_LIMIT = 60            # 화면에 그릴 최대 인원
 
 app = FastAPI()
 app.add_middleware(
@@ -167,7 +167,7 @@ async def hello(req: Request):
             p = {"n": mask(member["name"]), "m": 1, "a": member["total"]}
         else:
             p = {"n": "방문자" + str(random.randint(1000, 9999)), "m": 0, "a": 0}
-        p.update({"st": -1, "r": 0, "seen": now, "act": 0, "pub": secrets.token_hex(4)})
+        p.update({"st": -1, "r": 0, "seen": now, "act": 0, "pub": secrets.token_hex(4), "x": -15.2, "z": 0.5, "ry": 0.0, "mv": 0})
         players[pid] = p
         return {"ok": True, "id": pid, "pub": p["pub"], "name": p["n"], "member": p["m"], "total": p["a"],
                 "realName": member["name"] if member else None}
@@ -187,6 +187,15 @@ async def beat(req: Request):
         reps = max(0, min(MAX_REPS_PER_BEAT, int(body.get("reps", 0))))
     except (TypeError, ValueError):
         reps = 0
+
+    def num(k, lo, hi, dflt):
+        try:
+            v = float(body.get(k, dflt))
+        except (TypeError, ValueError):
+            return dflt
+        if v != v:            # NaN
+            return dflt
+        return max(lo, min(hi, v))
     with lock:
         roll_day()
         prune(now)
@@ -194,23 +203,28 @@ async def beat(req: Request):
         if not p:
             return {"ok": False, "error": "expired"}
         p["seen"] = now
+        p["x"] = round(num("x", -17, 17, p["x"]), 2)
+        p["z"] = round(num("z", -12, 12, p["z"]), 2)
+        p["ry"] = round(num("ry", -7, 7, p["ry"]), 2)
+        p["mv"] = 1 if body.get("mv") else 0
+        p["st"] = st if 0 <= st < STATIONS else -1
         if 0 <= st < STATIONS:
-            p["st"] = st
             if reps:
                 p["r"] += reps
                 p["act"] = now
                 data["all"][st] += reps
                 data["today"][st] += reps
                 dirty = True
-        # 최근에 움직인 사람부터, 본인은 항상 맨 앞 (다른 사람에게는 비밀 id 대신 공개용 id만 보냄)
-        others = sorted(((k, v) for k, v in players.items() if k != pid), key=lambda kv: -kv[1]["act"])
-        lst = [(pid, p)] + others[:LIST_LIMIT - 1]
+        # 나를 뺀 접속자 (최근에 운동한 사람부터). 다른 사람에게는 비밀 id 대신 공개용 id만 보냄
+        others = sorted(((k, v) for k, v in players.items() if k != pid), key=lambda kv: -max(kv[1]["act"], kv[1]["seen"] - 60))
+        lst = others[:LIST_LIMIT]
         return {
             "ok": True,
             "online": len(players),
             "today": data["today"],
             "all": data["all"],
-            "players": [{"id": v["pub"], "n": v["n"], "m": v["m"], "a": v["a"], "st": v["st"], "r": v["r"]} for k, v in lst],
+            "players": [{"id": v["pub"], "n": v["n"], "m": v["m"], "a": v["a"], "st": v["st"], "r": v["r"],
+                         "x": v["x"], "z": v["z"], "ry": v["ry"], "mv": v["mv"]} for k, v in lst],
         }
 
 

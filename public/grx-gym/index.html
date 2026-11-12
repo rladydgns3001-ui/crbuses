@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="description" content="GRX 3D 체육관: 하이록스 대회장에서 터치로 달리고 8개 스테이션을 도는 온라인 레이스. 출석 레벨이 높을수록 빨라집니다.">
+<meta name="description" content="GRX 3D 체육관: 하이록스 대회장에서 터치로 달리고 8개 스테이션을 도는 실시간 온라인 레이스. 출석 레벨이 높을수록 빨라집니다.">
 <meta property="og:title" content="GRX 3D 체육관">
-<meta property="og:description" content="하이록스 대회장에서 레이스하기. 출석 레벨이 곧 실력.">
+<meta property="og:description" content="하이록스 대회장에서 같이 레이스하기. 출석 레벨이 곧 실력.">
 <meta name="theme-color" content="#08090a">
 <title>GRX 3D 체육관</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -29,7 +29,8 @@
   .brand b{font-size:19px;font-weight:800;letter-spacing:-.4px;text-shadow:0 2px 8px rgba(0,0,0,.7);}
   .live{max-width:52vw;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 11px;font-size:12px;color:var(--muted);text-align:right;line-height:1.5;}
   .live b{color:var(--white);font-size:14px;font-variant-numeric:tabular-nums;}
-  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:5px;vertical-align:1px;}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted2);margin-right:5px;vertical-align:1px;}
+  .dot.on{background:var(--lime);}
 
   .chips{position:fixed;left:max(16px, env(safe-area-inset-left,0px));right:max(16px, env(safe-area-inset-right,0px));
     top:calc(76px + env(safe-area-inset-top,0px));display:flex;justify-content:space-between;align-items:center;gap:8px;pointer-events:none;}
@@ -74,10 +75,10 @@
 
 <div class="top">
   <div class="brand"><small>GRX ROX ARENA</small><b>GRX 3D 체육관</b></div>
-  <div class="live"><span class="dot"></span>AI 페이스메이커 <b>7</b>명과 레이스<br>레벨이 높을수록 빨라요</div>
+  <div class="live"><span class="dot" id="dot"></span>지금 <b id="online">-</b>명 접속<br>레벨이 높을수록 빨라요</div>
 </div>
 <div class="chips">
-  <span class="proto">실시간 접속은 준비 중</span>
+  <span class="proto" id="netState">서버 연결 중…</span>
   <div class="tools">
     <button class="tool" id="viewBtn">전체 보기</button>
     <button class="tool lime" id="memberBtn">회원 입장</button>
@@ -643,7 +644,7 @@ function doRep(pl){
     if(m >= 1000){ m = 0; if(pl.isMe) spawnFloat("1000m 완주", pl.c.root.position, 0.4); }
     pl.meters[pl.st] = m;
   }
-  if(pl.isMe){ myReps++; document.getElementById("myReps").textContent = myReps; spawnFloat(label, pl.c.root.position); shownZone = -2; }
+  if(pl.isMe){ net.pending++; myReps++; document.getElementById("myReps").textContent = myReps; spawnFloat(label, pl.c.root.position); shownZone = -2; }
   hype = t;
 }
 
@@ -715,8 +716,8 @@ function updateGear(t, dt){
       if(i === 4){ un.seat.position.z = -0.55 + sn * 0.0 - sn*0.35; un.handle.position.z = 0.55 - sn*0.9; }
       if(i === 7){
         var occ = s.slots[u];
-        if(q < 1 && occ){
-          var start = new THREE.Vector3(un.x, 1.3, occ.c.root.position.z - s.d.z - 0.3), top = new THREE.Vector3(un.x, 3.1, -1.6);
+        if(q < 1){
+          var start = new THREE.Vector3(un.x, 1.3, (occ ? occ.c.root.position.z - s.d.z : un.athleteZ) - 0.3), top = new THREE.Vector3(un.x, 3.1, -1.6);
           var a = q < 0.35 ? 0 : (q - 0.35) / 0.65, up = a < 0.5 ? a*2 : (1 - a)*2;
           un.ball.position.lerpVectors(start, top, ease(up));
           un.ball.visible = q >= 0.35;
@@ -763,6 +764,7 @@ document.getElementById("mOk").addEventListener("click", function(){
     .then(function(d){
       if(!d.ok){ errEl.textContent = d.error === "not_found" ? "일치하는 회원이 없어요. 이름과 번호를 확인해 주세요" : "잠시 후 다시 시도해 주세요"; return; }
       setMyLevel(levelOf(d.total || 0), d.name);
+      net.member = true; useIdentity(d); setNet(true, 1);
       document.getElementById("memberBtn").hidden = true;
       modal.hidden = true; document.getElementById("inPhone").value = "";
     })
@@ -772,50 +774,90 @@ document.getElementById("mOk").addEventListener("click", function(){
 var overview = false;
 document.getElementById("viewBtn").addEventListener("pointerdown", function(e){ e.stopPropagation(); overview = !overview; this.textContent = overview ? "내 선수 보기" : "전체 보기"; });
 
-/* ================= 예시 선수 (스테이션 → 트랙 한 바퀴 → 다음 스테이션) ================= */
-var NAMES = ["페이서","페이서","페이서","페이서","페이서","페이서","페이서"];
-var TIERS_OF = [1,3,2,4,0,6,5];
-var bots = [];
-var RX = IN_X + TRACK/2, RZ = IN_Z + TRACK/2;
-function lapPath(fromSt, toSt){
-  var a = stations[fromSt].d, b = stations[toSt].d, sx = a.x < 0 ? -RX : RX, path = [];
-  path.push(new THREE.Vector3(a.x, 0, 0));
-  path.push(new THREE.Vector3(sx, 0, 0));
-  var loop = sx < 0 ? [[-RX,-RZ],[RX,-RZ],[RX,RZ],[-RX,RZ]] : [[RX,RZ],[-RX,RZ],[-RX,-RZ],[RX,-RZ]];
-  loop.forEach(function(p){ path.push(new THREE.Vector3(p[0], 0, p[1])); });
-  path.push(new THREE.Vector3(sx, 0, 0));
-  path.push(new THREE.Vector3(b.x, 0, 0));
-  return path;
+/* ================= 실시간 접속 (grx-world) ================= */
+var net = {id:null, pub:null, pending:0, ok:false, wait:0, member:false}, meWalking = false;
+var remotes = {};
+function api(path, body){
+  return fetch(WORLD_API + path, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)})
+    .then(function(r){ return r.json(); });
 }
-for(var bi=0; bi<NAMES.length; bi++){
-  var tr = TIERS_OF[bi], blv = TIERS[tr].lv;
-  var pl = newPlayer(blv, NAMES[bi] + " Lv." + blv, false);
-  pl.c.face = bi * 1.7;
-  var bot = {pl:pl, st:bi, reps:0, need:5 + ((Math.random()*6)|0), path:null, next:0};
-  if(bi === 6){ /* 한 명은 트랙에서 출발 */
-    pl.c.root.position.set(RX, 0, -RZ); bot.path = lapPath(7, 0).slice(4); bot.st = 0;
-  } else {
-    var sd = stations[bi].d; pl.c.root.position.set(sd.x + (Math.random()-.5)*2, 0, sd.z * 0.4);
-    assign(pl, bi);
+function setNet(ok, online){
+  net.ok = ok;
+  document.getElementById("dot").className = ok ? "dot on" : "dot";
+  document.getElementById("online").textContent = ok ? fmt(online || 1) : "-";
+  var ns = document.getElementById("netState");
+  ns.hidden = ok; ns.textContent = "서버 연결 대기 중 · 혼자 레이스";
+}
+function useIdentity(d){
+  if(net.id && net.id !== d.id) api("/bye", {id:net.id}).catch(function(){});
+  net.id = d.id; net.pub = d.pub;
+}
+function guestHello(){
+  api("/hello", {mode:"guest"}).then(function(d){
+    if(!d.ok) throw d;
+    useIdentity(d);
+    if(!net.member) document.getElementById("myName").textContent = d.name;
+    setNet(true, 1);
+  }).catch(function(){ setNet(false); });
+}
+function beat(){
+  if(!net.id){
+    if(Date.now() < net.wait) return;
+    net.wait = Date.now() + 5000; guestHello(); return;
   }
-  bots.push(bot);
+  var p = me.c.root.position, sent = net.pending; net.pending = 0;
+  api("/beat", {id:net.id, x:p.x, z:p.z, ry:me.c.root.rotation.y, st:(me.st >= 0 && me.arrived) ? me.st : -1, reps:sent, mv:meWalking ? 1 : 0})
+    .then(function(d){
+      if(!d.ok){ net.id = null; net.wait = 0; net.pending += sent; return; }
+      setNet(true, d.online);
+      for(var i=0;i<stations.length;i++){ if(d.today && stations[i].count !== d.today[i]){ stations[i].count = d.today[i]; setCount(stations[i]); } }
+      syncRemotes(d.players || []);
+    })
+    .catch(function(){ net.pending += sent; net.id = null; net.wait = Date.now() + 5000; setNet(false); });
 }
+setInterval(beat, 700); beat();
+window.addEventListener("pagehide", function(){
+  if(net.id && navigator.sendBeacon) navigator.sendBeacon(WORLD_API + "/bye", JSON.stringify({id:net.id}));
+});
 
-function updateBot(bo, t, dt){
-  var pl = bo.pl, c = pl.c, walking = false, running = false;
-  if(bo.path){
-    var goal = bo.path[0], mv = moveToward(c, goal, dt, RUN_BASE * pl.spd * 1.05);
-    walking = running = true;
-    if(mv === 0){ bo.path.shift(); if(!bo.path.length){ bo.path = null; if(!assign(pl, bo.st)){ bo.st = (bo.st + 1) % 8; bo.path = [new THREE.Vector3(stations[bo.st].d.x, 0, 0)]; } bo.reps = 0; bo.need = 5 + ((Math.random()*7)|0); } }
-  } else if(pl.st >= 0){
-    walking = updateAtStation(pl, t, dt);
-    if(pl.arrived && t > bo.next){
-      if(bo.reps >= bo.need){ var from = pl.st; release(pl); bo.st = (from + 1) % 8; bo.path = lapPath(from, bo.st); }
-      else { doRep(pl); bo.reps++; bo.next = t + ((pl.st === 0 || pl.st === 4) ? 0.7 / pl.spd + 0.1 : 0.75 + Math.random()*0.9); }
+function syncRemotes(list){
+  var seen = {};
+  for(var i=0;i<list.length;i++){
+    var p = list[i]; if(p.id === net.pub) continue;
+    seen[p.id] = 1;
+    var rm = remotes[p.id], lv = levelOf(p.a || 0);
+    if(rm && rm.lv !== lv){ disposeCubi(rm.pl.c); rm = null; delete remotes[p.id]; }
+    if(!rm){
+      var pl = newPlayer(lv, p.n + " Lv." + lv, false);
+      pl.c.root.position.set(p.x, 0, p.z); pl.c.root.rotation.y = p.ry; pl.c.face = Math.random() * 6;
+      rm = remotes[p.id] = {pl:pl, lv:lv, r:p.r, queue:0};
     }
+    if(p.r > rm.r && p.st >= 0) rm.queue = Math.min(3, rm.queue + (p.r - rm.r));
+    rm.r = p.r; rm.tx = p.x; rm.tz = p.z; rm.ry = p.ry; rm.st = p.st; rm.mv = p.mv;
   }
-  var lane = pl.st >= 0 && stations[pl.st].d.kind === "lane" && pl.st !== 2 && pl.arrived;
-  pose(c, t, walking, running, pl.st);
+  for(var k in remotes){ if(!seen[k]){ disposeCubi(remotes[k].pl.c); delete remotes[k]; } }
+}
+function updateRemotes(t, dt){
+  for(var k in remotes){
+    var rm = remotes[k], pl = rm.pl, c = pl.c, pos = c.root.position;
+    var dx = rm.tx - pos.x, dz = rm.tz - pos.z, dist = Math.sqrt(dx*dx + dz*dz);
+    var walking = dist > 0.08 && rm.mv;
+    if(dist > 6){ pos.x = rm.tx; pos.z = rm.tz; }
+    else if(dist > 0.01){ var stp = Math.min(dist, Math.max(RUN_BASE * pl.spd, dist * 3) * dt); pos.x += dx/dist*stp; pos.z += dz/dist*stp; c.walkT += dt; }
+    turnTo(c, rm.ry, dt);
+    var cardio = rm.st === 0 || rm.st === 4, dur = cardio ? 0.7 / pl.spd : 0.7;
+    if(rm.queue > 0 && t - c.doT > dur && rm.st >= 0){
+      rm.queue--; c.doT = t; c.doSt = rm.st; c.doDur = dur; hype = t;
+      var s = stations[rm.st];
+      if(s.d.kind === "unit"){
+        var lx = pos.x - s.d.x, best = 0;
+        for(var u=1; u<s.units.length; u++) if(Math.abs(s.units[u].x - lx) < Math.abs(s.units[best].x - lx)) best = u;
+        s.units[best].t = t; s.units[best].dur = dur;
+      }
+    }
+    var onTrack = Math.abs(pos.x) > IN_X || Math.abs(pos.z) > IN_Z;
+    pose(c, t, walking, onTrack && walking, rm.st);
+  }
 }
 
 /* ================= 입력 ================= */
@@ -867,6 +909,7 @@ function loop(){
   else if(me.target){ walking = moveToward(me.c, me.target, dt, RUN_BASE * me.spd) > 0; if(!walking) me.target = null; }
   var pos = me.c.root.position, onTrack = Math.abs(pos.x) > IN_X || Math.abs(pos.z) > IN_Z;
   if(onTrack && walking && me.st < 0){ myRun += pos.distanceTo(prev); document.getElementById("myRun").textContent = Math.floor(myRun * 10); }
+  meWalking = walking;
   pose(me.c, t, walking, onTrack && walking, me.st);
 
   /* 버튼 */
@@ -881,7 +924,7 @@ function loop(){
   }
   for(var i=0;i<stations.length;i++) stations[i].edgeM.opacity = i === z ? 0.75 + 0.25*Math.sin(t*6) : 0.35;
 
-  for(var b=0;b<bots.length;b++) updateBot(bots[b], t, dt);
+  updateRemotes(t, dt);
   updateGear(t, dt);
 
   /* 관중 */
