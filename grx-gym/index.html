@@ -734,7 +734,8 @@ function updateGear(t, dt){
 /* ================= 나 ================= */
 var myLv = 1, myReps = 0, myRun = 0;
 var me = newPlayer(myLv, "나", true);
-me.c.root.position.set(-IN_X - TRACK/2, 0, 0.5);
+/* 들어올 때마다 록스존 가운데 통로의 다른 자리에서 시작 (여러 명이 한 점에 겹치지 않게) */
+me.c.root.position.set((Math.random() * 2 - 1) * 9, 0, (Math.random() * 2 - 1) * 0.5);
 function setMyLevel(lv, name){
   var old = me.c, pos = old.root.position.clone(), rot = old.root.rotation.y;
   disposeCubi(old); myLv = lv;
